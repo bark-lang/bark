@@ -7,7 +7,7 @@ set -e
 VERSION=${1:-"dev"}
 BUILD_DIR="dist"
 
-echo "Building Bark v${VERSION} for multiple platforms..."
+echo "Building Bark ${VERSION} for multiple platforms..."
 
 # Create build directory
 mkdir -p ${BUILD_DIR}
