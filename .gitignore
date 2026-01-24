@@ -1,0 +1,12 @@
+.claude
+
+/modules
+
+bark
+
+evaluator.test
+
+# Build artifacts
+/dist/
+/build/
+

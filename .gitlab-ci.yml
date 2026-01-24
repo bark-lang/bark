@@ -1,19 +1,70 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/user/application_security/secret_detection/pipeline/configure
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+# GitLab CI/CD configuration for Bark language
+# Builds release binaries when tags are created
+
 stages:
-- test
-- secret-detection
-sast:
+  - test
+  - build
+  - trigger
+
+# Run tests on every commit
+test:
   stage: test
-include:
-- template: Security/SAST.gitlab-ci.yml
-- template: Security/Secret-Detection.gitlab-ci.yml
-variables:
-  SECRET_DETECTION_ENABLED: 'true'
-secret_detection:
-  stage: secret-detection
+  image: golang:1.25
+  script:
+    - go version
+    - go test ./...
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG
+
+# Build release binaries only when tags are created
+build:
+  stage: build
+  image: golang:1.25
+  script:
+    - echo "Building Bark version $CI_COMMIT_TAG"
+    - chmod +x build.sh
+    - ./build.sh $CI_COMMIT_TAG
+    - |
+      cd dist
+      tar -czf bark-${CI_COMMIT_TAG}-darwin-arm64.tar.gz bark-darwin-arm64
+      tar -czf bark-${CI_COMMIT_TAG}-darwin-amd64.tar.gz bark-darwin-amd64
+      tar -czf bark-${CI_COMMIT_TAG}-linux-amd64.tar.gz bark-linux-amd64
+      tar -czf bark-${CI_COMMIT_TAG}-linux-arm64.tar.gz bark-linux-arm64
+      zip bark-${CI_COMMIT_TAG}-windows-amd64.zip bark-windows-amd64.exe
+  artifacts:
+    name: "bark-$CI_COMMIT_TAG"
+    paths:
+      - dist/*.tar.gz
+      - dist/*.zip
+    expire_in: never
+  rules:
+    - if: $CI_COMMIT_TAG
+  release:
+    tag_name: $CI_COMMIT_TAG
+    description: "Release $CI_COMMIT_TAG"
+    assets:
+      links:
+        - name: "macOS ARM64 (Apple Silicon)"
+          url: "${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_TAG}/raw/dist/bark-${CI_COMMIT_TAG}-darwin-arm64.tar.gz?job=build"
+        - name: "macOS AMD64 (Intel)"
+          url: "${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_TAG}/raw/dist/bark-${CI_COMMIT_TAG}-darwin-amd64.tar.gz?job=build"
+        - name: "Linux AMD64"
+          url: "${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_TAG}/raw/dist/bark-${CI_COMMIT_TAG}-linux-amd64.tar.gz?job=build"
+        - name: "Linux ARM64"
+          url: "${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_TAG}/raw/dist/bark-${CI_COMMIT_TAG}-linux-arm64.tar.gz?job=build"
+        - name: "Windows AMD64"
+          url: "${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_TAG}/raw/dist/bark-${CI_COMMIT_TAG}-windows-amd64.zip?job=build"
+
+# Trigger website rebuild when examples or docs change
+trigger-website:
+  stage: trigger
+  trigger:
+    project: bark-lang/website
+    branch: main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - examples/**/*
+        - docs/**/*
+        - readme.md
