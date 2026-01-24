@@ -21,6 +21,8 @@ test:
 build:
   stage: build
   image: golang:1.25
+  before_script:
+    - apt-get update && apt-get install -y zip
   script:
     - echo "Building Bark version $CI_COMMIT_TAG"
     - chmod +x build.sh
