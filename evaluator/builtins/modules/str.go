@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -242,6 +243,22 @@ func InitStr() map[string]*object.Builtin {
 				}
 
 				return helpers.FALSE
+			},
+		},
+
+		"str.alphanumeric?": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("str.alphanumeric? requires 1 argument, got=%d", len(args))
+				}
+
+				str, ok := args[0].(*object.String)
+				if !ok {
+					return helpers.NewError("str.alphanumeric? requires string argument, got=%s", args[0].Type())
+				}
+
+				matched, _ := regexp.MatchString("^[a-zA-Z0-9]+$", str.Value)
+				return helpers.NativeBoolToBooleanObject(matched)
 			},
 		},
 	}

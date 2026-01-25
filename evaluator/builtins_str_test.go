@@ -623,3 +623,65 @@ func TestStrNumericChaining(t *testing.T) {
 		testBooleanObject(t, evaluated, tt.expected)
 	}
 }
+
+func TestStrAlphanumericBuiltin(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		// Valid alphanumeric
+		{`str.alphanumeric?("abc123")`, true},
+		{`str.alphanumeric?("Hello123")`, true},
+		{`str.alphanumeric?("123")`, true},
+		{`str.alphanumeric?("abc")`, true},
+
+		// Invalid alphanumeric
+		{`str.alphanumeric?("hello world")`, false},
+		{`str.alphanumeric?("test@example")`, false},
+		{`str.alphanumeric?("a_b_c")`, false},
+		{`str.alphanumeric?("")`, false},
+		{`str.alphanumeric?("test-123")`, false},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testBooleanObject(t, evaluated, tt.expected)
+	}
+}
+
+func TestStrAlphanumericErrors(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{`str.alphanumeric?()`, "str.alphanumeric? requires 1 argument, got=0"},
+		{`str.alphanumeric?(123)`, "str.alphanumeric? requires string argument, got=INTEGER"},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		errObj, ok := evaluated.(*object.Error)
+		if !ok {
+			t.Errorf("expected Error object, got=%T (%+v)", evaluated, evaluated)
+			continue
+		}
+		if errObj.Msg != tt.expected {
+			t.Errorf("wrong error message. expected=%q, got=%q", tt.expected, errObj.Msg)
+		}
+	}
+}
+
+func TestStrAlphanumericChaining(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{`"abc123" > str.alphanumeric?()`, true},
+		{`"hello world" > str.alphanumeric?()`, false},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testBooleanObject(t, evaluated, tt.expected)
+	}
+}

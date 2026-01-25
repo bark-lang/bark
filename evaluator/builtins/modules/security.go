@@ -65,15 +65,15 @@ func InitSecurity() map[string]*object.Builtin {
 		},
 
 		// Check for dangerous shell commands
-		"security.is_safe_command?": {
+		"security.safe_command?": {
 			Fn: func(args ...object.Object) object.Object {
 				if len(args) != 1 {
-					return helpers.NewError("security.is_safe_command? requires 1 argument (command), got=%d", len(args))
+					return helpers.NewError("security.safe_command? requires 1 argument (command), got=%d", len(args))
 				}
 
 				cmd, ok := args[0].(*object.String)
 				if !ok {
-					return helpers.NewError("security.is_safe_command? requires string argument, got=%s", args[0].Type())
+					return helpers.NewError("security.safe_command? requires string argument, got=%s", args[0].Type())
 				}
 
 				command := strings.ToLower(strings.TrimSpace(cmd.Value))
@@ -167,33 +167,16 @@ func InitSecurity() map[string]*object.Builtin {
 			},
 		},
 
-		// Input Validation - Alphanumeric
-		"security.is_alphanumeric?": {
-			Fn: func(args ...object.Object) object.Object {
-				if len(args) != 1 {
-					return helpers.NewError("security.is_alphanumeric? requires 1 argument (input), got=%d", len(args))
-				}
-
-				input, ok := args[0].(*object.String)
-				if !ok {
-					return helpers.NewError("security.is_alphanumeric? requires string argument, got=%s", args[0].Type())
-				}
-
-				matched, _ := regexp.MatchString("^[a-zA-Z0-9]+$", input.Value)
-				return helpers.NativeBoolToBooleanObject(matched)
-			},
-		},
-
 		// Input Validation - Email
-		"security.is_email?": {
+		"security.email?": {
 			Fn: func(args ...object.Object) object.Object {
 				if len(args) != 1 {
-					return helpers.NewError("security.is_email? requires 1 argument (email), got=%d", len(args))
+					return helpers.NewError("security.email? requires 1 argument (email), got=%d", len(args))
 				}
 
 				email, ok := args[0].(*object.String)
 				if !ok {
-					return helpers.NewError("security.is_email? requires string argument, got=%s", args[0].Type())
+					return helpers.NewError("security.email? requires string argument, got=%s", args[0].Type())
 				}
 
 				// Basic email validation
@@ -205,15 +188,15 @@ func InitSecurity() map[string]*object.Builtin {
 		},
 
 		// Input Validation - URL
-		"security.is_url?": {
+		"security.url?": {
 			Fn: func(args ...object.Object) object.Object {
 				if len(args) != 1 {
-					return helpers.NewError("security.is_url? requires 1 argument (url), got=%d", len(args))
+					return helpers.NewError("security.url? requires 1 argument (url), got=%d", len(args))
 				}
 
 				urlStr, ok := args[0].(*object.String)
 				if !ok {
-					return helpers.NewError("security.is_url? requires string argument, got=%s", args[0].Type())
+					return helpers.NewError("security.url? requires string argument, got=%s", args[0].Type())
 				}
 
 				// Check for valid URL scheme

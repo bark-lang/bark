@@ -29,19 +29,19 @@ fn err_validation_with_default(err error, val string) {
 
 // Validators return (error, value) tuple - composable in chains
 fn validateEmail(email string) {
-  email > security.is_email?() > return?({}, email)
+  email > security.email?() > return?({}, email)
   err("invalid email format") > e
   return(e, "")
 }(error, string)
 
 fn validateEmailWithContext(email string) {
-  email > security.is_email?() > return?({}, email)
+  email > security.email?() > return?({}, email)
   err("invalid email format", {"email": email, "reason": "format"}) > e
   return(e, "")
 }(error, string)
 
 fn validateAlphanumeric(input string) {
-  input > security.is_alphanumeric?() > return?({}, input)
+  input > str.alphanumeric?() > return?({}, input)
   err("input must be alphanumeric") > e
   return(e, "")
 }(error, string)

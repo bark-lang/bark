@@ -104,25 +104,25 @@ func TestSecurityIsSafeCommandBuiltin(t *testing.T) {
 		expected bool
 	}{
 		// Safe commands
-		{`security.is_safe_command?("ls -la")`, true},
-		{`security.is_safe_command?("cat file.txt")`, true},
-		{`security.is_safe_command?("echo hello")`, true},
+		{`security.safe_command?("ls -la")`, true},
+		{`security.safe_command?("cat file.txt")`, true},
+		{`security.safe_command?("echo hello")`, true},
 
 		// Dangerous commands
-		{`security.is_safe_command?("rm -rf /")`, false},
-		{`security.is_safe_command?("curl malicious.com")`, false},
-		{`security.is_safe_command?("wget hack.sh")`, false},
-		{`security.is_safe_command?("shutdown now")`, false},
+		{`security.safe_command?("rm -rf /")`, false},
+		{`security.safe_command?("curl malicious.com")`, false},
+		{`security.safe_command?("wget hack.sh")`, false},
+		{`security.safe_command?("shutdown now")`, false},
 
 		// Command chaining
-		{`security.is_safe_command?("ls; rm -rf /")`, false},
-		{`security.is_safe_command?("echo test && whoami")`, false},
-		{`security.is_safe_command?("cat file | grep secret")`, false},
-		{`security.is_safe_command?("echo $(whoami)")`, false},
+		{`security.safe_command?("ls; rm -rf /")`, false},
+		{`security.safe_command?("echo test && whoami")`, false},
+		{`security.safe_command?("cat file | grep secret")`, false},
+		{`security.safe_command?("echo $(whoami)")`, false},
 
 		// Empty/whitespace
-		{`security.is_safe_command?("")`, true},
-		{`security.is_safe_command?("   ")`, true},
+		{`security.safe_command?("")`, true},
+		{`security.safe_command?("   ")`, true},
 	}
 
 	for _, tt := range tests {
@@ -171,51 +171,26 @@ e`
 
 // Input Validation Tests
 
-func TestSecurityIsAlphanumericBuiltin(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected bool
-	}{
-		// Valid alphanumeric
-		{`security.is_alphanumeric?("abc123")`, true},
-		{`security.is_alphanumeric?("Hello123")`, true},
-		{`security.is_alphanumeric?("123")`, true},
-		{`security.is_alphanumeric?("abc")`, true},
-
-		// Invalid alphanumeric
-		{`security.is_alphanumeric?("hello world")`, false},
-		{`security.is_alphanumeric?("test@example")`, false},
-		{`security.is_alphanumeric?("a_b_c")`, false},
-		{`security.is_alphanumeric?("")`, false},
-		{`security.is_alphanumeric?("test-123")`, false},
-	}
-
-	for _, tt := range tests {
-		evaluated := testEval(tt.input)
-		testBooleanObject(t, evaluated, tt.expected)
-	}
-}
-
 func TestSecurityIsEmailBuiltin(t *testing.T) {
 	// Valid email
-	evaluated := testEval(`security.is_email?("test@example.com")`)
+	evaluated := testEval(`security.email?("test@example.com")`)
 	testBooleanObject(t, evaluated, true)
 
 	// Invalid emails
-	evaluated = testEval(`security.is_email?("not_an_email")`)
+	evaluated = testEval(`security.email?("not_an_email")`)
 	testBooleanObject(t, evaluated, false)
 
-	evaluated = testEval(`security.is_email?("")`)
+	evaluated = testEval(`security.email?("")`)
 	testBooleanObject(t, evaluated, false)
 }
 
 func TestSecurityIsURLBuiltin(t *testing.T) {
 	// Valid URLs
-	evaluated := testEval(`security.is_url?("https://example.com")`)
+	evaluated := testEval(`security.url?("https://example.com")`)
 	testBooleanObject(t, evaluated, true)
 
 	// Invalid URLs
-	evaluated = testEval(`security.is_url?("not_a_url")`)
+	evaluated = testEval(`security.url?("not_a_url")`)
 	testBooleanObject(t, evaluated, false)
 }
 
@@ -291,19 +266,15 @@ func TestSecurityWrongArgs(t *testing.T) {
 		{`security.shell_escape()`, "security.shell_escape requires 1 argument (input), got=0"},
 		{`security.shell_escape(123)`, "security.shell_escape requires string argument, got=INTEGER"},
 
-		// is_safe_command? errors
-		{`security.is_safe_command?()`, "security.is_safe_command? requires 1 argument (command), got=0"},
-		{`security.is_safe_command?(123)`, "security.is_safe_command? requires string argument, got=INTEGER"},
+		// safe_command? errors
+		{`security.safe_command?()`, "security.safe_command? requires 1 argument (command), got=0"},
+		{`security.safe_command?(123)`, "security.safe_command? requires string argument, got=INTEGER"},
 
-		// is_alphanumeric? errors
-		{`security.is_alphanumeric?()`, "security.is_alphanumeric? requires 1 argument (input), got=0"},
-		{`security.is_alphanumeric?(123)`, "security.is_alphanumeric? requires string argument, got=INTEGER"},
+		// email? errors
+		{`security.email?()`, "security.email? requires 1 argument (email), got=0"},
 
-		// is_email? errors
-		{`security.is_email?()`, "security.is_email? requires 1 argument (email), got=0"},
-
-		// is_url? errors
-		{`security.is_url?()`, "security.is_url? requires 1 argument (url), got=0"},
+		// url? errors
+		{`security.url?()`, "security.url? requires 1 argument (url), got=0"},
 
 		// html_escape errors
 		{`security.html_escape()`, "security.html_escape requires 1 argument (html), got=0"},
