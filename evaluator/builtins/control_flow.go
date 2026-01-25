@@ -53,8 +53,9 @@ func InitControlFlow() map[string]*object.Builtin {
 				}
 
 				if condition.Value {
-					// Continue processing - return NULL to allow chain to continue
-					return NULL
+					// Continue processing - return Void to allow chain to continue
+					// without passing a value to the next function
+					return &object.Void{}
 				}
 				// Stop chain - return ChainStop to halt chain processing
 				return &object.ChainStop{}

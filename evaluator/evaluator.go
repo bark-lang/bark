@@ -524,6 +524,11 @@ func evalLinkExpression(node *ast.LinkExpression, env *object.Environment) objec
 			ReturnType: right.ReturnType,
 		}
 
+		// If left is Void, call with no arguments
+		if _, isVoid := left.(*object.Void); isVoid {
+			return applyFunction(function, []object.Object{})
+		}
+
 		// If left is a tuple, check if it should be unpacked or passed as-is
 		if tuple, ok := left.(*object.Tuple); ok {
 			// If function has 1 parameter with a tuple type, pass tuple as-is
@@ -555,9 +560,13 @@ func evalLinkExpression(node *ast.LinkExpression, env *object.Environment) objec
 			return args[0]
 		}
 
-		// If left is a tuple, check if it should be unpacked or passed as-is
+		// If left is Void, don't prepend it - just use explicit args
+		// This allows continue?() to act as a pure gate without passing a value
 		var allArgs []object.Object
-		if tuple, ok := left.(*object.Tuple); ok {
+		if _, isVoid := left.(*object.Void); isVoid {
+			allArgs = args
+		} else if tuple, ok := left.(*object.Tuple); ok {
+			// If left is a tuple, check if it should be unpacked or passed as-is
 			// Check if function's first parameter expects a tuple type
 			shouldPassAsTuple := false
 			if fn, ok := function.(*object.Function); ok {

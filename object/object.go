@@ -611,6 +611,15 @@ type ChainStop struct{}
 func (cs *ChainStop) Type() ObjectType { return CHAIN_STOP_OBJ }
 func (cs *ChainStop) Inspect() string  { return "null" }
 
+// Void signals that the chain should continue but without passing a value
+// to the next function. Used by continue?() to act as a pure gate.
+const VOID_OBJ = "VOID"
+
+type Void struct{}
+
+func (v *Void) Type() ObjectType { return VOID_OBJ }
+func (v *Void) Inspect() string  { return "void" }
+
 // Environment holds variable bindings
 type Environment struct {
 	store map[string]Object

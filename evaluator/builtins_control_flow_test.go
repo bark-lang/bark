@@ -190,10 +190,11 @@ func TestBreakQuestionErrors(t *testing.T) {
 }
 
 func TestContinueQuestionBuiltin(t *testing.T) {
-	// continue?(true) should return NULL to allow chain to continue
+	// continue?(true) should return Void to allow chain to continue
+	// without passing a value to the next function
 	evaluated := testEval(`continue?(true)`)
-	if evaluated != NULL {
-		t.Errorf("continue?(true): expected NULL, got=%T (%+v)", evaluated, evaluated)
+	if _, ok := evaluated.(*object.Void); !ok {
+		t.Errorf("continue?(true): expected Void, got=%T (%+v)", evaluated, evaluated)
 	}
 
 	// continue?(false) should return ChainStop to halt the chain
