@@ -11,9 +11,7 @@ fn fn2(str string){
 println("=== Link Operator ===")
 
 fn1() > result1
-println("fn1() returns: {result1}")
-// Outputs: "fn1() returns: hello"
+println("fn1() returns: {result1}") // Outputs: "fn1() returns: hello"
 
 fn1() > fn2() > result2
-println("fn1() > fn2() returns: {result2}")
-// Outputs: "fn1() > fn2() returns: hello world"
+println("fn1() > fn2() returns: {result2}") // Outputs: "fn1() > fn2() returns: hello world"

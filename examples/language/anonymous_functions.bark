@@ -31,17 +31,15 @@ fn example_multi_param() {
     x > mul(2) > return()
   }(int) > doubled
 
-  doubled > println()
+  doubled > println() // Outputs: 20
 }()
-// Outputs: 20
 
 // Example 3: Anonymous function with no return type
 fn example_no_return() {
   42 > (n int) {
-    n > println()
-  }() > result
+    n > println() // Outputs: 42
+  }()
 }()
-// Outputs: 42
 
 // Example 4: Anonymous function for transformation
 fn transform_value(val int) {
@@ -75,9 +73,8 @@ fn example_chain() {
     m > mul(2) > return()
   }(int) > result
 
-  result > println()
+  result > println() // Outputs: 16
 }()
-// Outputs: 16
 
 // Example 7: Anonymous function with variable binding inside
 fn example_binding() {
@@ -90,7 +87,7 @@ fn example_binding() {
 
   return(final_result)
 }(int)
-// Outputs: 250, returns 250
+// example_binding() returns 250
 
 // Example 8: Anonymous function for conditional logic
 fn is_adult(age int) {
@@ -128,9 +125,8 @@ fn example_nested() {
     }(int) > return()
   }(int) > result
 
-  result > println()
+  result > println() // Outputs: 30
 }()
-// Outputs: 30
 
 // Example 11: Tuples for multi-parameter initialization
 //
@@ -142,9 +138,8 @@ fn example_tuple_init() {
     x > add(y) > return()
   }(int) > result
 
-  result > println()
+  result > println() // Outputs: 15
 }()
-// Outputs: 15
 
 // Example 12: Tuple with recursive anonymous function
 //
@@ -172,9 +167,8 @@ fn example_three_params() {
     a > add(b) > add(c) > return()
   }(int) > result
 
-  result > println()
+  result > println() // Outputs: 6
 }()
-// Outputs: 6
 
 // Example 14: Tuple with named function
 fn calculate(a int, b int, c int) {
@@ -183,9 +177,8 @@ fn calculate(a int, b int, c int) {
 
 fn example_tuple_named() {
   // Tuples also work with named functions
-  (2, 3, 4) > calculate() > println()
+  (2, 3, 4) > calculate() > println() // Outputs: 10 (2*3+4)
 }()
-// Outputs: 10 (2*3+4)
 
 // Key Points:
 // - Anonymous functions require explicit parameter types: (param type)

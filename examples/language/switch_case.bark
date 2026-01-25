@@ -34,11 +34,14 @@ fn full_day_name(abbr string) {
 }(string)
 
 
-full_day_name("WED") > println("Full day name for 'WED' is: {day_name}")
-// Outputs: "Full day name for 'WED' is: wednesday"
-full_day_name("fri") > println("Full day name for 'fri' is: {day_name}")
-// Outputs: "Full day name for 'fri' is: friday"
-full_day_name("Sun") > println("Full day name for 'Sun' is: {day_name}")
-// Outputs: "Full day name for 'Sun' is: sunday"
-full_day_name("xyz") > println("Full day name for 'xyz' is: {day_name}")
-// Outputs: "Full day name for 'xyz' is: unknown day abbreviation"
+full_day_name("WED") > day_name
+println("Full day name for 'WED' is: {day_name}") // Outputs: "Full day name for 'WED' is: wednesday"
+
+full_day_name("fri") > day_name
+println("Full day name for 'fri' is: {day_name}") // Outputs: "Full day name for 'fri' is: friday"
+
+full_day_name("Sun") > day_name
+println("Full day name for 'Sun' is: {day_name}") // Outputs: "Full day name for 'Sun' is: sunday"
+
+full_day_name("xyz") > day_name
+println("Full day name for 'xyz' is: {day_name}") // Outputs: "Full day name for 'xyz' is: unknown day abbreviation"

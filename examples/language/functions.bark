@@ -33,29 +33,23 @@ fn weekdays(){
 println("=== Basic Functions ===")
 
 name() > n1
-println("name() returns: {n1}")
-// Outputs: "name() returns: bark"
+println("name() returns: {n1}") // Outputs: "name() returns: bark"
 
 println("name_and_semver() returns:")
 name_and_semver() > (name_val string, ver string) {
   println("{name_val} {ver}")
   return(name_val, ver)
-}(string, string) > (n string, v string)
-// Outputs: "bark 0.0.1"
+}(string, string) > (n, v)
 // n and v now hold "bark" and "0.0.1"
 
 5 > positive?() > p1
-println("5 > positive?() returns: {p1}")
-// Outputs: "5 > positive?() returns: true"
+println("5 > positive?() returns: {p1}") // Outputs: "5 > positive?() returns: true"
 
 -3 > positive?() > p2
-println("-3 > positive?() returns: {p2}")
-// Outputs: "-3 > positive?() returns: false"
+println("-3 > positive?() returns: {p2}") // Outputs: "-3 > positive?() returns: false"
 
 pi() > pi_val
-println("pi() returns: {pi_val}")
-// Outputs: "pi() returns: 3.14159"
+println("pi() returns: {pi_val}") // Outputs: "pi() returns: 3.14159"
 
 weekdays() > days
-println("weekdays() returns: {days}")
-// Outputs: "weekdays() returns: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]"
+println("weekdays() returns: {days}") // Outputs: "weekdays() returns: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]"
