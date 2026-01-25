@@ -21,7 +21,7 @@ Fundamental operations that are always available without a module prefix:
 - **Testing (2)** - `assert()`, `assert_error()`
 - **Core (10)** - `print()`, `println()`, `eprint()`, `eprintln()`, `print?()`, `println?()`, `eprint?()`, `eprintln?()`, `return()`, `to_string()`
 
-### Module Namespace (120 functions)
+### Module Namespace (121 functions)
 
 Specialized operations accessed via `module.function()` syntax:
 
@@ -140,7 +140,7 @@ Specialized operations accessed via `module.function()` syntax:
 **Parallel Processing (Global):**
 
 - `array > parallel(fn)` - Process elements concurrently
-- `array > parallel_limited(fn, 4)` - Process with concurrency limit
+- `parallel_limited(4, array, fn)` - Process with concurrency limit
 - `errors > all_absent?()` - Check if all operations succeeded
 
 **Testing (Global):**
