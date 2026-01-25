@@ -2,7 +2,7 @@
 
 "hello" > reverse() > assert("olleh")
 "world" > reverse() > assert("dlrow")
-"Bark" > reverse() > assert("kraB")
+"bark" > reverse() > assert("kraB")
 "12345" > reverse() > assert("54321")
 "racecar" > reverse() > assert("racecar")
 "a" > reverse() > assert("a")

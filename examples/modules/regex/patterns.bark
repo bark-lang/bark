@@ -1,4 +1,4 @@
-// Bark Regex Module Examples
+// bark Regex Module Examples
 // Demonstrates regular expression operations
 
 println("=== Basic Pattern Matching ===")

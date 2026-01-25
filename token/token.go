@@ -16,7 +16,7 @@ const (
 	// Special tokens
 	ILLEGAL = "ILLEGAL" // Unknown token
 	EOF     = "EOF"     // End of file
-	NEWLINE = "NEWLINE" // Newline (significant in Bark)
+	NEWLINE = "NEWLINE" // Newline (significant in bark)
 	COMMENT = "COMMENT" // Comment starting with //
 
 	// Identifiers and literals

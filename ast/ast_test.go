@@ -81,7 +81,7 @@ func TestString(t *testing.T) {
 		},
 	}
 
-	// The output should represent a valid Bark function (though formatted)
+	// The output should represent a valid bark function (though formatted)
 	output := program.String()
 
 	// Check that key elements are present in the output

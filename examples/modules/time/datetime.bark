@@ -1,4 +1,4 @@
-// Bark Time Module Examples
+// bark Time Module Examples
 // Demonstrates date and time operations
 
 println("=== Getting Current Time ===")

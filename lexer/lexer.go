@@ -7,7 +7,7 @@ import (
 	"gitlab.com/bark-lang/bark/token"
 )
 
-// Lexer tokenizes Bark source code
+// Lexer tokenizes bark source code
 type Lexer struct {
 	input        string
 	position     int  // current position in input (points to current char)

@@ -1,6 +1,6 @@
 // Anonymous Functions
 //
-// Anonymous functions in Bark are inline functions that behave exactly like
+// Anonymous functions in bark are inline functions that behave exactly like
 // named functions. They require explicit parameter types and return type annotations.
 //
 // Use Cases:

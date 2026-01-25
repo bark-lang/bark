@@ -1,4 +1,4 @@
-// Bark Env Module Examples
+// bark Env Module Examples
 // Demonstrates environment variable operations
 
 println("=== Getting Environment Variables ===")

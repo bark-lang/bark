@@ -1,4 +1,4 @@
-// Bark Dir Module Examples
+// bark Dir Module Examples
 // Demonstrates directory operations
 
 println("=== Checking Directory Existence ===")

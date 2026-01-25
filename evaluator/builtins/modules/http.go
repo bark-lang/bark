@@ -346,7 +346,7 @@ func InitHTTP() map[string]*object.Builtin {
 	}
 }
 
-// buildHTTPResponse creates a Bark map from an HTTP response
+// buildHTTPResponse creates a bark map from an HTTP response
 func buildHTTPResponse(resp *http.Response, body string) *object.Map {
 	responseMap := &object.Map{
 		Pairs: make(map[string]object.Object),

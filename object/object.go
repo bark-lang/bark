@@ -95,7 +95,7 @@ func (rv *RepeatValue) Inspect() string  { return "repeat" }
 
 // Error represents an error value.
 // There are two kinds of errors:
-// 1. Bark error values - created by err(), can be stored/passed/returned
+// 1. bark error values - created by err(), can be stored/passed/returned
 // 2. Programming errors - created by newError(), stop execution immediately
 // The IsProgrammingError flag distinguishes between them.
 type Error struct {

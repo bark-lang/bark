@@ -1,4 +1,4 @@
-// Bark JSON Module Examples
+// bark JSON Module Examples
 // Demonstrates JSON parsing and serialization
 
 println("=== JSON Stringify ===")

@@ -1444,7 +1444,7 @@ func isError(obj object.Object) bool {
 	if obj.Type() == object.ERROR_OBJ {
 		return true
 	}
-	// Check if it's a non-empty map (Bark error representation)
+	// Check if it's a non-empty map (bark error representation)
 	if m, ok := obj.(*object.Map); ok {
 		return len(m.Pairs) > 0
 	}

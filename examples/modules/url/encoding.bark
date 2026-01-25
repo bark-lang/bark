@@ -1,4 +1,4 @@
-// Bark URL Module Examples
+// bark URL Module Examples
 // Demonstrates URL encoding, decoding, and parsing
 
 println("=== URL Encoding ===")

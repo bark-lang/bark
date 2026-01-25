@@ -7,10 +7,15 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+	// SQLite driver (pure Go, no CGO
+	// SQLite driver (pure Go, no CGO
+	// SQLite driver (pure Go, no CGO
+	// SQLite driver (pure Go, no CGO
+	// SQLite driver (pure Go, no CGO
+	// SQLite driver (pure Go, no CGO
 
 	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
 	"gitlab.com/bark-lang/bark/object"
-
 	// SQLite driver (pure Go, no CGO)
 	_ "modernc.org/sqlite"
 )
@@ -144,7 +149,7 @@ func InitSQL() map[string]*object.Builtin {
 						return errorTuple(fmt.Sprintf("sql.query: scan error: %s", scanErr.Error()))
 					}
 
-					// Convert to Bark map
+					// Convert to bark map
 					rowMap := &object.Map{
 						Pairs: make(map[string]object.Object),
 						Keys:  make([]string, len(columns)),
@@ -323,7 +328,7 @@ func successTuple(result object.Object) *object.Tuple {
 	}
 }
 
-// objectArrayToAny converts a Bark array to []any for SQL params
+// objectArrayToAny converts a bark array to []any for SQL params
 func objectArrayToAny(arr *object.Array) []any {
 	result := make([]any, len(arr.Elements))
 	for i, elem := range arr.Elements {
@@ -345,7 +350,7 @@ func objectArrayToAny(arr *object.Array) []any {
 	return result
 }
 
-// anyToObject converts a SQL value to a Bark object
+// anyToObject converts a SQL value to a bark object
 func anyToObject(val any, _ string) object.Object {
 	if val == nil {
 		return helpers.NULL

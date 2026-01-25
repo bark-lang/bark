@@ -1,4 +1,4 @@
-// Bark Array Module Examples
+// bark Array Module Examples
 // Demonstrates array manipulation operations
 
 println("=== Array Push (Add to End) ===")

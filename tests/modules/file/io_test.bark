@@ -2,7 +2,7 @@
 // Uses /tmp directory to avoid affecting the project
 
 // Write and read a file
-"/tmp/bark_test_io.txt" > file.write("Hello, Bark!\nTest content.\n") > (write_err map) {
+"/tmp/bark_test_io.txt" > file.write("Hello, bark!\nTest content.\n") > (write_err map) {
   write_err > absent?() > assert(true)
 }()
 
@@ -16,7 +16,7 @@
 // Read file contents
 "/tmp/bark_test_io.txt" > file.read() > (err error, content string) {
   err > absent?() > assert(true)
-  content > includes?("Hello, Bark!") > assert(true)
+  content > includes?("Hello, bark!") > assert(true)
   content > includes?("Test content.") > assert(true)
 }()
 

@@ -251,7 +251,7 @@ func (c *Compiler) compileBlockStatement(block *ast.BlockStatement) error {
 }
 
 // compileFunctionBody compiles a function body with implicit return of the last expression.
-// In Bark, if the last statement is an expression, its value is implicitly returned.
+// In bark, if the last statement is an expression, its value is implicitly returned.
 func (c *Compiler) compileFunctionBody(body *ast.BlockStatement) error {
 	if body == nil || len(body.Statements) == 0 {
 		// Empty body - return null
@@ -1031,7 +1031,7 @@ func isValidInterpolationContent(content string) bool {
 	return isValidIdentifier(content)
 }
 
-// isValidIdentifier checks if a string is a valid Bark identifier
+// isValidIdentifier checks if a string is a valid bark identifier
 func isValidIdentifier(s string) bool {
 	if s == "" {
 		return false

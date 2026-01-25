@@ -1,4 +1,4 @@
-// Bark Base64 Module Examples
+// bark Base64 Module Examples
 // Demonstrates base64 encoding and decoding
 
 println("=== Base64 Encoding ===")

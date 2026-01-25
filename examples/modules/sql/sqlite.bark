@@ -1,4 +1,4 @@
-// Bark SQL Module Examples
+// bark SQL Module Examples
 // Demonstrates SQLite database operations
 
 println("=== Opening SQLite Database ===")

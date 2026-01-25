@@ -232,7 +232,7 @@ func evalProgram(program *ast.Program, env *object.Environment) object.Object {
 			return r.Value
 		case *object.Error:
 			// Only programming errors stop execution
-			// Bark error values (from err() builtin) can be stored/passed
+			// bark error values (from err() builtin) can be stored/passed
 			if r.IsProgrammingError {
 				return r
 			}
@@ -258,7 +258,7 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 				return result
 			}
 			// Only programming errors stop block execution
-			// Bark error values can be stored/passed
+			// bark error values can be stored/passed
 			if rt == object.ERROR_OBJ {
 				if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
 					return result
@@ -840,7 +840,7 @@ var typeMap = map[string]object.ObjectType{
 	"fn":     object.FUNCTION_OBJ,
 	"null":   object.NULL_OBJ,
 	"t":      "", // Generic type - accepts any type
-	"error":  "", // Special type - accepts maps (Bark error convention)
+	"error":  "", // Special type - accepts maps (bark error convention)
 }
 
 // validateType checks if an object matches the expected type annotation
@@ -882,9 +882,9 @@ func validateType(obj object.Object, typeExpr *ast.TypeExpression, paramName str
 	}
 
 	// Special handling for 'error' type
-	// In Bark, errors can be:
+	// In bark, errors can be:
 	// - object.Error (from err() builtin)
-	// - Maps with msg field (Bark error convention)
+	// - Maps with msg field (bark error convention)
 	// - Empty maps {} (representing no error)
 	if typeName == "error" {
 		if obj.Type() == object.MAP_OBJ || obj.Type() == object.ERROR_OBJ {
@@ -967,7 +967,7 @@ func validateMapType(obj object.Object, typeExpr *ast.TypeExpression, paramName 
 			paramName, typeExpr.String(), obj.Type())
 	}
 
-	// Map keys in Bark are always strings, so verify the key type is string
+	// Map keys in bark are always strings, so verify the key type is string
 	if typeExpr.KeyType.Name != "string" && typeExpr.KeyType.Name != "t" {
 		return newError("type mismatch: map keys must be string type, got %s", typeExpr.KeyType.Name)
 	}
@@ -1252,7 +1252,7 @@ func validateReturnTypeElement(obj object.Object, typeExpr *ast.TypeExpression, 
 }
 
 // isError checks if an object is a programming error (should stop execution).
-// Bark error values (from err() builtin) are NOT programming errors.
+// bark error values (from err() builtin) are NOT programming errors.
 func isError(obj object.Object) bool {
 	if obj != nil && obj.Type() == object.ERROR_OBJ {
 		if errObj, ok := obj.(*object.Error); ok {
@@ -1286,14 +1286,14 @@ func isChainStop(obj object.Object) bool {
 	return false
 }
 
-// isBarkError checks if an object represents a Bark error (non-empty map with msg field or Error object)
-func isBarkError(obj object.Object) bool {
+// isbarkError checks if an object represents a bark error (non-empty map with msg field or Error object)
+func isbarkError(obj object.Object) bool {
 	// Check if it's a direct Error object
 	if _, isErr := obj.(*object.Error); isErr {
 		return true
 	}
 
-	// Check if it's a Map with msg field (Bark error convention)
+	// Check if it's a Map with msg field (bark error convention)
 	mapObj, ok := obj.(*object.Map)
 	if !ok {
 		return false

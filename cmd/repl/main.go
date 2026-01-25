@@ -14,7 +14,7 @@ import (
 const PROMPT = ">> "
 
 func main() {
-	fmt.Println("Bark REPL v0.0.1")
+	fmt.Println("bark REPL v0.0.1")
 	fmt.Println("Type 'exit' to quit")
 	fmt.Println()
 

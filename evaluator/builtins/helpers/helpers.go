@@ -14,7 +14,7 @@ var (
 	NULL  = &object.Null{}
 )
 
-// NativeBoolToBooleanObject converts a Go boolean to a Bark Boolean object.
+// NativeBoolToBooleanObject converts a Go boolean to a bark Boolean object.
 // Uses singleton objects for efficiency.
 func NativeBoolToBooleanObject(input bool) *object.Boolean {
 	if input {
@@ -273,7 +273,7 @@ func isNumeric(s string) bool {
 	return true
 }
 
-// isValidIdentifier checks if a string is a valid Bark identifier
+// isValidIdentifier checks if a string is a valid bark identifier
 func isValidIdentifier(s string) bool {
 	if s == "" {
 		return false
@@ -314,7 +314,7 @@ func objectToString(obj object.Object) string {
 	}
 }
 
-// ObjectsEqual compares two Bark objects for equality without allocating strings.
+// ObjectsEqual compares two bark objects for equality without allocating strings.
 // For primitive types (Integer, Float, String, Boolean), it compares values directly.
 // For complex types, it falls back to Inspect() comparison.
 func ObjectsEqual(a, b object.Object) bool {

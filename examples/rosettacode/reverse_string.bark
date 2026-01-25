@@ -16,7 +16,7 @@ fn print_test(original string) {
 // Test with various strings
 "hello" > print_test()
 "world" > print_test()
-"Bark" > print_test()
+"bark" > print_test()
 "12345" > print_test()
 "racecar" > print_test()
 "a" > print_test()

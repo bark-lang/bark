@@ -1,4 +1,4 @@
-// Bark Cryptography Module Examples
+// bark Cryptography Module Examples
 // Demonstrates password hashing, encryption, HMAC, and secure random generation
 
 println("=== Password Hashing with bcrypt ===")

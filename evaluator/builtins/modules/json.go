@@ -36,8 +36,8 @@ func InitJSON() map[string]*object.Builtin {
 					}
 				}
 
-				// Convert JSON data to Bark object
-				barkObj := jsonToBark(data)
+				// Convert JSON data to bark object
+				barkObj := jsonTobark(data)
 
 				// Return success tuple: ({}, data)
 				return &object.Tuple{
@@ -55,7 +55,7 @@ func InitJSON() map[string]*object.Builtin {
 					return helpers.NewError("json.stringify requires 1 argument (data), got=%d", len(args))
 				}
 
-				// Convert Bark object to JSON-compatible interface
+				// Convert bark object to JSON-compatible interface
 				data := barkToJSON(args[0])
 
 				// Marshal to compact JSON
@@ -74,7 +74,7 @@ func InitJSON() map[string]*object.Builtin {
 					return helpers.NewError("json.stringify_pretty requires 1 argument (data), got=%d", len(args))
 				}
 
-				// Convert Bark object to JSON-compatible interface
+				// Convert bark object to JSON-compatible interface
 				data := barkToJSON(args[0])
 
 				// Marshal to pretty-printed JSON with 2-space indentation
@@ -89,27 +89,27 @@ func InitJSON() map[string]*object.Builtin {
 	}
 }
 
-// jsonToBark converts JSON data (from unmarshal) to Bark objects
-func jsonToBark(data interface{}) object.Object {
+// jsonTobark converts JSON data (from unmarshal) to bark objects
+func jsonTobark(data interface{}) object.Object {
 	switch v := data.(type) {
 	case map[string]interface{}:
-		// JSON object → Bark map
+		// JSON object → bark map
 		pairs := make(map[string]object.Object)
 		keys := make([]string, 0, len(v))
 
 		// Maintain key order (Go 1.12+ maintains map iteration order for json)
 		for key, value := range v {
-			pairs[key] = jsonToBark(value)
+			pairs[key] = jsonTobark(value)
 			keys = append(keys, key)
 		}
 
 		return &object.Map{Pairs: pairs, Keys: keys}
 
 	case []interface{}:
-		// JSON array → Bark array
+		// JSON array → bark array
 		elements := make([]object.Object, len(v))
 		for i, item := range v {
-			elements[i] = jsonToBark(item)
+			elements[i] = jsonTobark(item)
 		}
 		return &object.Array{Elements: elements}
 
@@ -122,7 +122,7 @@ func jsonToBark(data interface{}) object.Object {
 		if v == float64(int64(v)) {
 			return &object.Integer{Value: int64(v)}
 		}
-		// Note: Bark doesn't have a Float type yet, so we convert to int
+		// Note: bark doesn't have a Float type yet, so we convert to int
 		// This might lose precision for non-integer numbers
 		return &object.Integer{Value: int64(v)}
 
@@ -139,11 +139,11 @@ func jsonToBark(data interface{}) object.Object {
 	}
 }
 
-// barkToJSON converts Bark objects to JSON-compatible interface{}
+// barkToJSON converts bark objects to JSON-compatible interface{}
 func barkToJSON(obj object.Object) interface{} {
 	switch v := obj.(type) {
 	case *object.Map:
-		// Bark map → JSON object (maintain key order)
+		// bark map → JSON object (maintain key order)
 		result := make(map[string]interface{})
 		for _, key := range v.Keys {
 			if value, ok := v.Pairs[key]; ok {
@@ -153,7 +153,7 @@ func barkToJSON(obj object.Object) interface{} {
 		return result
 
 	case *object.Array:
-		// Bark array → JSON array
+		// bark array → JSON array
 		result := make([]interface{}, len(v.Elements))
 		for i, elem := range v.Elements {
 			result[i] = barkToJSON(elem)

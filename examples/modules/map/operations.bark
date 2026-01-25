@@ -1,4 +1,4 @@
-// Bark Map Module Examples
+// bark Map Module Examples
 // Demonstrates map manipulation operations
 
 println("=== Map Get With Default ===")

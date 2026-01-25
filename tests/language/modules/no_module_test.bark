@@ -24,4 +24,4 @@ fn greet(name string) {
 3 > multiply_numbers(7) > assert(21)
 
 "World" > greet() > assert("Hello, World!")
-"Bark" > greet() > assert("Hello, Bark!")
+"bark" > greet() > assert("Hello, bark!")

@@ -91,11 +91,11 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Println("Bark Programming Language")
+	fmt.Println("bark Programming Language")
 	fmt.Println()
 	fmt.Println("Usage:")
-	fmt.Println("  bark <file.bark>    Run a Bark program")
-	fmt.Println("  bark -e <code>      Execute Bark code directly")
+	fmt.Println("  bark <file.bark>    Run a bark program")
+	fmt.Println("  bark -e <code>      Execute bark code directly")
 	fmt.Println("  bark check          Check all .bark files in current directory parse correctly")
 	fmt.Println("  bark check <path>   Check .bark files in specified path recursively")
 	fmt.Println("  bark test           Run all tests in tests/ directory")
@@ -184,7 +184,7 @@ func runFile(filename string) {
 	result := evaluator.Eval(program, env)
 
 	if result != nil {
-		// Only programming errors are fatal - Bark error values can be returned
+		// Only programming errors are fatal - bark error values can be returned
 		if result.Type() == object.ERROR_OBJ {
 			if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
 				fmt.Fprint(os.Stderr, errObj.FormatError())
@@ -249,7 +249,7 @@ func runCode(code string) {
 	result := evaluator.Eval(program, env)
 
 	if result != nil {
-		// Only programming errors are fatal - Bark error values can be returned
+		// Only programming errors are fatal - bark error values can be returned
 		if result.Type() == object.ERROR_OBJ {
 			if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
 				fmt.Fprint(os.Stderr, errObj.FormatError())
@@ -568,7 +568,7 @@ func cmdCheck(args []string) {
 
 	var allFiles []string
 	for _, path := range checkPaths {
-		files, err := collectBarkFiles(path)
+		files, err := collectbarkFiles(path)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
@@ -604,8 +604,8 @@ func cmdCheck(args []string) {
 	}
 }
 
-// collectBarkFiles finds all .bark files in the given path recursively
-func collectBarkFiles(path string) ([]string, error) {
+// collectbarkFiles finds all .bark files in the given path recursively
+func collectbarkFiles(path string) ([]string, error) {
 	info, err := os.Stat(path)
 	if err != nil {
 		return nil, fmt.Errorf("cannot access %s: %w", path, err)

@@ -390,7 +390,7 @@ func parallelStrictFunc(args ...object.Object) object.Object {
 			// Helper to process tuple result
 			processTuple := func(errObj, resultObj object.Object) {
 				// Check if this is an error (non-empty map with msg field)
-				if isBarkError(errObj) {
+				if isbarkError(errObj) {
 					// Signal error and cancel
 					select {
 					case errorChan <- errObj:
@@ -468,7 +468,7 @@ func allAbsentFunc(args ...object.Object) object.Object {
 	}
 
 	for _, errObj := range errorsArray.Elements {
-		if isBarkError(errObj) {
+		if isbarkError(errObj) {
 			return FALSE
 		}
 	}
@@ -492,7 +492,7 @@ func allPresentFunc(args ...object.Object) object.Object {
 	}
 
 	for _, errObj := range errorsArray.Elements {
-		if !isBarkError(errObj) {
+		if !isbarkError(errObj) {
 			return FALSE
 		}
 	}
@@ -512,7 +512,7 @@ func firstErrorFunc(args ...object.Object) object.Object {
 	}
 
 	for _, errObj := range errorsArray.Elements {
-		if isBarkError(errObj) {
+		if isbarkError(errObj) {
 			return errObj
 		}
 	}

@@ -1,6 +1,6 @@
 # Rosetta Code Examples
 
-Bark implementations of classic programming tasks from [Rosetta Code](https://rosettacode.org/wiki/Category:Go).
+bark implementations of classic programming tasks from [Rosetta Code](https://rosettacode.org/wiki/Category:Go).
 
 ## Completed Examples
 
@@ -39,5 +39,5 @@ Bark implementations of classic programming tasks from [Rosetta Code](https://ro
 Examples are chosen based on:
 
 - Practical, real-world applicability
-- Demonstrating Bark's strengths (link operator, function chaining)
-- Compatibility with current Bark language features
+- Demonstrating bark's strengths (link operator, function chaining)
+- Compatibility with current bark language features

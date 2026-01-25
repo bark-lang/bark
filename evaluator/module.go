@@ -13,7 +13,7 @@ import (
 	"gitlab.com/bark-lang/bark/parser"
 )
 
-// Module represents a loaded Bark module
+// Module represents a loaded bark module
 type Module struct {
 	Name        string              // Module name from 'module' declaration
 	Path        string              // File path of the module

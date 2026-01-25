@@ -1,6 +1,6 @@
-// Parallel Processing in Bark
+// Parallel Processing in bark
 //
-// This example demonstrates Bark's parallel processing capabilities using
+// This example demonstrates bark's parallel processing capabilities using
 // builtin functions for concurrent execution.
 
 fn main() {

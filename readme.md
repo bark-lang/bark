@@ -323,7 +323,7 @@ bark test tests/math_test.bark
 
 ## credits
 
-Bark is built with:
+bark is built with:
 
 - [Go](https://go.dev/)
 - [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto)
