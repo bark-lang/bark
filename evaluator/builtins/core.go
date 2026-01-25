@@ -233,7 +233,11 @@ func InitCore() map[string]*object.Builtin {
 				}
 
 				if err, ok := args[0].(*object.Error); ok {
-					return &object.Map{Pairs: err.Context, Keys: []string{}}
+					keys := make([]string, 0, len(err.Context))
+					for k := range err.Context {
+						keys = append(keys, k)
+					}
+					return &object.Map{Pairs: err.Context, Keys: keys}
 				}
 
 				return newError("err_context requires error argument")
