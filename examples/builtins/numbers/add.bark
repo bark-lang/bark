@@ -1,0 +1,17 @@
+// add(n) - Add n to the piped value
+// Returns: integer or float
+
+// Basic integer addition
+5 > add(3) > println()    // Output: 8
+
+// Adding negative numbers
+10 > add(-4) > println()  // Output: 6
+
+// Chained additions
+1 > add(2) > add(3) > add(4) > println()  // Output: 10
+
+// Float addition
+3.14 > add(1.86) > println()  // Output: 5.0
+
+// Float addition (both operands must be same type)
+5.0 > add(2.5) > println()  // Output: 7.5

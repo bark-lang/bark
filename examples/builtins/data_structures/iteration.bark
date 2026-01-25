@@ -1,0 +1,253 @@
+// Data structures examples - maps and arrays
+
+// =============================================================================
+// Map Literals
+// =============================================================================
+
+// Empty map
+{}
+
+// Map with string values
+{"name": "john", "city": "seattle"}
+
+// Map with mixed values
+{"count": 42, "name": "test", "active": true}
+
+// Nested maps
+{"user": {"name": "john", "age": 30}}
+
+// =============================================================================
+// Array Literals
+// =============================================================================
+
+// Empty array
+[]
+
+// Array with integers
+[1, 2, 3, 4]
+
+// Array with strings
+["apple", "banana", "cherry"]
+
+// Nested arrays
+[1, [2, 3], [4, [5, 6]]]
+
+// =============================================================================
+// Map Iteration
+// =============================================================================
+
+// Print all entries in a map
+fn print_map(data map) {
+  data > each((m map, k string) {
+    m > get(k) > v
+    println("{k}: {v}")
+  }())
+}
+
+// Transform all map values
+fn uppercase_all_values(data map) {
+  data > head() > (m map, k string) {
+    k > absent?() > break?(data)  // Exit if empty map, return data
+
+    m > get(k) > str.upper() > upper
+    m > set(k, upper)
+
+    m > next(k) > nextKey > absent?() > break?()
+    repeat(m, nextKey)
+  }()
+
+  return(data)
+}(map)
+
+// Find entry by value (early exit)
+fn find_admin(users map) {
+  users > head() > (m map, username string) {
+    username > absent?() > break?("")  // Empty map, return empty string
+
+    m > get(username) > user
+    user > get("admin") > isAdmin
+
+    isAdmin > return?(username)  // Found admin, return username
+
+    m > next(username) > nextKey > absent?() > break?("")  // Not found
+    repeat(m, nextKey)
+  }()
+
+  return("")
+}(string)
+
+// Count matching entries
+fn count_active_users(users map) {
+  (users, 0) > (m map, count int) {
+    m > head() > (data map, username string) {
+      username > absent?() > break?(count)  // Empty map, return count
+
+      data > get(username) > user
+      user > get("active") > isActive
+
+      // Conditionally increment count
+      count > add(1) > incremented
+      isActive > (active bool) {
+        active > return?(incremented)
+        return(count)
+      }(int) > new_count
+
+      data > next(username) > nextKey
+      nextKey > absent?() > break?(new_count)
+      repeat(data, nextKey, new_count)
+    }(int) > result
+    return(result)
+  }(int) > final_count
+
+  return(final_count)
+}(int)
+
+// =============================================================================
+// Array Iteration
+// =============================================================================
+
+// Print all array elements
+fn print_array(items array) {
+  items > each((arr array, idx int) {
+    arr > get(idx) > val
+    println("{idx}: {val}")
+  }())
+}
+
+// Double all array values
+fn double_all(nums array) {
+  nums > head() > (arr array, idx int) {
+    idx > lt?(0) > break?(nums)  // Exit if empty array, return nums
+
+    arr > get(idx) > mul(2) > doubled
+    arr > set(idx, doubled)
+
+    arr > next(idx) > nextIdx > lt?(0) > break?()
+    repeat(arr, nextIdx)
+  }()
+
+  return(nums)
+}(array)
+
+// Find first matching element
+fn find_admin_user(users array) {
+  users > head() > (arr array, idx int) {
+    idx > lt?(0) > break?({})  // Empty array, return empty map
+
+    arr > get(idx) > user
+    user > get("admin") > isAdmin
+
+    isAdmin > return?(user)  // Found it, return user
+
+    arr > next(idx) > nextIdx > lt?(0) > break?({})  // Not found
+    repeat(arr, nextIdx)
+  }()
+}(map)
+
+// Sum all elements
+fn sum(nums array) {
+  0 > total
+  nums > head() > (arr array, idx int) {
+    idx > lt?(0) > break?(total)  // Empty array, return total (0)
+
+    arr > get(idx) > val
+    total > add(val) > total
+
+    arr > next(idx) > nextIdx > lt?(0) > break?()
+    repeat(arr, nextIdx)
+  }()
+
+  return(total)
+}(int)
+
+// Build new array from transformation
+fn uppercase_all_strings(words array) {
+  [] > result
+  words > head() > (arr array, idx int) {
+    idx > lt?(0) > break?(result)  // Empty array, return result ([])
+
+    arr > get(idx) > str.upper() > upper
+    result > array.push(upper)
+
+    arr > next(idx) > nextIdx > lt?(0) > break?()
+    repeat(arr, nextIdx)
+  }()
+
+  return(result)
+}(array)
+
+// =============================================================================
+// Reverse Iteration
+// =============================================================================
+
+// Print array in reverse
+fn print_array_reverse(items array) {
+  items > reverse() > each((arr array, idx int) {
+    arr > get(idx) > println()
+  }())
+}
+
+// =============================================================================
+// Execute Functions
+// =============================================================================
+
+println("=== Data Structures ===")
+
+// Map literals
+{} > empty_map
+println("Empty map: {empty_map}")
+
+{"name": "john", "city": "seattle"} > str_map
+println("Map with string values: {str_map}")
+
+{"count": 42, "name": "test", "active": true} > mixed_map
+println("Map with mixed values: {mixed_map}")
+
+{"user": {"name": "john", "age": 30}} > nested_map
+println("Nested maps: {nested_map}")
+
+// Array literals
+[] > empty_arr
+println("Empty array: {empty_arr}")
+
+[1, 2, 3, 4] > int_arr
+println("Array with integers: {int_arr}")
+
+["apple", "banana", "cherry"] > str_arr
+println("Array with strings: {str_arr}")
+
+[1, [2, 3], [4, [5, 6]]] > nested_arr
+println("Nested arrays: {nested_arr}")
+
+// Map iteration functions
+println("print_map({\"a\": 1, \"b\": 2}): ")
+{"a": 1, "b": 2} > print_map()
+
+{"a": "hello", "b": "world"} > uppercase_all_values() > result1
+println("uppercase_all_values({{\"a\": \"hello\", \"b\": \"world\"}}): {result1}")
+
+{"alice": {"admin": false}, "bob": {"admin": true}} > find_admin() > result2
+println("find_admin({{\"alice\": {{\"admin\": false}}, \"bob\": {{\"admin\": true}}}}): {result2}")
+
+{"u1": {"active": true}, "u2": {"active": false}, "u3": {"active": true}} > count_active_users() > result3
+println("count_active_users({{\"u1\": {{\"active\": true}}, \"u2\": {{\"active\": false}}, \"u3\": {{\"active\": true}}}}): {result3}")
+
+// Array iteration functions
+println("print_array([\"a\", \"b\", \"c\"]): ")
+["a", "b", "c"] > print_array()
+
+[1, 2, 3, 4] > double_all() > result4
+println("double_all([1, 2, 3, 4]): {result4}")
+
+[{"name": "alice", "admin": false}, {"name": "bob", "admin": true}] > find_admin_user() > result5
+println("find_admin_user([{{\"name\": \"alice\", \"admin\": false}}, {{\"name\": \"bob\", \"admin\": true}}]): {result5}")
+
+[1, 2, 3, 4, 5] > sum() > result6
+println("sum([1, 2, 3, 4, 5]): {result6}")
+
+["hello", "world"] > uppercase_all_strings() > result7
+println("uppercase_all_strings([\"hello\", \"world\"]): {result7}")
+
+// Reverse iteration
+println("print_array_reverse([\"a\", \"b\", \"c\"]): ")
+["a", "b", "c"] > print_array_reverse()

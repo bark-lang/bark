@@ -1,0 +1,26 @@
+// gt?(value) - Check if piped value is greater than argument
+// Returns: boolean
+
+// Integer comparison
+10 > gt?(5) > println() // Output: true
+5 > gt?(10) > println() // Output: false
+5 > gt?(5) > println() // Output: false (equal is not greater)
+
+// Float comparison
+3.14 > gt?(3.0) > println() // Output: true
+2.5 > gt?(2.5) > println() // Output: false
+
+// Negative numbers
+-1 > gt?(-5) > println() // Output: true
+-5 > gt?(-1) > println() // Output: false
+// Float comparison (both operands must be same type)
+10.0 > gt?(9.99) > println()  // Output: true
+
+// Practical use: validation
+fn check_age(age int) {
+  age > gt?(17) > return?("Adult")
+  return("Minor")
+}(string)
+
+21 > check_age() > println() // Output: Adult
+15 > check_age() > println()// Output: Minor

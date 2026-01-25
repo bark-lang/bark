@@ -1,0 +1,46 @@
+// excludes?(collection, value) - Check if collection does NOT contain value
+// For arrays: checks that no element equals value
+// For strings: checks that substring does NOT exist
+// Returns: boolean (opposite of includes?)
+
+// Array excludes
+[1, 2, 3, 4, 5] > excludes?(9) > println()  // Output: true
+[1, 2, 3, 4, 5] > excludes?(3) > println()  // Output: false
+
+// String excludes (no substring)
+"hello world" > excludes?("xyz") > println()    // Output: true
+"hello world" > excludes?("world") > println()  // Output: false
+
+// Validate exclusion
+fn is_not_blocked(username string) {
+  ["admin", "root", "system"] > excludes?(username) > return()
+}(bool)
+
+"john" > is_not_blocked() > println()   // Output: true
+"admin" > is_not_blocked() > println()  // Output: false
+
+// Check for dangerous characters
+fn is_safe_input(input string) {
+  input > excludes?("<script>") > return()
+}(bool)
+
+"Hello, user!" > is_safe_input() > println()       // Output: true
+"<script>alert(1)</script>" > is_safe_input() > println()  // Output: false
+
+// Ensure array doesn't contain duplicates (check before adding)
+fn can_add(items array, newItem string) {
+  items > excludes?(newItem) > return()
+}(bool)
+
+["a", "b", "c"] > can_add("d") > println()  // Output: true
+["a", "b", "c"] > can_add("b") > println()  // Output: false
+
+// Validation guard
+fn validate_no_spaces(input string) {
+  input > excludes?(" ") > valid
+  valid > return?(input)
+  return("")
+}(string)
+
+"hello" > validate_no_spaces() > println()        // Output: hello
+"hello world" > validate_no_spaces() > println()  // Output: (empty)

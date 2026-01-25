@@ -1,0 +1,32 @@
+// first(collection) - Get first element with its key/index
+// For arrays: returns [index, value] where index is 0 or -1 if empty
+// For maps: returns [key, value] where key is "" if empty
+
+// Array first element
+[10, 20, 30] > first() > println()  // Output: [0, 10]
+
+// Empty array
+[] > first() > println()  // Output: [-1, 0]
+
+// Map first entry (insertion order)
+{"a": 1, "b": 2, "c": 3} > first() > println()  // Output: ["a", 1]
+
+// Empty map
+{} > first() > println()  // Output: ["", 0]
+
+// Destructure the result
+["apple", "banana", "cherry"] > first() > (arr array) { // first() returns [index, value]
+  arr > get(1) > val
+  println("Index: {1}, Value: {val}")
+}()
+
+// Check if collection has elements
+fn has_elements(arr array) {
+  arr > present?() > return()
+}(bool)
+
+[1, 2, 3] > has_elements() > println()  // Output: true
+[] > has_elements() > println()         // Output: false
+
+// Get first value directly
+["first", "second"] > first() > get(1) > println()  // Output: first

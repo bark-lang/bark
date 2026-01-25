@@ -1,0 +1,32 @@
+// print(), println(), eprint(), eprintln() - Output functions
+// print/println write to stdout, eprint/eprintln write to stderr
+// ln variants add a newline after the output
+
+// Basic println - most common output function
+"Hello, World!" > println()
+
+// print without newline - useful for prompts or inline output
+"Enter name: " > print()
+
+// Multiple values using format strings with {0}, {1} placeholders
+println("Name: {0}, Age: {1}", "Alice", 30)
+
+// String interpolation in the value being printed
+"Bob" > name
+42 > age
+println("User {name} is {age} years old")
+
+// eprint/eprintln write to stderr (for errors and diagnostics)
+"Warning: low memory" > eprintln()
+"Error: " > eprint()
+"file not found" > eprintln()
+
+// Chaining with other operations
+5 > add(3) > println()  // Output: 8
+
+// Printing different types
+42 > println()           // integer
+3.14 > println()         // float
+true > println()         // boolean
+[1, 2, 3] > println()    // array
+{"a": 1} > println()     // map

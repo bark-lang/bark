@@ -1,0 +1,32 @@
+// last(collection) - Get last element with its key/index
+// For arrays: returns [index, value] where index is -1 if empty
+// For maps: returns [key, value] where key is "" if empty
+
+// Array last element
+[10, 20, 30] > last() > println()  // Output: [2, 30]
+
+// Empty array
+[] > last() > println()  // Output: [-1, 0]
+
+// Map last entry (insertion order)
+{"a": 1, "b": 2, "c": 3} > last() > println()  // Output: ["c", 3]
+
+// Empty map
+{} > last() > println()  // Output: ["", 0]
+
+// Destructure the result
+["apple", "banana", "cherry"] > last() > (arr array) {
+  arr > get(0) > val
+  println("Index: {0}, Value: {val}") // Output: Index: 2, Value: cherry
+}()
+
+// Get the last value from an array
+[1, 2, 3, 4, 5] > last() > get(1) > println()  // Output: 5
+
+// Useful for stack-like operations
+fn peek(stack array) {
+  stack > last() > get(1) > return()
+}(map)
+
+[{"task": "first"}, {"task": "second"}] > peek() > println()
+// Output: {"task": "second"}

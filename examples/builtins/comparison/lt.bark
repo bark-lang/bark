@@ -1,0 +1,24 @@
+// lt?(value) - Check if piped value is less than argument
+// Returns: boolean
+
+// Integer comparison
+5 > lt?(10) > println() // Output: true
+10 > lt?(5) > println() // Output: false
+5 > lt?(5) > println() // Output: false (equal is not less)
+
+// Float comparison
+2.5 > lt?(3.0) > println() // Output: true
+3.14 > lt?(3.14) > println() // Output: false
+
+// Negative numbers
+-5 > lt?(-1) > println() // Output: true
+-1 > lt?(-5) > println() // Output: false
+
+// Practical use: under threshold
+fn check_inventory(count int) {
+  count > lt?(10) > return?("Low stock - reorder needed")
+  return("Stock OK")
+}(string)
+
+5 > check_inventory() > println() // Output: Low stock - reorder needed
+15 > check_inventory() > println() // Output: Stock OK

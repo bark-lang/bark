@@ -1,0 +1,17 @@
+// sub(n) - Subtract n from the piped value
+// Returns: integer or float
+
+// Basic integer subtraction
+10 > sub(3) > println()    // Output: 7
+
+// Subtracting negative numbers (effectively adds)
+5 > sub(-2) > println()    // Output: 7
+
+// Chained subtractions
+20 > sub(5) > sub(3) > sub(2) > println()  // Output: 10
+
+// Float subtraction
+10.5 > sub(3.2) > println()  // Output: 7.3
+
+// Result can be negative
+3 > sub(7) > println()  // Output: -4

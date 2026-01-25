@@ -1,0 +1,58 @@
+// return?(condition, value) - Conditional early return
+// Returns the value only if condition is true
+// If condition is false, continues execution
+
+// Basic conditional return
+fn check_positive(n int) {
+  n > gt?(0) > return?("positive")
+  n > lt?(0) > return?("negative")
+  return("zero")
+}(string)
+
+5 > check_positive() > println() // Output: positive
+-3 > check_positive() > println() // Output: negative
+0 > check_positive() > println() // Output: zero
+
+// Early exit on error condition
+fn safe_divide(a int, b int) {
+  b > eq?(0) > return?(0)  // Early return if dividing by zero
+  a > div(b) > return()
+}(int)
+
+10 > safe_divide(2) > println() // Output: 5
+10 > safe_divide(0) > println() // Output: 0
+
+// Guard clauses pattern
+fn process_user(user map) {
+  user > empty?() > return?("no user")
+
+  user > get("active") > isActive
+  isActive > not() > return?("user inactive")
+
+  user > get("name") > name
+  return("processing {name}")
+}(string)
+
+{} > process_user() > println()
+{"active": false, "name": "Bob"} > process_user() > println() // Output: user inactive
+{"active": true, "name": "Alice"} > process_user() > println() // Output: processing Alice
+
+// Multiple return values with return?
+fn find_value(arr array, target int) {
+  arr > head() > (items array, idx int) {
+    idx > lt?(0) > return?(-1, false)  // Empty array
+
+    items > get(idx) > val
+    val > eq?(target) > return?(idx, true)  // Found
+
+    items > next(idx) > nextIdx
+    nextIdx > lt?(0) > return?(-1, false)  // Not found
+    repeat(items, nextIdx)
+  }(int, bool) > (foundIdx int, found bool) {
+    return(foundIdx, found)
+  }(int, bool)
+}(int, bool)
+
+[10, 20, 30] > find_value(20) > (idx int, found bool) {
+  println("Index: {idx}, Found: {found}") // Output: Index: 1, Found: true
+}()

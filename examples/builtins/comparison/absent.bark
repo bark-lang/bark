@@ -1,0 +1,27 @@
+// absent?() - Check if value is absent (empty string or empty collection)
+// Returns: boolean
+
+// Empty string is absent
+"" > absent?() > println() // Output: true
+
+// Empty collections are absent
+[] > absent?() > println() // Output: true
+{} > absent?() > println() // Output: true
+
+// Non-empty values are not absent
+42 > absent?() > println() // Output: false
+"hello" > absent?() > println() // Output: false
+false > absent?() > println() // Output: false
+
+// Non-empty collections are not absent
+[1, 2] > absent?() > println() // Output: false
+{"a": 1} > absent?() > println() // Output: false
+
+// Useful for success checking (empty error = success)
+fn check_success(err map) {
+  err > absent?() > return?("Operation succeeded")
+  return("Operation failed")
+}(string)
+
+{} > check_success() > println() // Output: Operation succeeded
+{"Msg": "Error"} > check_success() > println() // Output: Operation failed

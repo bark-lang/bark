@@ -1,0 +1,28 @@
+// present?() - Check if value is present (not empty string, not empty collection)
+// Returns: boolean
+
+// Non-empty values are present
+42 > present?() > println() // Output: true
+"hello" > present?() > println() // Output: true
+true > present?() > println() // Output: true
+false > present?() > println() // Output: true (false is a value)
+
+// Empty string is not present
+"" > present?() > println() // Output: false
+
+// Empty collections are not present
+[] > present?() > println() // Output: false
+{} > present?() > println() // Output: false
+
+// Non-empty collections are present
+[1, 2, 3] > present?() > println() // Output: true
+{"key": "value"} > present?() > println() // Output: true
+
+// Useful for error checking
+fn handle_result(err map) {
+  err > present?() > return?("Error occurred")
+  return("Success")
+}(string)
+
+{} > handle_result() > println() // Output: Success
+{"Msg": "Something went wrong"} > handle_result() > println() // Output: Error occurred

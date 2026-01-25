@@ -1,0 +1,48 @@
+// print?(), println?(), eprint?(), eprintln?() - Conditional output
+// Only prints when the first argument (condition) is true
+// Useful for debug output or conditional logging
+
+// Basic conditional print
+true > println?("This prints")
+false > println?("This does not print")
+
+// With variables
+true > shouldLog
+shouldLog > println?("Logging enabled")
+
+// Conditional debug output
+fn process(value int, debug bool) {
+  debug > println?("Processing value: {0}", value)
+  value > mul(2) > result
+  debug > println?("Result: {0}", result)
+  return(result)
+}(int)
+
+// Run with debug on
+10 > process(true) > result1
+println("Final: {result1}")
+
+// Run with debug off (no debug output)
+10 > process(false) > result2
+println("Final: {result2}")
+
+// Conditional stderr output for errors
+false > hasError
+hasError > eprintln?("An error occurred!")
+
+true > hasWarning
+hasWarning > eprintln?("Warning: check your input")
+
+// Useful in validation
+fn validate(input string) {
+  input > len() > inputLen
+  inputLen > lt?(3) > tooShort
+  tooShort > eprintln?("Input too short: {0}", input)
+  tooShort > not() > return()
+}(bool)
+
+"ab" > validate() > valid1
+println("'ab' valid: {valid1}")
+
+"hello" > validate() > valid2
+println("'hello' valid: {valid2}")

@@ -1,0 +1,24 @@
+// lte?(value) - Check if piped value is less than or equal to argument
+// Returns: boolean
+
+// Integer comparison
+5 > lte?(10) > println() // Output: true
+10 > lte?(5) > println() // Output: false
+5 > lte?(5) > println() // Output: true (equal counts)
+
+// Float comparison
+3.0 > lte?(3.14) > println() // Output: true
+3.14 > lte?(3.14) > println() // Output: true
+// Negative numbers
+-5 > lte?(0) > println() // Output: true
+-5 > lte?(-5) > println() // Output: true
+
+// Practical use: maximum threshold
+fn check_budget(cost int) {
+  cost > lte?(100) > return?("Within budget")
+  return("Over budget")
+}(string)
+
+85 > check_budget() > println() // Output: Within budget
+100 > check_budget() > println() // Output: Within budget
+150 > check_budget() > println() // Output: Over budget

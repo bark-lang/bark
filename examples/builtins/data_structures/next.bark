@@ -1,0 +1,42 @@
+// next(collection, key) - Get the next key/index after current position
+// For arrays: returns next index or -1 if at end
+// For maps: returns next key or "" if at end
+
+// Array next index
+[10, 20, 30] > next(0) > println()  // Output: 1
+[10, 20, 30] > next(1) > println()  // Output: 2
+[10, 20, 30] > next(2) > println()  // Output: -1 (at end)
+
+// Map next key
+{"a": 1, "b": 2, "c": 3} > next("a") > println()  // Output: b
+{"a": 1, "b": 2, "c": 3} > next("b") > println()  // Output: c
+{"a": 1, "b": 2, "c": 3} > next("c") > println()  // Output: "" (at end)
+
+// Iterate using next
+fn print_all(arr array) {
+  arr > head() > (items array, idx int) {
+    idx > lt?(0) > return?()  // Empty array
+
+    items > get(idx) > val
+    println("arr[{idx}] = {val}")
+
+    items > next(idx) > nextIdx
+    nextIdx > lt?(0) > return?()  // End of array
+    repeat(items, nextIdx)
+  }()
+}()
+
+[100, 200, 300] > print_all()
+// Output:
+// arr[0] = 100
+// arr[1] = 200
+// arr[2] = 300
+
+// Check if there's a next element
+fn has_next(arr array, idx int) {
+  arr > next(idx) > nextIdx
+  nextIdx > gte?(0) > return()
+}(bool)
+
+[1, 2, 3] > has_next(1) > println()  // Output: true
+[1, 2, 3] > has_next(2) > println()  // Output: false

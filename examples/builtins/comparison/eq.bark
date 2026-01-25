@@ -1,0 +1,23 @@
+// eq?(value) - Check if two values are equal
+// Returns: boolean
+// Note: Uses reference equality for arrays and maps
+
+// Integer equality
+5 > eq?(5) > println() // Output: true
+5 > eq?(3) > println() // Output: false
+
+// String equality
+"hello" > eq?("hello") > println() // Output: true
+"hello" > eq?("world") > println() // Output: false
+
+// Boolean equality
+true > eq?(true) > println() // Output: true
+true > eq?(false) > println() // Output: false
+
+// Float equality
+3.14 > eq?(3.14) > println() // Output: true
+3.14 > eq?(2.71) > println() // Output: false
+
+// Zero equality
+0 > eq?(0) > println() // Output: true
+0.0 > eq?(0.0) > println() // Output: true

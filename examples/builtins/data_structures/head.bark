@@ -1,0 +1,50 @@
+// head(collection) - Get collection with cursor at first position
+// Returns tuple: (collection, first_key_or_index)
+// For arrays: returns (array, 0) or (array, -1) if empty
+// For maps: returns (map, first_key) or (map, "") if empty
+// Useful for starting iteration
+
+// Array head
+[10, 20, 30] > head() > capture(arry, idx)
+println("Array: {arry}, Index: {idx}")  // Output: Array: [10, 20, 30], Index: 0
+
+// Empty array
+[] > head() > capture(arry, idx)
+println("Array: {arry}, Index: {idx}")  // Output: Array: [], Index: -1
+
+// Map head
+{"a": 1, "b": 2} > head() > capture(m, k)
+println("Map: {m}, First key: {k}")  // Output: ({"a": 1, "b": 2}, "a")
+
+// Empty map
+{} > head() > capture(m, k)
+println("Map: {m}, First key: {k}")  // Output: ({}, "")
+
+// Iteration pattern with head
+fn sum_all(arr array) {
+  arr > head() > (items array, idx int) {
+    idx > lt?(0) > break?(0)  // Empty array
+
+    items > get(idx) > val
+    0 > total
+
+    (items, idx, total) > (a array, i int, t int) {
+      a > get(i) > v
+      t > add(v) > newTotal
+
+      a > next(i) > nextIdx
+      nextIdx > lt?(0) > break?(newTotal)
+      repeat(a, nextIdx, newTotal)
+    }(int) > result
+    return(result)
+  }(int) > finalResult
+  return(finalResult)
+}(int)
+
+[1, 2, 3, 4, 5] > sum_all() > println()  // Output: 15
+
+// Destructure head result
+{"x": 10, "y": 20} > head() > (m map, k string) {
+  println("Map: {m}")
+  println("First key: {k}")
+}()

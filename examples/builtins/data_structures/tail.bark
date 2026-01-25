@@ -1,0 +1,58 @@
+// tail(collection) - Get collection with cursor at last position
+// Returns tuple: (collection, last_key_or_index)
+// For arrays: returns (array, last_index) or (array, -1) if empty
+// For maps: returns (map, last_key) or (map, "") if empty
+// Useful for reverse iteration
+
+// Array tail
+[10, 20, 30] > tail() > capture(arr, idx)
+println("Array: {arr}, Index: {idx}")  // Output: Array: [10, 20, 30], Index: 2
+
+// Empty array
+[] > tail() > capture(arr, idx)
+println("Array: {arr}, Index: {idx}")  // Output: Array: [], Index: -1
+
+// Map tail
+{"a": 1, "b": 2, "c": 3} > tail() > capture(m, k)
+println("Map: {m}, Last key: {k}")  // Output: Map: {"a": 1, "b": 2, "c": 3}, Last key: c
+
+// Empty map
+{} > tail() > capture(m, k)
+println("Map: {m}, Last key: {k}")  // Output: Map: {}, Last key:
+
+// Reverse iteration pattern with tail
+fn print_reverse(arr array) {
+  arr > tail() > (items array, idx int) {
+    idx > lt?(0) > break?()  // Empty array
+
+    items > get(idx) > val
+    println(val)
+
+    items > prev(idx) > prevIdx
+    prevIdx > lt?(0) > break?()
+    repeat(items, prevIdx)
+  }()
+}()
+
+["first", "second", "third"] > print_reverse()
+// Output:
+// third
+// second
+// first
+
+// Find last matching element
+fn find_last_positive(arr array) {
+  arr > tail() > (items array, idx int) {
+    idx > lt?(0) > break?(-1)  // Empty
+
+    items > get(idx) > val
+    val > gt?(0) > break?(val)  // Found
+
+    items > prev(idx) > prevIdx
+    prevIdx > lt?(0) > break?(-1)  // Not found
+    repeat(items, prevIdx)
+  }(int) > result
+  return(result)
+}(int)
+
+[-1, 5, -2, 3, -4] > find_last_positive() > println()  // Output: 3

@@ -1,0 +1,49 @@
+// return(value) - Exit function and return a value
+// Can return single values, multiple values (tuple), or nothing
+
+// Single return value
+fn double(n int) {
+  n > mul(2) > result
+  return(result)
+}(int)
+
+5 > double() > println()  // Output: 10
+
+// Return with no value (for side-effect functions)
+fn greet(name string) {
+  println("Hello, {name}!")
+  return()
+}()
+
+"World" > greet()
+
+// Multiple return values (tuple pattern)
+fn divmod(a int, b int) {
+  a > div(b) > quotient
+  quotient > mul(b) > product
+  a > sub(product) > remainder
+  return(quotient, remainder)
+}(int, int)
+
+
+17 > divmod(5) > (q int, r int) {
+  println("17 / 5 = {q} remainder {r}")
+}()
+
+// Early return pattern
+fn find_positive(arr array) {
+  arr > head() > (items array, idx int) {
+    idx > lt?(0) > return?(-1)  // Empty array
+
+    items > get(idx) > val
+    val > gt?(0) > return?(val)  // Found positive
+
+    items > next(idx) > nextIdx
+    nextIdx > lt?(0) > return?(-1)  // End of array
+    repeat(items, nextIdx)
+  }(int) > result
+  return(result)
+}(int)
+
+[-1, -2, 3, -4] > find_positive() > println()  // Output: 3
+[-1, -2, -3] > find_positive() > println()     // Output: -1

@@ -1,0 +1,21 @@
+// not() - Logical negation of boolean value
+// Returns: boolean
+
+// Basic negation
+true > not() > println() // Output: false
+false > not() > println() // Output: true
+
+// Double negation
+true > not() > not() > println() // Output: true
+
+// Chained with other comparisons
+5 > gt?(3) > not() > println() // Output: false (5 > 3 is true, not makes it false)
+5 > lt?(3) > not() > println() // Output: true (5 < 3 is false, not makes it true)
+
+// Practical use: inverse logic
+fn is_invalid(value string) {
+  value > eq?("") > not()
+}(bool)
+
+"hello" > is_invalid() > println() // Output: true (non-empty is "invalid" by this logic)
+"" > is_invalid() > println() // Output: false

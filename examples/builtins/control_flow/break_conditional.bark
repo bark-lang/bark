@@ -1,0 +1,58 @@
+// break?(condition, value) - Conditional exit from recursive anonymous function
+// Similar to return? but specifically for exiting anonymous function recursion
+// Stops recursion and returns value when condition is true
+
+// Basic break? in recursion
+fn countdown(n int) {
+  n > (current int) {
+    current > println()
+    current > lte?(1) > break?()  // Exit when we reach 1
+
+    current > sub(1) > next
+    repeat(next)
+  }()
+}()
+
+5 > countdown()
+// Output: 5, 4, 3, 2, 1
+
+// break? with return value
+fn sum_until_limit(arr array, limit int) {
+  (arr, 0, 0) > (items array, idx int, total int) {
+    items > len() > arrLen
+    idx > gte?(arrLen) > break?(total)  // End of array
+
+    items > get(idx) > val
+    total > add(val) > newTotal
+
+    newTotal > gte?(limit) > break?(newTotal)  // Hit limit
+
+    idx > add(1) > nextIdx
+    repeat(items, nextIdx, newTotal)
+  }(int) > result
+  return(result)
+}(int)
+
+[10, 20, 30, 40, 50] > sum_until_limit(50) > println() // Output: 60 (10+20+30)
+[1, 2, 3] > sum_until_limit(100) > println() // Output: 6 (all elements)
+
+// break? vs return? in anonymous functions
+// break? is used inside anonymous functions for early exit
+// return? exits the entire enclosing named function
+
+fn find_first_even(arr array) {
+  arr > head() > (items array, idx int) {
+    idx > lt?(0) > break?(-1)  // Empty array
+
+    items > get(idx) > val
+    val > math.even?() > break?(val)  // Found even number
+
+    items > next(idx) > nextIdx
+    nextIdx > lt?(0) > break?(-1)  // End of array, not found
+    repeat(items, nextIdx)
+  }(int) > result
+  return(result)
+}(int)
+
+[1, 3, 4, 7] > find_first_even() > println() // Output: 4
+[1, 3, 5, 7] > find_first_even() > println() // Output: -1

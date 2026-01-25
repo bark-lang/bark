@@ -1,0 +1,43 @@
+// prev(collection, key) - Get the previous key/index before current position
+// For arrays: returns previous index or -1 if at start
+// For maps: returns previous key or "" if at start
+
+// Array previous index
+[10, 20, 30] > prev(2) > println()  // Output: 1
+[10, 20, 30] > prev(1) > println()  // Output: 0
+[10, 20, 30] > prev(0) > println()  // Output: -1 (at start)
+
+// Map previous key
+{"a": 1, "b": 2, "c": 3} > prev("c") > println()  // Output: b
+{"a": 1, "b": 2, "c": 3} > prev("b") > println()  // Output: a
+{"a": 1, "b": 2, "c": 3} > prev("a") > println()  // Output: "" (at start)
+
+// Reverse iteration using prev
+fn print_reverse(arr array) {
+  arr > len() > sub(1) > lastIdx
+  (arr, lastIdx) > (items array, idx int) {
+    idx > lt?(0) > return?()  // Empty array
+
+    items > get(idx) > val
+    println("arr[{idx}] = {val}")
+
+    items > prev(idx) > prevIdx
+    prevIdx > lt?(0) > return?()  // Start of array
+    repeat(items, prevIdx)
+  }()
+}()
+
+[100, 200, 300] > print_reverse()
+// Output:
+// arr[2] = 300
+// arr[1] = 200
+// arr[0] = 100
+
+// Check if there's a previous element
+fn has_prev(arr array, idx int) {
+  arr > prev(idx) > prevIdx
+  prevIdx > gte?(0) > return()
+}(bool)
+
+[1, 2, 3] > has_prev(1) > println()  // Output: true
+[1, 2, 3] > has_prev(0) > println()  // Output: false

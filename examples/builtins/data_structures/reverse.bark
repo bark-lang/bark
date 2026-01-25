@@ -1,0 +1,52 @@
+// reverse(collection) - Reverse order of elements
+// Works on arrays and strings
+// Returns: new reversed collection
+
+// Reverse array
+[1, 2, 3, 4, 5] > reverse() > println()  // Output: [5, 4, 3, 2, 1]
+
+// Reverse string
+"hello" > reverse() > println()  // Output: olleh
+
+// Empty collections
+[] > reverse() > println()  // Output: []
+"" > reverse() > println()  // Output: (empty string)
+
+// Single element
+[42] > reverse() > println()  // Output: [42]
+"x" > reverse() > println()   // Output: x
+
+// Reverse and process
+["first", "second", "third"] > reverse() > each((items array, idx int) {
+  items > get(idx) > println()
+}())
+// Output:
+// third
+// second
+// first
+
+// Check for palindrome
+fn is_palindrome(s string) {
+  s > reverse() > reversed
+  s > eq?(reversed) > return()
+}(bool)
+
+"racecar" > is_palindrome() > println()  // Output: true
+"hello" > is_palindrome() > println()    // Output: false
+
+// Reverse twice returns original
+[1, 2, 3] > reverse() > reverse() > println()  // Output: [1, 2, 3]
+
+// Process array from end to start
+fn process_lifo(stack array) {
+  stack > reverse() > each((items array, idx int) {
+    items > get(idx) > val
+    println("Processing: {val}")
+  }())
+}()
+
+["task1", "task2", "task3"] > process_lifo()
+// Output:
+// Processing: task3
+// Processing: task2
+// Processing: task1

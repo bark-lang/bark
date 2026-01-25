@@ -1,0 +1,31 @@
+// get(collection, key) - Retrieve value from array or map
+// For arrays: key is integer index
+// For maps: key is string
+// Returns execution error if key/index not found
+
+// Array access by index
+[10, 20, 30] > get(0) > println()  // Output: 10
+[10, 20, 30] > get(2) > println()  // Output: 30
+
+// Map access by key
+{"name": "Alice", "age": 30} > get("name") > println()  // Output: Alice
+{"name": "Alice", "age": 30} > get("age") > println()   // Output: 30
+
+// Chained access for nested structures
+{"user": {"name": "Bob"}} > get("user") > get("name") > println()  // Output: Bob
+
+// Array of maps
+[{"id": 1}, {"id": 2}] > get(1) > get("id") > println()  // Output: 2
+
+// Store retrieved value
+{"status": "active"} > get("status") > status
+println("Status is: {status}")
+
+// Use in calculations
+[5, 10, 15] > arr
+arr > get(0) > first_val
+arr > get(2) > last_val
+first_val > add(last_val) > println()  // Output: 20
+
+// Note: Out of bounds access returns execution error
+// [1, 2, 3] > get(5) > println()  // Would return error

@@ -1,0 +1,20 @@
+// div(n) - Divide the piped value by n
+// Returns: integer or float (integer division truncates)
+
+// Basic integer division
+10 > div(2) > println()    // Output: 5
+
+// Integer division truncates
+7 > div(2) > println()     // Output: 3
+
+// Float division preserves decimals
+7.0 > div(2.0) > println() // Output: 3.5
+
+// Chained divisions
+100 > div(2) > div(5) > println()  // Output: 10
+
+// Dividing by negative numbers
+12 > div(-3) > println()   // Output: -4
+
+// Negative divided by negative
+-12 > div(-4) > println()  // Output: 3

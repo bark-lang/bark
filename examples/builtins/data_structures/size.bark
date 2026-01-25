@@ -1,0 +1,35 @@
+// size(collection) - Get number of elements in collection
+// Works on arrays, maps, and strings
+// Returns: integer
+
+// Array size
+[1, 2, 3, 4, 5] > size() > println()  // Output: 5
+[] > size() > println()               // Output: 0
+
+// Map size (number of key-value pairs)
+{"a": 1, "b": 2, "c": 3} > size() > println()  // Output: 3
+{} > size() > println()                         // Output: 0
+
+// String size (number of characters)
+"hello" > size() > println()  // Output: 5
+"" > size() > println()       // Output: 0
+
+// Unicode string size
+"hello" > size() > println()  // Output: 5
+
+// Conditional based on size
+fn describe_collection(arr array) {
+  arr > size() > s
+  s > eq?(0) > return?("empty")
+  s > eq?(1) > return?("single element")
+  s > lt?(5) > return?("small collection")
+  return("large collection")
+}(string)
+
+[] > describe_collection() > println()           // Output: empty
+[1] > describe_collection() > println()          // Output: single element
+[1, 2, 3] > describe_collection() > println()    // Output: small collection
+[1, 2, 3, 4, 5, 6] > describe_collection() > println()  // Output: large collection
+
+// Note: size() is an alias for len() that works consistently
+// across arrays, maps, and strings

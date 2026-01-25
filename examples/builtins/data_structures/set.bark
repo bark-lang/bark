@@ -1,0 +1,29 @@
+// set(collection, key, value) - Set value in array or map
+// For arrays: key is integer index (must be valid)
+// For maps: key is string (creates or updates)
+// Returns the modified collection
+
+// Set array element
+[1, 2, 3] > set(1, 99) > println()  // Output: [1, 99, 3]
+
+// Set map value (update existing)
+{"name": "Alice"} > set("name", "Bob") > println()  // Output: {"name": "Bob"}
+
+// Set map value (add new key)
+{"name": "Alice"} > set("age", 30) > println()  // Output: {"name": "Alice", "age": 30}
+
+// Chained sets
+{} > set("a", 1) > set("b", 2) > set("c", 3) > println() // Output: {"a": 1, "b": 2, "c": 3}
+
+// Update array in a chain
+[0, 0, 0] > set(0, 1) > set(1, 2) > set(2, 3) > println() // Output: [1, 2, 3]
+
+// Store modified collection
+{"count": 0} > data
+data > set("count", 42) > data
+println("Updated data: {data}")
+
+// Nested map update
+{"user": {"name": "Alice"}} > outer
+outer > get("user") > set("name", "Bob") > inner
+outer > set("user", inner) > println()

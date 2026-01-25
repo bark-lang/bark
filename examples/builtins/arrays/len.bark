@@ -1,0 +1,24 @@
+// len() - Get the length of an array or string
+// Returns: integer
+// Note: For maps, use size() instead
+
+// Array length
+[1, 2, 3, 4, 5] > len() > println() // Output: 5
+
+// Empty array
+[] > len() > println() // Output: 0
+
+// String length
+"hello" > len() > println() // Output: 5
+
+// Empty string
+"" > len() > println() // Output: 0
+
+// For maps, use size() instead of len()
+{"a": 1, "b": 2, "c": 3} > size() > println() // Output: 3
+
+// Empty map
+{} > size() > println() // Output: 0
+
+// Nested arrays (counts top-level elements)
+[[1, 2], [3, 4], [5]] > len() > println() // Output: 3

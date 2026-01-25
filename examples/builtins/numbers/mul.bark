@@ -1,0 +1,20 @@
+// mul(n) - Multiply the piped value by n
+// Returns: integer or float
+
+// Basic integer multiplication
+5 > mul(3) > println()    // Output: 15
+
+// Multiplying by negative numbers
+4 > mul(-2) > println()   // Output: -8
+
+// Chained multiplications
+2 > mul(3) > mul(4) > println()  // Output: 24
+
+// Float multiplication
+2.5 > mul(4.0) > println()  // Output: 10.0
+
+// Multiplying by zero
+100 > mul(0) > println()  // Output: 0
+
+// Negative times negative
+-3 > mul(-4) > println()  // Output: 12

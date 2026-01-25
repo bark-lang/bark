@@ -1,0 +1,172 @@
+// Error Handling Examples
+// Demonstrates Bark's error handling patterns with runnable code
+
+// =============================================================================
+// Error Handler Functions
+// =============================================================================
+
+// Error handlers take an error as first parameter
+// Convention: names start with 'err_' (will be checked by linter)
+
+fn err_file(err error) {
+  eprintln("file operation failed: {err}")
+  return(err)
+}(error)
+
+fn err_validation(err error) {
+  eprintln("validation failed: {err}")
+  return(err)
+}(error)
+
+fn err_validation_with_default(err error, val string) {
+  eprintln("validation failed, using default: {err}")
+  return("default_value")
+}(string)
+
+// =============================================================================
+// Composable Validators
+// =============================================================================
+
+// Validators return (error, value) tuple - composable in chains
+fn validateEmail(email string) {
+  email > security.is_email?() > return?({}, email)
+  err("invalid email format") > e
+  return(e, "")
+}(error, string)
+
+fn validateEmailWithContext(email string) {
+  email > security.is_email?() > return?({}, email)
+  err("invalid email format", {"email": email, "reason": "format"}) > e
+  return(e, "")
+}(error, string)
+
+fn validateAlphanumeric(input string) {
+  input > security.is_alphanumeric?() > return?({}, input)
+  err("input must be alphanumeric") > e
+  return(e, "")
+}(error, string)
+
+// =============================================================================
+// Error Context Manipulation
+// =============================================================================
+
+fn err_add_validation_context(err error) {
+  time.now() > timestamp
+  err > err_add_context("stage", "validation") >
+       err_add_context("timestamp", timestamp) >
+       return()
+}(error)
+
+fn err_log_details(err error) {
+  err > err_msg() > msg
+  eprintln("Error: {msg}")
+
+  err > err_context() > ctx
+  eprintln("Context: {ctx}")
+
+  return(err)
+}(error)
+
+// =============================================================================
+// Error Propagation Pattern
+// =============================================================================
+
+fn processUserInput(email string, username string) {
+  // Validate email then username, propagate errors
+  email > validateEmail() > (err1 error, validEmail string) {
+    err1 > present?() > return?(err1, {})
+
+    username > validateAlphanumeric() > (err2 error, validUsername string) {
+      err2 > present?() > return?(err2, {})
+      return({}, {"email": validEmail, "username": validUsername})
+    }(error, map)
+  }(error, map)
+}(error, map)
+
+// =============================================================================
+// Execute Functions
+// =============================================================================
+
+println("=== Error Handling ===")
+
+// Test err() builtin
+err("test error") > e1
+println("err(\"test error\") returns: {e1}")
+
+// Test err() with context
+err("test", {"key": "value"}) > e2
+println("err(\"test\", {{\"key\": \"value\"}}) returns: {e2}")
+
+// Test err_msg()
+err("my message") > err_msg() > msg1
+println("err(\"my message\") > err_msg() returns: {msg1}")
+
+// Test err_context()
+err("msg", {"a": 1}) > err_context() > ctx1
+println("err(\"msg\", {{\"a\": 1}}) > err_context() returns: {ctx1}")
+
+// Test err_add_context()
+err("msg") > err_add_context("key", "val") > e3
+println("err(\"msg\") > err_add_context(\"key\", \"val\") returns: {e3}")
+
+// Test error handler functions
+err("file not found") > err_file() > e4
+println("err_file(err(\"file not found\")) returns: {e4}")
+
+err("invalid input") > err_validation() > e5
+println("err_validation(err(\"invalid input\")) returns: {e5}")
+
+err("bad") > err_validation_with_default("fallback") > e6
+println("err_validation_with_default(err(\"bad\"), \"fallback\") returns: {e6}")
+
+// Test err_add_validation_context
+err("test") > err_add_validation_context() > e7
+println("err_add_validation_context(err(\"test\")) returns: {e7}")
+
+// Test err_log_details
+err("test", {"ctx": "data"}) > err_log_details() > e8
+println("err_log_details(err(\"test\", {{\"ctx\": \"data\"}})) returns: {e8}")
+
+// Test composable validators - valid email
+println("validateEmail(\"user@example.com\"): ")
+"user@example.com" > validateEmail() > (ve1 error, vv1 string) {
+  println(ve1)
+  println(vv1)
+}()
+
+// Test composable validators - invalid email
+println("validateEmail(\"invalid\"): ")
+"invalid" > validateEmail() > (ve2 error, vv2 string) {
+  println(ve2)
+  println(vv2)
+}()
+
+// Test composable validators - valid alphanumeric
+println("validateAlphanumeric(\"user123\"): ")
+"user123" > validateAlphanumeric() > (ve3 error, vv3 string) {
+  println(ve3)
+  println(vv3)
+}()
+
+// Test composable validators - invalid alphanumeric
+println("validateAlphanumeric(\"user@123\"): ")
+"user@123" > validateAlphanumeric() > (ve4 error, vv4 string) {
+  println(ve4)
+  println(vv4)
+}()
+
+// Test error propagation - valid input
+println("processUserInput(\"user@example.com\", \"john123\"): ")
+"user@example.com" > processUserInput("john123") > (perr1 error, presult1 map) {
+  println(perr1)
+  println(presult1)
+}()
+
+// Test error propagation - invalid input
+println("processUserInput(\"invalid\", \"john123\"): ")
+"invalid" > processUserInput("john123") > (perr2 error, presult2 map) {
+  println(perr2)
+  println(presult2)
+}()
+
+println("=== End of Error Handling Examples ===")

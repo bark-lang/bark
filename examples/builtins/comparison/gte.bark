@@ -1,0 +1,25 @@
+// gte?(value) - Check if piped value is greater than or equal to argument
+// Returns: boolean
+
+// Integer comparison
+10 > gte?(5) > println() // Output: true
+5 > gte?(10) > println() // Output: false
+5 > gte?(5) > println() // Output: true (equal counts)
+
+// Float comparison
+3.14 > gte?(3.14) > println() // Output: true
+3.14 > gte?(3.0) > println() // Output: true
+
+// Negative numbers
+0 > gte?(-1) > println() // Output: true
+-5 > gte?(-5) > println() // Output: true
+
+// Practical use: minimum threshold
+fn check_score(score int) {
+  score > gte?(60) > return?("Pass")
+  return("Fail")
+}(string)
+
+75 > check_score() > println() // Output: Pass
+60 > check_score() > println() // Output: Pass
+59 > check_score() > println() // Output: Fail

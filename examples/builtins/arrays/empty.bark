@@ -1,0 +1,29 @@
+// empty?() - Check if collection or string is empty
+// Returns: boolean
+
+// Empty array
+[] > empty?() > println() // Output: true
+
+// Non-empty array
+[1, 2, 3] > empty?() > println() // Output: false
+
+// Empty string
+"" > empty?() > println() // Output: true
+
+// Non-empty string
+"hello" > empty?() > println() // Output: false
+
+// Empty map
+{} > empty?() > println() // Output: true
+
+// Non-empty map
+{"key": "value"} > empty?() > println() // Output: false
+
+// Practical use: conditional logic
+fn check_list(items array) {
+  items > empty?() > return?("List is empty")
+  items > len() > to_string() > str.concat(" items found") > return()
+}(string)
+
+[] > check_list() > println() // Output: List is empty
+[1, 2, 3] > check_list() > println() // Output: 3 items found

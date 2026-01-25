@@ -1,0 +1,40 @@
+// includes?(collection, value) - Check if collection contains value
+// For arrays: checks if any element equals value
+// For strings: checks if substring exists
+// Returns: boolean
+
+// Array includes
+[1, 2, 3, 4, 5] > includes?(3) > println()  // Output: true
+[1, 2, 3, 4, 5] > includes?(9) > println()  // Output: false
+
+// String includes (substring check)
+"hello world" > includes?("world") > println()  // Output: true
+"hello world" > includes?("xyz") > println()    // Output: false
+
+// Check for string in array
+["apple", "banana", "cherry"] > includes?("banana") > println()  // Output: true
+["apple", "banana", "cherry"] > includes?("grape") > println()   // Output: false
+
+// Conditional logic with includes
+fn is_admin(roles array) {
+  roles > includes?("admin") > return()
+}(bool)
+
+["user", "editor"] > is_admin() > println()        // Output: false
+["user", "admin", "editor"] > is_admin() > println()  // Output: true
+
+// Validate input against allowed values
+fn validate_color(color string) {
+  ["red", "green", "blue"] > includes?(color) > return()
+}(bool)
+
+"red" > validate_color() > println()     // Output: true
+"yellow" > validate_color() > println()  // Output: false
+
+// Check substring in validation
+fn has_domain(email string) {
+  email > includes?("@") > return()
+}(bool)
+
+"user@example.com" > has_domain() > println()  // Output: true
+"invalid" > has_domain() > println()           // Output: false

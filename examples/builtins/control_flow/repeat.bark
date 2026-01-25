@@ -1,0 +1,118 @@
+// Anonymous function recursion with repeat()
+//
+// Anonymous functions can recursively call themselves using repeat().
+// They declare return types just like named functions and use return() to exit.
+// Use tuples (value1, value2) to initialize anonymous functions with multiple parameters.
+
+// Example 1: Factorial calculation using recursion
+fn factorial(n int) {
+  (n, 1) > (num int, acc int) {
+    num > lte?(1) > return?(acc)
+
+    num > sub(1) > next_num
+    acc > mul(num) > next_acc
+    repeat(next_num, next_acc)
+  }(int) > result
+
+  return(result)
+}(int)
+
+factorial(5) > println() // Output: 120
+
+// How it works:
+// - Call: factorial(5) > tuple (5, 1) initializes anonymous function with num=5, acc=1
+// - Iteration 1: num=5 <= 1? false, next_num=4, next_acc=5, repeat(4, 5)
+// - Iteration 2: num=4 <= 1? false, next_num=3, next_acc=20, repeat(3, 20)
+// - Iteration 3: num=3 <= 1? false, next_num=2, next_acc=60, repeat(2, 60)
+// - Iteration 4: num=2 <= 1? false, next_num=1, next_acc=120, repeat(1, 120)
+// - Iteration 5: num=1 <= 1? true, return(120) -> returns 120
+
+// Example 2: Sum of numbers from 1 to n
+fn sum_to_n(n int) {
+  (1, 0) > (current int, total int) {
+    total > add(current) > new_total
+    current > add(1) > next
+
+    next > gt?(n) > return?(new_total)
+
+    repeat(next, new_total)
+  }(int) > result
+
+  return(result)
+}(int)
+sum_to_n(10) > println() // Output: 55
+
+// How it works:
+// - Initial call: (1, 0)
+// - Iteration 1: new_total=1, next=2, 2 > 10? false, repeat(2, 1)
+// - Iteration 2: new_total=3, next=3, 3 > 10? false, repeat(3, 3)
+// - ...
+// - Iteration 10: new_total=55, next=11, 11 > 10? true, return(55) -> returns 55
+
+// Example 3: Find first even number in a range
+fn find_first_even(start int, end int) {
+  start > (current int) {
+    current > gt?(end) > return?(-1)  // Not found, return -1
+    current > math.even?() > return?(current)  // Found, return the number
+
+    current > add(1) > next
+    repeat(next)
+  }(int) > result
+
+  return(result)
+}(int)
+
+find_first_even(7, 12) > println() // Output: 8
+find_first_even(7, 7) > println() // Output: -1
+
+// How it works:
+// - Initial: current=7
+// - 7 > 12? false, 7 even? false, next=8, repeat(8)
+// - 8 > 12? false, 8 even? true, return(8) -> returns 8
+
+// Example 4: Count down and print
+fn countdown(n int) {
+  n > (current int) {
+	print(current)
+    current > lte?(1) > return?()
+
+    current > sub(1) > next
+    repeat(next)
+  }()
+
+  println() // New line after countdown
+}()
+
+countdown(5) // Output: 54321
+
+// How it works:
+// - Iteration 1: prints "5", 5 <= 1? false, next=4, repeat(4)
+// - Iteration 2: prints "4", 4 <= 1? false, next=3, repeat(3)
+// - Iteration 3: prints "3", 3 <= 1? false, next=2, repeat(2)
+// - Iteration 4: prints "2", 2 <= 1? false, next=1, repeat(1)
+// - Iteration 5: prints "1", 1 <= 1? true, return() -> exits
+
+// Example 5: Array iteration with recursion
+fn sum_array(arr array) {
+  (arr, 0, 0) > (items array, idx int, total int) {
+    items > len() > arr_len
+    idx > gte?(arr_len) > return?(total)
+
+    items > get(idx) > value
+    total > add(value) > new_total
+
+    idx > add(1) > next_idx
+    repeat(items, next_idx, new_total)
+  }(int) > result
+
+  return(result)
+}(int)
+
+sum_array([1, 2, 3, 4, 5]) > println() // Output: 15
+
+// How it works:
+// - Initial: tuple (arr, 0, 0) initializes items=arr, idx=0, total=0
+// - Iteration 1: idx=0 >= 5? false, value=1, new_total=1, next_idx=1, repeat([...], 1, 1)
+// - Iteration 2: idx=1 >= 5? false, value=2, new_total=3, next_idx=2, repeat([...], 2, 3)
+// - ...
+// - Final: idx=5 >= 5? true, return(15) -> returns 15

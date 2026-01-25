@@ -1,0 +1,41 @@
+// continue?(condition) - Conditional chain continuation
+// Continues chain if condition is true, stops chain if false
+// Useful for filtering or short-circuit evaluation
+
+// Basic continue? - stops chain when false
+fn process_if_positive(n int) {
+  n > gt?(0) > continue?()  // Stop if not positive
+  n > mul(2) > println()
+}()
+
+5 > process_if_positive() // Output: 10
+-3 > process_if_positive()// No output (chain stopped)
+
+// Using continue? as a filter in processing
+fn log_errors_only(level string, msg string) {
+  level > eq?("error") > continue?() > println("[ERROR] {msg}")
+}()
+
+"info" > log_errors_only("System started") // No output
+"error" > log_errors_only("Disk full") // Output: [ERROR] Disk full
+"warn" > log_errors_only("Low memory") // No output
+
+// Chain of validations
+fn validate_and_process(value int) {
+  value > gt?(0) > continue?()      // Must be positive
+  value > lt?(100) > continue?()    // Must be less than 100
+  value > mul(10) > println()       // Process valid values
+}()
+
+50 > validate_and_process()   // Output: 500
+-5 > validate_and_process()   // No output (failed first check)
+150 > validate_and_process()  // No output (failed second check)
+
+// Conditional processing in a function
+fn safe_log(enabled bool, msg string) {
+  enabled > continue?()
+  println("LOG: {msg}")
+}()
+
+true > safe_log("Debug mode active")   // Output: LOG: Debug mode active
+false > safe_log("This won't print")   // No output

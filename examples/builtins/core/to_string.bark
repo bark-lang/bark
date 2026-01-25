@@ -1,0 +1,27 @@
+// to_string(value) - Convert any value to its string representation
+// Returns: string
+
+// Convert integer to string
+42 > to_string() > println()  // Output: 42
+
+// Convert float to string
+3.14159 > to_string() > println()  // Output: 3.14159
+
+// Convert boolean to string
+true > to_string() > println()   // Output: true
+false > to_string() > println()  // Output: false
+
+// Convert array to string
+[1, 2, 3] > to_string() > println()  // Output: [1, 2, 3]
+
+// Convert map to string
+{"name": "Alice", "age": 30} > to_string() > println()
+
+// Useful for string concatenation
+"User ID: " > prefix
+42 > to_string() > id_str
+prefix > str.concat(id_str) > println()
+
+// Store converted value
+100 > to_string() > numStr
+numStr > str.concat(" items") > println()  // Output: 100 items
