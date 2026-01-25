@@ -1,0 +1,54 @@
+// Even or Odd
+//
+// Go implementation: https://rosettacode.org/wiki/Even_or_odd#Go
+//
+// Determine if an integer is even or odd.
+// Demonstrates using the math module's even?() and odd?() functions.
+
+fn parity_label(n int) {
+  n > math.even?() > return?("even")
+  return("odd")
+}(string)
+
+fn print_parity(n int) {
+  n > parity_label() > label
+  println("{0} is {1}", n, label)
+}()
+
+// Test positive numbers
+println("Positive numbers:")
+0 > print_parity()
+1 > print_parity()
+2 > print_parity()
+3 > print_parity()
+10 > print_parity()
+11 > print_parity()
+100 > print_parity()
+101 > print_parity()
+
+println()
+
+// Test negative numbers
+println("Negative numbers:")
+-1 > print_parity()
+-2 > print_parity()
+-3 > print_parity()
+-4 > print_parity()
+-99 > print_parity()
+-100 > print_parity()
+
+println()
+
+// Demonstrate using both math.even?() and math.odd?()
+println("Using math.even?() and math.odd?():")
+42 > (n int) {
+  n > math.even?() > is_even
+  n > math.odd?() > is_odd
+  println("{0}: even?={1}, odd?={2}", n, is_even, is_odd)
+}()
+
+17 > (n int) {
+  n > math.even?() > is_even
+  n > math.odd?() > is_odd
+  println("{0}: even?={1}, odd?={2}", n, is_even, is_odd)
+}()

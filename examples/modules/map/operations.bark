@@ -1,0 +1,97 @@
+// Bark Map Module Examples
+// Demonstrates map manipulation operations
+
+println("=== Map Get With Default ===")
+
+// Get value with default if key doesn't exist
+{"name": "Alice", "age": 30} > person
+person > map.get_or("name", "Unknown") > name
+println("Name: {name}")
+
+person > map.get_or("email", "no-email@example.com") > email
+println("Email: {email}")
+
+println("\n=== Map Delete ===")
+
+// Delete single key
+{"a": 1, "b": 2, "c": 3} > map.del("b") > after_del
+println("After del(b): {after_del}")
+
+// Delete multiple keys
+{"a": 1, "b": 2, "c": 3, "d": 4} > map.del("b", "d") > after_multi_del
+println("After del(b, d): {after_multi_del}")
+
+println("\n=== Map Keys ===")
+
+// Get all keys as array
+{"name": "Alice", "age": 30, "city": "NYC"} > map.keys() > keys
+println("Keys: {keys}")
+
+println("\n=== Map Values ===")
+
+// Get all values as array
+{"x": 10, "y": 20, "z": 30} > map.values() > values
+println("Values: {values}")
+
+println("\n=== Map Entries ===")
+
+// Get all key-value pairs as array of [key, value] arrays
+{"a": 1, "b": 2, "c": 3} > map.entries() > entries
+println("Entries: {entries}")
+
+println("\n=== Map Key Checks ===")
+
+{"name": "Alice", "age": 30} > data
+
+// Check if key exists
+data > map.key_present?("name") > has_name
+println("Has name: {has_name}")
+
+data > map.key_present?("email") > has_email
+println("Has email: {has_email}")
+
+// Check if key is absent
+data > map.key_absent?("email") > missing_email
+println("Missing email: {missing_email}")
+
+println("\n=== Map Merge ===")
+
+// Merge two maps (later values override earlier ones)
+{"a": 1, "b": 2} > map.merge({"c": 3, "d": 4}) > merged1
+println("Merged: {merged1}")
+
+// Merge with override
+{"a": 1, "b": 2} > map.merge({"b": 20, "c": 3}) > merged2
+println("Merged with override: {merged2}")
+
+println("\n=== Practical Examples ===")
+
+// Configuration with defaults
+fn get_config() {
+    {"debug": false, "timeout": 30, "retries": 3} > defaults
+    {"debug": true, "timeout": 60} > overrides
+    defaults > map.merge(overrides) > return()
+}(map)
+
+get_config() > config
+println("Config: {config}")
+
+// Building a user record
+fn build_user(name string, email string) {
+    {"name": name, "email": email} > user
+
+    // Add admin role if admin email
+    email > str.ends_with?("@admin.com") > is_admin
+    user > map.merge({"role": "admin"}) > admin_user
+    is_admin > return?(admin_user)
+
+    return(user)
+}(map)
+
+"Alice" > build_user("alice@example.com") > user1
+println("User 1: {user1}")
+
+"Bob" > build_user("bob@admin.com") > user2
+println("User 2: {user2}")
+
+println("\nAll map examples completed!")

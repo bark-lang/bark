@@ -1,0 +1,54 @@
+// Find Maximum and Minimum
+//
+// Go implementation: https://rosettacode.org/wiki/Greatest_element_of_a_list#Go
+//
+// Find the maximum and minimum elements in an array.
+// Common use case: data analysis, validation, range checking.
+
+fn max_helper(idx int, max_val int, arr array, length int) {
+  idx > gte?(length) > return?(max_val)
+  arr > get(idx) > val
+  max_val > math.max(val) > new_max
+  idx > add(1) > next_idx
+  repeat(next_idx, new_max, arr, length)
+}(int)
+
+fn min_helper(idx int, min_val int, arr array, length int) {
+  idx > gte?(length) > return?(min_val)
+  arr > get(idx) > val
+  min_val > math.min(val) > new_min
+  idx > add(1) > next_idx
+  repeat(next_idx, new_min, arr, length)
+}(int)
+
+fn find_max(arr array) {
+  arr > len() > length
+  length > eq?(0) > return?(0)
+  arr > get(0) > first
+  1 > max_helper(first, arr, length) > result
+  return(result)
+}(int)
+
+fn find_min(arr array) {
+  arr > len() > length
+  length > eq?(0) > return?(0)
+  arr > get(0) > first
+  1 > min_helper(first, arr, length) > result
+  return(result)
+}(int)
+
+fn print_max_min(arr array) {
+  arr > find_max() > max_val
+  arr > find_min() > min_val
+  println("array: {0}", arr)
+  println("  max: {0}", max_val)
+  println("  min: {0}\n", min_val)
+}()
+
+// Test cases
+[3, 1, 4, 1, 5, 9, 2, 6] > print_max_min()
+[10, 20, 30, 40, 50] > print_max_min()
+[50, 40, 30, 20, 10] > print_max_min()
+[-5, -2, -8, -1] > print_max_min()
+[42] > print_max_min()
+[7, 7, 7, 7] > print_max_min()

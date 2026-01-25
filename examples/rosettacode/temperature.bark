@@ -1,0 +1,51 @@
+// Temperature Conversion
+//
+// Go implementation: https://rosettacode.org/wiki/Temperature_conversion#Go
+//
+// Convert temperatures between Celsius, Fahrenheit, and Kelvin.
+// Common use case: weather apps, scientific calculations, IoT sensors.
+
+fn celsius_to_fahrenheit(c float) {
+  c > mul(9.0) > div(5.0) > add(32.0) > result
+  return(result)
+}(float)
+
+fn fahrenheit_to_celsius(f float) {
+  f > sub(32.0) > mul(5.0) > div(9.0) > result
+  return(result)
+}(float)
+
+fn celsius_to_kelvin(c float) {
+  c > add(273.15) > result
+  return(result)
+}(float)
+
+fn kelvin_to_celsius(k float) {
+  k > sub(273.15) > result
+  return(result)
+}(float)
+
+fn print_celsius(c float) {
+  c > celsius_to_fahrenheit() > f
+  c > celsius_to_kelvin() > k
+  println("{0} C = {1} F = {2} K", c, f, k)
+}()
+
+fn print_fahrenheit(f float) {
+  f > fahrenheit_to_celsius() > c
+  println("{0} F = {1} C", f, c)
+}()
+
+// Test Celsius conversions
+print("Celsius conversions:\n")
+0.0 > print_celsius()
+100.0 > print_celsius()
+-40.0 > print_celsius()
+37.0 > print_celsius()
+
+// Test Fahrenheit to Celsius
+print("\nFahrenheit to Celsius:\n")
+32.0 > print_fahrenheit()
+212.0 > print_fahrenheit()
+-40.0 > print_fahrenheit()
+98.6 > print_fahrenheit()

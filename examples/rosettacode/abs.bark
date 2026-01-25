@@ -1,0 +1,36 @@
+// Absolute Value
+//
+// Go implementation: https://rosettacode.org/wiki/Absolute_value#Go
+//
+// Return the absolute value of a number.
+// Demonstrates using the math.abs() function.
+
+fn print_abs(n int) {
+  n > math.abs() > result
+  println("|{0}| = {1}", n, result)
+}()
+
+fn print_abs_float(n float) {
+  n > math.abs() > result
+  println("|{0}| = {1}", n, result)
+}()
+
+println("Integer absolute values:")
+0 > print_abs()
+1 > print_abs()
+-1 > print_abs()
+42 > print_abs()
+-42 > print_abs()
+100 > print_abs()
+-100 > print_abs()
+
+println()
+
+println("Floating-point absolute values:")
+0.0 > print_abs_float()
+3.14 > print_abs_float()
+-3.14 > print_abs_float()
+2.718 > print_abs_float()
+-2.718 > print_abs_float()
+0.001 > print_abs_float()
+-0.001 > print_abs_float()

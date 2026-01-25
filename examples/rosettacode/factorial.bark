@@ -1,0 +1,32 @@
+// Factorial
+//
+// Go implementation: https://rosettacode.org/wiki/Factorial#Go
+//
+// Calculate the factorial of a number: n! = n × (n-1) × ... × 1
+// For example: 5! = 5 × 4 × 3 × 2 × 1 = 120
+
+// Factorial using tail recursion with accumulator
+fn factorial(n int) {
+  // Use tuple to initialize (num, acc) for recursive anonymous function
+  // n! = n * (n-1) * (n-2) * ... * 1
+  // 0! = 1 and 1! = 1 (base cases handled by lte?(1))
+  (n, 1) > (num int, acc int) {
+    num > lte?(1) > return?(acc)
+
+    num > sub(1) > next_num
+    acc > mul(num) > next_acc
+    repeat(next_num, next_acc)
+  }(int) > result
+
+  return(result)
+}(int)
+
+// Print factorial results for 0 to 12
+fn print_factorial(arr array, idx int) {
+  arr > get(idx) > n
+  n > factorial() > result
+
+  println("{0}! = {1}", n, result)
+}()
+
+array.range(0, 12) > each(print_factorial)

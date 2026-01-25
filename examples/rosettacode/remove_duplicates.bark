@@ -1,0 +1,20 @@
+// Remove Duplicate Elements
+//
+// Go implementation: https://rosettacode.org/wiki/Remove_duplicate_elements#Go
+//
+// Remove duplicate elements from an array, keeping only unique values.
+// Common use case: data cleaning, deduplication, unique lists.
+
+fn print_unique(arr array) {
+  arr > array.dedupe() > unique
+  println("original: {0}", arr)
+  println("  unique: {0}\n", unique)
+}()
+
+// Test cases
+[1, 2, 3, 1, 2, 3] > print_unique()
+[1, 1, 1, 1] > print_unique()
+[1, 2, 3, 4, 5] > print_unique()
+[] > print_unique()
+[5, 4, 3, 2, 1, 1, 2, 3, 4, 5] > print_unique()
+[42] > print_unique()

@@ -1,0 +1,58 @@
+// Prime Number Check
+//
+// Go implementation: https://rosettacode.org/wiki/Primality_by_trial_division#Go
+//
+// Check if a number is prime using trial division.
+// Common use case: cryptography, number theory, security applications.
+
+fn check_divisors(i int, limit int, n int) {
+  i > gt?(limit) > return?(true)
+  n > math.mod(i) > eq?(0) > return?(false)
+  i > add(2) > next_i
+  repeat(next_i, limit, n)
+}(bool)
+
+fn is_prime(n int) {
+  // Numbers less than 2 are not prime
+  n > lt?(2) > return?(false)
+
+  // 2 is prime
+  n > eq?(2) > return?(true)
+
+  // Even numbers greater than 2 are not prime
+  n > math.even?() > return?(false)
+
+  // Check odd divisors from 3 up to sqrt(n)
+  n > math.sqrt() > math.to_int() > limit
+  3 > check_divisors(limit, n) > result
+
+  return(result)
+}(bool)
+
+fn prime_label(n int) {
+  n > is_prime() > return?("is prime")
+  return("is not prime")
+}(string)
+
+fn print_result(n int) {
+  n > prime_label() > label
+  println("{0} {1}", n, label)
+}()
+
+// Test cases
+1 > print_result()
+2 > print_result()
+3 > print_result()
+4 > print_result()
+5 > print_result()
+6 > print_result()
+7 > print_result()
+10 > print_result()
+11 > print_result()
+13 > print_result()
+17 > print_result()
+19 > print_result()
+20 > print_result()
+23 > print_result()
+97 > print_result()
+100 > print_result()

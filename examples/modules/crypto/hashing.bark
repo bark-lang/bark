@@ -1,0 +1,121 @@
+// Bark Cryptography Module Examples
+// Demonstrates password hashing, encryption, HMAC, and secure random generation
+
+println("=== Password Hashing with bcrypt ===")
+
+// Hash a password with bcrypt (cost 12, ~250ms)
+crypto.bcrypt_hash("secret123") > (err map, hash string) {
+    err > present?() > return?("bcrypt hash failed")
+
+    println("Bcrypt hash: {0}", hash)
+
+    // Verify correct password
+    crypto.bcrypt_verify("secret123", hash) > (valid bool) {
+        println("Verify correct password: {0}", valid)
+    }()
+
+    // Verify wrong password
+    crypto.bcrypt_verify("wrong", hash) > (valid bool) {
+        println("Verify wrong password: {0}", valid)
+    }()
+}()
+
+println("\n=== Password Hashing with Argon2id (Recommended) ===")
+
+// Hash a password with Argon2id (more secure than bcrypt)
+crypto.argon2_hash("my_password") > (err2 map, hash2 string) {
+    err2 > present?() > return?("argon2 hash failed")
+
+    println("Argon2id hash: {0}", hash2)
+
+    // Verify correct password
+    crypto.argon2_verify("my_password", hash2) > (valid bool) {
+        println("Verify correct password: {0}", valid)
+    }()
+
+    // Verify wrong password
+    crypto.argon2_verify("wrong_password", hash2) > (valid bool) {
+        println("Verify wrong password: {0}", valid)
+    }()
+}()
+
+println("\n=== AES-256-GCM Encryption ===")
+
+// Use a fixed 32-byte key for this example
+// In production, derive keys from passwords using PBKDF2 or similar
+"12345678901234567890123456789012" > (key string) {
+
+    println("Plaintext: secret message")
+
+    // Encrypt the message
+    crypto.aes_encrypt("secret message", key) > (err3 map, ciphertext string) {
+        err3 > present?() > return?("encryption failed")
+
+        println("Ciphertext (hex): {0}", ciphertext)
+
+        // Decrypt the message
+        crypto.aes_decrypt(ciphertext, key) > (err4 map, plaintext string) {
+            err4 > present?() > return?("decryption failed")
+
+            println("Decrypted: {0}", plaintext)
+        }()
+    }()
+}()
+
+println("\n=== HMAC Signatures ===")
+
+// Create HMAC-SHA256 signature
+crypto.hmac_sha256("important message", "secret_key") > (signature string) {
+    println("HMAC-SHA256 signature: {0}", signature)
+
+    // Verify the signature
+    crypto.hmac_verify("important message", signature, "secret_key") > (valid bool) {
+        println("Signature valid: {0}", valid)
+    }()
+
+    // Try verifying with wrong message
+    crypto.hmac_verify("tampered message", signature, "secret_key") > (valid bool) {
+        println("Tampered message valid: {0}", valid)
+    }()
+}()
+
+println("\n=== HMAC-SHA512 (Stronger) ===")
+
+crypto.hmac_sha512("api webhook payload", "webhook_secret") > (signature string) {
+    println("HMAC-SHA512 signature: {0}", signature)
+
+    // Verify the signature
+    crypto.hmac_verify("api webhook payload", signature, "webhook_secret") > (valid bool) {
+        println("Signature valid: {0}", valid)
+    }()
+}()
+
+println("\n=== Secure Random Generation ===")
+
+// Generate random bytes (for keys, salts, etc.)
+crypto.random_bytes(16) > (err5 map, random_hex string) {
+    err5 > present?() > return?("random bytes generation failed")
+
+    println("Random 16 bytes (hex): {0}", random_hex)
+}()
+
+// Generate random string (for tokens, session IDs, etc.)
+crypto.random_string(32) > (err6 map, random_str string) {
+    err6 > present?() > return?("random string generation failed")
+
+    println("Random 32-char string: {0}", random_str)
+}()
+
+println("\n=== Hash Functions (for checksums/fingerprints) ===")
+
+// SHA-256 hash (for file integrity, fingerprints)
+crypto.sha256("hello world") > (hash string) {
+    println("SHA-256('hello world'): {0}", hash)
+}()
+
+// SHA-512 hash (stronger)
+crypto.sha512("hello world") > (hash string) {
+    println("SHA-512('hello world'): {0}", hash)
+}()
+
+println("\nAll cryptography examples completed!")

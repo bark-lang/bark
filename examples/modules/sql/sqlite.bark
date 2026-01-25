@@ -1,0 +1,156 @@
+// Bark SQL Module Examples
+// Demonstrates SQLite database operations
+
+println("=== Opening SQLite Database ===")
+
+// Open an in-memory SQLite database
+sql.open("sqlite", ":memory:") > capture(conn_err, conn)
+conn_err > present?() > (failed bool) {
+    failed > not() > return?()
+    println("Failed to open database: ", conn_err)
+    return()
+}()
+
+println("Connected to SQLite database")
+
+println("\n=== Creating Tables ===")
+
+// Create a users table
+conn > sql.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)") > capture(create_err, _)
+create_err > absent?() > println?("Created users table")
+
+println("\n=== Inserting Data ===")
+
+// Insert some users using parameterized queries (SQL injection safe)
+conn > sql.exec("INSERT INTO users (name, email) VALUES (?, ?)", ["Alice", "alice@example.com"]) > capture(e1, affected1)
+e1 > absent?() > println?("Inserted Alice, affected rows: {affected1}")
+
+conn > sql.exec("INSERT INTO users (name, email) VALUES (?, ?)", ["Bob", "bob@example.com"]) > capture(e2, affected2)
+e2 > absent?() > println?("Inserted Bob, affected rows: {affected2}")
+
+conn > sql.exec("INSERT INTO users (name, email) VALUES (?, ?)", ["Charlie", "charlie@example.com"]) > capture(e3, affected3)
+e3 > absent?() > println?("Inserted Charlie, affected rows: {affected3}")
+
+println("\n=== Querying Data ===")
+
+// Query all users
+conn > sql.query("SELECT id, name, email FROM users ORDER BY id") > capture(query_err, rows)
+query_err > absent?() > (success bool) {
+    success > not() > return?()
+    println("All users:")
+    rows > each((arr array, i int) {
+        arr > get(i) > (row map) {
+            row > get("id") > (id int) {
+                row > get("name") > (name string) {
+                    row > get("email") > (email string) {
+                        println("  {id}: {name} <{email}>")
+                    }()
+                }()
+            }()
+        }()
+    }())
+}()
+
+// Query with parameters
+conn > sql.query("SELECT * FROM users WHERE name = ?", ["Alice"]) > capture(alice_err, alice_rows)
+alice_err > absent?() > (success bool) {
+    success > not() > return?()
+    println("\nFiltered query (Alice):")
+    alice_rows > get(0) > (row map) {
+        row > get("email") > (email string) {
+            println("  Alice's email: {email}")
+        }()
+    }()
+}()
+
+println("\n=== Updating Data ===")
+
+// Update a user
+conn > sql.exec("UPDATE users SET email = ? WHERE name = ?", ["bob.smith@example.com", "Bob"]) > capture(update_err, updated)
+update_err > absent?() > println?("Updated Bob's email, affected rows: {updated}")
+
+// Verify update
+conn > sql.query("SELECT email FROM users WHERE name = ?", ["Bob"]) > capture(bob_err, bob_rows)
+bob_err > absent?() > (success bool) {
+    success > not() > return?()
+    bob_rows > get(0) > get("email") > (email string) {
+        println("Bob's new email: {email}")
+    }()
+}()
+
+println("\n=== Transactions ===")
+
+// Start a transaction
+conn > sql.begin() > capture(tx_err, tx)
+tx_err > present?() > (failed bool) {
+    failed > not() > return?()
+    println("Failed to start transaction: ", tx_err)
+    return()
+}()
+
+println("Transaction started")
+
+// Insert within transaction
+tx > sql.exec("INSERT INTO users (name, email) VALUES (?, ?)", ["Dave", "dave@example.com"]) > capture(dave_err, _)
+dave_err > absent?() > println?("Inserted Dave (in transaction)")
+
+// Commit transaction
+tx > sql.commit() > capture(commit_err, _)
+commit_err > absent?() > println?("Transaction committed")
+
+// Verify Dave was inserted
+conn > sql.query("SELECT COUNT(*) as count FROM users") > capture(count_err, count_rows)
+count_err > absent?() > (success bool) {
+    success > not() > return?()
+    count_rows > get(0) > get("count") > (count int) {
+        println("Total users after transaction: {count}")
+    }()
+}()
+
+println("\n=== Rollback Example ===")
+
+// Start another transaction
+conn > sql.begin() > capture(tx2_err, tx2)
+tx2_err > absent?() > (success bool) {
+    success > not() > return?()
+
+    // Insert a user
+    tx2 > sql.exec("INSERT INTO users (name, email) VALUES (?, ?)", ["Eve", "eve@example.com"]) > capture(eve_err, _)
+    eve_err > absent?() > println?("Inserted Eve (in transaction, will rollback)")
+
+    // Rollback instead of commit
+    tx2 > sql.rollback() > capture(rollback_err, _)
+    rollback_err > absent?() > println?("Transaction rolled back")
+}()
+
+// Verify Eve was NOT inserted
+conn > sql.query("SELECT COUNT(*) as count FROM users WHERE name = ?", ["Eve"]) > capture(eve_count_err, eve_count_rows)
+eve_count_err > absent?() > (success bool) {
+    success > not() > return?()
+    eve_count_rows > get(0) > get("count") > (count int) {
+        println("Eve records after rollback: {count}")
+    }()
+}()
+
+println("\n=== Deleting Data ===")
+
+// Delete a user
+conn > sql.exec("DELETE FROM users WHERE name = ?", ["Charlie"]) > capture(del_err, deleted)
+del_err > absent?() > println?("Deleted Charlie, affected rows: {deleted}")
+
+// Final count
+conn > sql.query("SELECT COUNT(*) as count FROM users") > capture(final_err, final_rows)
+final_err > absent?() > (success bool) {
+    success > not() > return?()
+    final_rows > get(0) > get("count") > (count int) {
+        println("Final user count: {count}")
+    }()
+}()
+
+println("\n=== Closing Connection ===")
+
+// Close the database connection
+conn > sql.close() > capture(close_err, _)
+close_err > absent?() > println?("Database connection closed")
+
+println("\nAll SQL examples completed!")

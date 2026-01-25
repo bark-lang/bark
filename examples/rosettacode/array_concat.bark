@@ -1,0 +1,51 @@
+// Array Concatenation
+//
+// Go implementation: https://rosettacode.org/wiki/Array_concatenation#Go
+//
+// Concatenate two arrays.
+// Demonstrates using array.append_to() to join arrays.
+
+fn print_array(arr array) {
+  arr > to_string() > println()
+}()
+
+println("Array concatenation examples:")
+println()
+
+// Basic concatenation
+[1, 2, 3] > a
+[4, 5, 6] > b
+println("Array a: {0}", a)
+println("Array b: {0}", b)
+
+// Concatenate b onto a
+a > array.append_to(b) > result
+println("a concatenated with b: {0}", result)
+
+println()
+
+// Concatenate strings
+["hello", "world"] > s1
+["foo", "bar", "baz"] > s2
+s1 > array.append_to(s2) > s_concat
+println("String arrays: {0}", s_concat)
+
+println()
+
+// Empty array concatenation
+[] > empty
+[1, 2, 3] > numbers
+empty > array.append_to(numbers) > from_empty
+println("Empty + [1,2,3]: {0}", from_empty)
+
+numbers > array.append_to([]) > to_empty
+println("[1,2,3] + Empty: {0}", to_empty)
+
+println()
+
+// Multiple concatenations
+[1] > one
+[2] > two
+[3] > three
+one > array.append_to(two) > array.append_to(three) > chained
+println("Chained [1] + [2] + [3]: {0}", chained)

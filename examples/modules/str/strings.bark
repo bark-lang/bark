@@ -1,0 +1,86 @@
+// Bark String Module Examples
+// Demonstrates string manipulation operations
+
+println("=== String Case Conversion ===")
+
+// Convert to uppercase
+"hello world" > str.upper() > println()
+
+// Convert to lowercase
+"HELLO WORLD" > str.lower() > println()
+
+println("\n=== String Trimming ===")
+
+// Trim whitespace from both ends
+"  hello world  " > str.trim() > println()
+
+println("\n=== String Prefix/Suffix Checks ===")
+
+// Check if string starts with prefix
+"hello world" > str.starts_with?("hello") > println()
+"hello world" > str.starts_with?("world") > println()
+
+// Check if string ends with suffix
+"hello world" > str.ends_with?("world") > println()
+"hello world" > str.ends_with?("hello") > println()
+
+println("\n=== String Replacement ===")
+
+// Replace all occurrences of a substring
+"hello hello hello" > str.replace("hello", "hi") > println()
+
+println("\n=== String Splitting ===")
+
+// Split string by delimiter
+"apple,banana,cherry" > str.split(",") > (fruits array) {
+    println("Fruits: {fruits}")
+
+    // Get individual elements
+    fruits > get(0) > println()
+    fruits > get(1) > println()
+    fruits > get(2) > println()
+}()
+
+println("\n=== String Joining ===")
+
+// Join array of strings with separator
+["red", "green", "blue"] > str.join(", ") > println()
+["one", "two", "three"] > str.join("-") > println()
+
+println("\n=== String Concatenation ===")
+
+// Concatenate multiple strings
+str.concat("Hello", " ", "World", "!") > println()
+
+println("\n=== String Formatting ===")
+
+// Format string with placeholders
+str.format("Name: {0}, Age: {1}", "Alice", 30) > println()
+str.format("Coordinates: ({0}, {1})", 10, 20) > println()
+
+println("\n=== Practical Examples ===")
+
+// Building a full name
+fn format_name(first string, last string) {
+    str.concat(first, " ", last) > str.upper() > return()
+}(string)
+
+"john" > format_name("doe") > println()
+
+// Parsing CSV-like data
+"id:123,name:Alice,role:admin" > str.split(",") > (parts array) {
+    parts > each((arr array, i int) {
+        arr > get(i) > (part string) {
+            println("Part {i}: {part}")
+        }()
+    }())
+}()
+
+// Cleaning and normalizing input
+fn normalize_input(input string) {
+    input > str.trim() > str.lower() > return()
+}(string)
+
+"  HELLO World  " > normalize_input() > println()
+
+println("\nAll string examples completed!")

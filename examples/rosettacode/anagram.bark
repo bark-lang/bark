@@ -1,0 +1,89 @@
+// Anagram Detection
+//
+// Go implementation: https://rosettacode.org/wiki/Anagrams#Go
+//
+// Check if two strings are anagrams of each other.
+// Two words are anagrams if they contain the same letters in different order.
+//
+// We use character counting instead of sorting - count occurrences of each
+// character in both strings and compare the counts.
+
+// Count character frequencies in a string, returning a map
+fn char_counts(s string) {
+  // Remove spaces first, then split
+  s > str.lower() > str.replace(" ", "") > cleaned
+  cleaned > str.split("") > chars
+  chars > len() > length
+
+  ({}, 0) > (counts map, idx int) {
+    idx > gte?(length) > return?(counts)
+
+    chars > get(idx) > c
+
+    // Get current count (default 0) and increment
+    counts > map.get_or(c, 0) > current
+    current > add(1) > new_count
+    counts > set(c, new_count) > new_counts
+
+    idx > add(1) > next_idx
+    repeat(new_counts, next_idx)
+  }(map) > result
+
+  return(result)
+}(map)
+
+// Compare two maps for equality
+fn maps_equal(a map, b map) {
+  a > size() > len_a
+  b > size() > len_b
+  len_a > ne?(len_b) > return?(false)
+
+  // Check each key in a exists in b with same value
+  a > map.keys() > a_keys
+  a_keys > len() > num_keys
+
+  (0) > (idx int) {
+    idx > gte?(num_keys) > return?(true)
+
+    a_keys > get(idx) > key
+    a > get(key) > a_val
+    b > map.get_or(key, -1) > b_val
+
+    a_val > ne?(b_val) > return?(false)
+
+    idx > add(1) > next
+    repeat(next)
+  }(bool) > result
+
+  return(result)
+}(bool)
+
+// Check if two strings are anagrams
+fn is_anagram(a string, b string) {
+  a > char_counts() > counts_a
+  b > char_counts() > counts_b
+  counts_a > maps_equal(counts_b) > result
+  return(result)
+}(bool)
+
+fn anagram_label(a string, b string) {
+  a > is_anagram(b) > return?("are anagrams")
+  return("are NOT anagrams")
+}(string)
+
+fn print_result(a string, b string) {
+  a > anagram_label(b) > label
+  println("\"{0}\" and \"{1}\" {2}", a, b, label)
+}()
+
+// Test cases
+"listen" > print_result("silent")
+"evil" > print_result("vile")
+"dormitory" > print_result("dirty room")
+"hello" > print_result("world")
+"astronomer" > print_result("moon starer")
+"the eyes" > print_result("they see")
+"abc" > print_result("cab")
+"abc" > print_result("abd")
+"" > print_result("")
+"a" > print_result("a")

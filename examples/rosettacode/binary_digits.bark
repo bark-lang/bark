@@ -1,0 +1,50 @@
+// Binary Digits
+//
+// Go implementation: https://rosettacode.org/wiki/Binary_digits#Go
+//
+// Convert a non-negative integer to its binary representation.
+
+// Helper for binary conversion iteration
+fn binary_iter(result string, num int) {
+  num > eq?(0) > done
+  done > return?(result)
+
+  num > math.mod(2) > to_string() > bit
+  bit > str.concat(result) > new_result
+  num > div(2) > math.to_int() > next_num
+
+  repeat(new_result, next_num)
+}(string)
+
+// Convert integer to binary string
+fn to_binary(n int) {
+  n > eq?(0) > return?("0")
+
+  // Build binary string by repeatedly dividing by 2
+  "" > binary_iter(n) > binary
+  return(binary)
+}(string)
+
+fn print_binary(n int) {
+  n > to_binary() > binary
+  println("{0} in binary is {1}", n, binary)
+}()
+
+// Test cases from Rosetta Code
+0 > print_binary()
+1 > print_binary()
+2 > print_binary()
+3 > print_binary()
+4 > print_binary()
+5 > print_binary()
+6 > print_binary()
+7 > print_binary()
+8 > print_binary()
+9 > print_binary()
+10 > print_binary()
+15 > print_binary()
+16 > print_binary()
+42 > print_binary()
+255 > print_binary()
+256 > print_binary()
+1000 > print_binary()

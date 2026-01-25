@@ -1,0 +1,156 @@
+// Bark Regex Module Examples
+// Demonstrates regular expression operations
+
+println("=== Basic Pattern Matching ===")
+
+// Check if pattern matches
+"hello world" > regex.match?("world") > println()
+"hello world" > regex.match?("foo") > println()
+
+// Case-sensitive matching
+"Hello World" > regex.match?("hello") > println()
+"Hello World" > regex.match?("Hello") > println()
+
+// Match any character with dot
+"cat" > regex.match?("c.t") > println()
+"cut" > regex.match?("c.t") > println()
+"ct" > regex.match?("c.t") > println()
+
+println("\n=== Character Classes ===")
+
+// Match digits
+"abc123def" > regex.match?("[0-9]") > println()
+"abcdef" > regex.match?("[0-9]") > println()
+
+// Match letters
+"123abc456" > regex.match?("[a-zA-Z]") > println()
+"123456" > regex.match?("[a-zA-Z]") > println()
+
+// Match word characters
+"hello_world" > regex.match?("\\w+") > println()
+
+println("\n=== Quantifiers ===")
+
+// One or more
+"goooal" > regex.match?("go+al") > println()
+"gal" > regex.match?("go+al") > println()
+
+// Zero or more
+"goooal" > regex.match?("go*al") > println()
+"gal" > regex.match?("go*al") > println()
+
+// Optional (zero or one)
+"color" > regex.match?("colou?r") > println()
+"colour" > regex.match?("colou?r") > println()
+
+// Exact count
+"aaa" > regex.match?("a{3}") > println()
+"aa" > regex.match?("a{3}") > println()
+
+println("\n=== Anchors ===")
+
+// Start of string
+"hello world" > regex.match?("^hello") > println()
+"say hello" > regex.match?("^hello") > println()
+
+// End of string
+"hello world" > regex.match?("world$") > println()
+"world hello" > regex.match?("world$") > println()
+
+println("\n=== Finding Matches ===")
+
+// Find first match
+"The year 2024 was great" > regex.find("[0-9]+") > println()
+
+// Find with no match returns empty string
+"no numbers here" > regex.find("[0-9]+") > println()
+
+println("\n=== Finding All Matches ===")
+
+// Find all occurrences
+"a1b2c3d4e5" > regex.find_all("[0-9]") > println()
+
+// Find all words
+"hello world foo bar" > regex.find_all("\\w+") > println()
+
+// Find all email-like patterns
+"Contact john@example.com or jane@test.org" > regex.find_all("[\\w.]+@[\\w.]+") > println()
+
+println("\n=== Replacement ===")
+
+// Replace all occurrences
+"hello world" > regex.replace("o", "0") > println()
+
+// Replace digits with X
+"abc123def456" > regex.replace("[0-9]", "X") > println()
+
+// Replace whitespace with underscore
+"hello world foo bar" > regex.replace("\\s+", "_") > println()
+
+// Remove all non-alphanumeric
+"Hello, World! 123" > regex.replace("[^a-zA-Z0-9]", "") > println()
+
+println("\n=== Splitting by Pattern ===")
+
+// Split by whitespace
+"hello   world  foo" > regex.split("\\s+") > println()
+
+// Split by comma and optional whitespace
+"a, b,c,  d" > regex.split(",\\s*") > println()
+
+// Split by any punctuation
+"hello.world,foo;bar" > regex.split("[.,;]") > println()
+
+println("\n=== Practical Examples ===")
+
+// Validate email format (simplified)
+fn is_valid_email?(email string) {
+    email > regex.match?("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$") > return()
+}(bool)
+
+"user@example.com" > is_valid_email?() > println()
+"invalid-email" > is_valid_email?() > println()
+"user@sub.example.org" > is_valid_email?() > println()
+
+// Extract numbers from text
+fn extract_numbers(text string) {
+    text > regex.find_all("[0-9]+") > return()
+}(array)
+
+"Order #123 has 5 items totaling $99" > extract_numbers() > println()
+
+// Sanitize input (remove special characters)
+fn sanitize(input string) {
+    input > regex.replace("[^a-zA-Z0-9 ]", "") > str.trim() > return()
+}(string)
+
+"Hello <script>alert('xss')</script> World!" > sanitize() > println()
+
+// Parse log line
+fn parse_log_line(line string) {
+    // Extract timestamp, level, and message from "[2024-01-15 10:30:00] [INFO] Message"
+    line > regex.find("\\[([0-9-]+ [0-9:]+)\\]") > timestamp
+    line > regex.find("\\[(INFO|WARN|ERROR)\\]") > level
+    line > regex.replace("\\[[^\\]]+\\]\\s*", "") > message
+
+    {"timestamp": timestamp, "level": level, "message": message} > return()
+}(map)
+
+"[2024-01-15 10:30:00] [INFO] Application started" > parse_log_line() > println()
+
+// Mask sensitive data
+fn mask_credit_card(text string) {
+    text > regex.replace("[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}", "****-****-****-****") > return()
+}(string)
+
+"Card: 1234-5678-9012-3456" > mask_credit_card() > println()
+
+// Convert camelCase to snake_case
+fn to_snake_case(camel string) {
+    camel > regex.replace("([a-z])([A-Z])", "${1}_${2}") > str.lower() > return()
+}(string)
+
+"helloWorld" > to_snake_case() > println()
+"getUserById" > to_snake_case() > println()
+
+println("\nAll regex examples completed!")

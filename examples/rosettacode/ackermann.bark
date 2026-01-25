@@ -1,0 +1,104 @@
+// Ackermann Function (Memoized)
+//
+// Go implementation: https://rosettacode.org/wiki/Ackermann_function#Go
+//
+// The Ackermann function is a classic example of a total computable function
+// that is not primitive recursive. It grows extremely fast.
+//
+// A(m, n) =
+//   n + 1                  if m = 0
+//   A(m-1, 1)              if m > 0 and n = 0
+//   A(m-1, A(m, n-1))      if m > 0 and n > 0
+//
+// Using mfn (memoized function) makes this practical for larger inputs
+// by caching computed values.
+
+mfn ackermann(m int, n int) {
+  // Base case: m = 0 -> return n + 1
+  m > eq?(0) > is_base
+  is_base > (cond bool) {
+    cond > eq?(false) > return?()
+    n > add(1) > result
+    return(result)
+  }(int) > base_result
+
+  base_result > present?() > return?(base_result)
+
+  // Case: n = 0 -> return A(m-1, 1)
+  n > eq?(0) > is_n_zero
+  is_n_zero > (cond bool) {
+    cond > eq?(false) > return?()
+    m > sub(1) > m_minus_1
+    m_minus_1 > ackermann(1) > result
+    return(result)
+  }(int) > zero_result
+
+  zero_result > present?() > return?(zero_result)
+
+  // Recursive case: m > 0 and n > 0
+  // A(m-1, A(m, n-1))
+  m > sub(1) > m_minus_1
+  n > sub(1) > n_minus_1
+  m > ackermann(n_minus_1) > inner
+  m_minus_1 > ackermann(inner) > result
+
+  return(result)
+}(int)
+
+fn print_ackermann(m int, n int) {
+  m > ackermann(n) > result
+  println("A({0}, {1}) = {2}", m, n, result)
+}()
+
+// Test small values (larger values grow extremely fast)
+println("Ackermann function values (memoized):")
+println()
+
+// A(0, n) = n + 1
+0 > print_ackermann(0)
+0 > print_ackermann(1)
+0 > print_ackermann(2)
+0 > print_ackermann(3)
+0 > print_ackermann(4)
+
+println()
+
+// A(1, n) = n + 2
+1 > print_ackermann(0)
+1 > print_ackermann(1)
+1 > print_ackermann(2)
+1 > print_ackermann(3)
+1 > print_ackermann(4)
+
+println()
+
+// A(2, n) = 2n + 3
+2 > print_ackermann(0)
+2 > print_ackermann(1)
+2 > print_ackermann(2)
+2 > print_ackermann(3)
+2 > print_ackermann(4)
+
+println()
+
+// A(3, n) = 2^(n+3) - 3
+3 > print_ackermann(0)
+3 > print_ackermann(1)
+3 > print_ackermann(2)
+3 > print_ackermann(3)
+3 > print_ackermann(4)
+
+println()
+
+// With memoization, we can compute larger values!
+// A(3, 10) = 8189
+// A(3, 12) = 32765
+3 > print_ackermann(10)
+3 > print_ackermann(12)
+
+println()
+
+// A(4, 0) = 13
+// A(4, 1) = 65533 - now computable with memoization!
+4 > print_ackermann(0)
+4 > print_ackermann(1)

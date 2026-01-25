@@ -1,0 +1,105 @@
+// Bark Dir Module Examples
+// Demonstrates directory operations
+
+println("=== Checking Directory Existence ===")
+
+// Check if directories exist
+"/tmp" > dir.exists?() > (exists bool) {
+    println("/tmp exists: {exists}")
+}()
+
+"/nonexistent_dir_xyz" > dir.exists?() > (exists bool) {
+    println("/nonexistent_dir_xyz exists: {exists}")
+}()
+
+// Check if directories are absent
+"/nonexistent_dir_xyz" > dir.absent?() > (absent bool) {
+    println("/nonexistent_dir_xyz is absent: {absent}")
+}()
+
+"/tmp" > dir.absent?() > (absent bool) {
+    println("/tmp is absent: {absent}")
+}()
+
+println("\n=== Listing Directory Contents ===")
+
+// Create some test files for listing
+"/tmp/bark_dir_test/file1.txt" > file.write("content 1") > (err map) {}()
+"/tmp/bark_dir_test/file2.txt" > file.write("content 2") > (err map) {}()
+"/tmp/bark_dir_test/file3.txt" > file.write("content 3") > (err map) {}()
+
+// List directory contents
+"/tmp/bark_dir_test" > dir.list() > capture(err, files)
+err > absent?() > (success bool) {
+    success > not() > return?()
+    println("Files in /tmp/bark_dir_test:")
+    files > each((arr array, i int) {
+        arr > get(i) > (file string) {
+            println("  {i}: {file}")
+        }()
+    }())
+}()
+
+// Listing a non-existent directory returns an error
+"/nonexistent_directory" > dir.list() > capture(err2, files2)
+err2 > present?() > (has_error bool) {
+    has_error > not() > return?()
+    println("\nListing non-existent directory returns error (expected)")
+}()
+
+println("\n=== Distinguishing Files from Directories ===")
+
+// Create a subdirectory for testing
+"/tmp/bark_dir_test/subdir/nested.txt" > file.write("nested") > (err map) {}()
+
+// Check if path is a directory vs file
+"/tmp/bark_dir_test" > dir.exists?() > (is_dir bool) {
+    println("/tmp/bark_dir_test is a directory: {is_dir}")
+}()
+
+"/tmp/bark_dir_test/file1.txt" > dir.exists?() > (is_dir bool) {
+    println("/tmp/bark_dir_test/file1.txt is a directory: {is_dir}")
+}()
+
+"/tmp/bark_dir_test/file1.txt" > file.exists?() > (is_file bool) {
+    println("/tmp/bark_dir_test/file1.txt is a file: {is_file}")
+}()
+
+println("\n=== Practical Examples ===")
+
+// Count files in a directory
+fn count_files(path string) {
+    path > dir.list() > capture(err, files)
+    err > present?() > return?(0)
+    files > len() > return()
+}(int)
+
+"/tmp/bark_dir_test" > count_files() > (count int) {
+    println("Number of items in /tmp/bark_dir_test: {count}")
+}()
+
+// Find files with specific extension (simplified pattern matching)
+fn has_txt_extension(filename string) {
+    filename > str.ends_with?(".txt") > return()
+}(bool)
+
+"/tmp/bark_dir_test" > dir.list() > capture(list_err, file_list)
+list_err > absent?() > (success bool) {
+    success > not() > return?()
+    println("\nFiles with .txt extension:")
+    file_list > each((arr array, i int) {
+        arr > get(i) > (file string) {
+            file > has_txt_extension() > (is_txt bool) {
+                is_txt > println?("  {file}")
+            }()
+        }()
+    }())
+}()
+
+// Clean up test files
+"/tmp/bark_dir_test/file1.txt" > file.delete() > (err map) {}()
+"/tmp/bark_dir_test/file2.txt" > file.delete() > (err map) {}()
+"/tmp/bark_dir_test/file3.txt" > file.delete() > (err map) {}()
+"/tmp/bark_dir_test/subdir/nested.txt" > file.delete() > (err map) {}()
+
+println("\nAll directory operation examples completed!")

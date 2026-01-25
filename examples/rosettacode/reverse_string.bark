@@ -1,0 +1,23 @@
+// Reverse a String
+//
+// Go implementation: https://rosettacode.org/wiki/Reverse_a_string#Go
+//
+// Reverse the characters in a string.
+
+// Test cases - reverse() works directly on strings
+fn print_test(original string) {
+  original > reverse() > reversed
+  print(original)
+  print(" -> ")
+  print(reversed)
+  print("\n")
+}()
+
+// Test with various strings
+"hello" > print_test()
+"world" > print_test()
+"Bark" > print_test()
+"12345" > print_test()
+"racecar" > print_test()
+"a" > print_test()
+"" > print_test()

@@ -1,0 +1,27 @@
+// Count Occurrences of a Substring
+//
+// Go implementation: https://rosettacode.org/wiki/Count_occurrences_of_a_substring#Go
+//
+// Count how many times a substring appears in a string.
+// Common use case: text analysis, search, logging analysis, word frequency.
+
+fn count_occurrences(haystack string, needle string) {
+  haystack > str.split(needle) > parts
+  parts > len() > num_parts
+  num_parts > sub(1) > count
+  return(count)
+}(int)
+
+fn print_count(haystack string, needle string) {
+  haystack > count_occurrences(needle) > count
+  println("\"{0}\" appears {1} time(s) in \"{2}\"", needle, count, haystack)
+}()
+
+// Test cases
+"the three truths" > print_count("th")
+"ababababab" > print_count("abab")
+"aaaaaa" > print_count("aa")
+"hello world" > print_count("o")
+"mississippi" > print_count("ss")
+"abcdef" > print_count("xyz")
+"" > print_count("test")

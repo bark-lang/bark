@@ -1,0 +1,132 @@
+// Bark Math Module Examples - Trigonometry
+// Demonstrates trigonometric functions (all angles in radians)
+
+println("=== Mathematical Constants ===")
+
+// Pi and Euler's number
+math.pi() > (pi float) {
+    println("Pi: {pi}")
+}()
+
+math.e() > (e float) {
+    println("e: {e}")
+}()
+
+println("\n=== Basic Trigonometric Functions ===")
+
+// Sin, Cos, Tan at common angles
+println("At 0 radians:")
+0 > math.sin() > println()  // 0
+0 > math.cos() > println()  // 1
+0 > math.tan() > println()  // 0
+
+// pi/2 radians (90 degrees)
+math.pi() > div(2.0) > (half_pi float) {
+    println("\nAt pi/2 radians (90 degrees):")
+    half_pi > math.sin() > println()  // 1
+    half_pi > math.cos() > println()  // ~0 (very small due to floating point)
+}()
+
+// pi radians (180 degrees)
+math.pi() > (pi float) {
+    println("\nAt pi radians (180 degrees):")
+    pi > math.sin() > println()  // ~0
+    pi > math.cos() > println()  // -1
+}()
+
+// pi/4 radians (45 degrees)
+math.pi() > div(4.0) > (quarter_pi float) {
+    println("\nAt pi/4 radians (45 degrees):")
+    quarter_pi > math.sin() > println()  // 0.7071...
+    quarter_pi > math.cos() > println()  // 0.7071...
+    quarter_pi > math.tan() > println()  // 1
+}()
+
+println("\n=== Inverse Trigonometric Functions ===")
+
+// Arcsine (returns radians)
+0 > math.asin() > println()  // 0
+1 > math.asin() > println()  // pi/2 (1.5707...)
+0.5 > math.asin() > println()  // pi/6 (0.5235...)
+
+// Arccosine
+1 > math.acos() > println()  // 0
+0 > math.acos() > println()  // pi/2 (1.5707...)
+0.5 > math.acos() > println()  // pi/3 (1.0471...)
+
+// Arctangent
+0 > math.atan() > println()  // 0
+1 > math.atan() > println()  // pi/4 (0.7853...)
+
+println("\n=== Practical Examples ===")
+
+// Convert degrees to radians
+fn degrees_to_radians(degrees float) {
+    math.pi() > (pi float) {
+        degrees > mul(pi) > div(180.0) > return()
+    }()
+}(float)
+
+// Convert radians to degrees
+fn radians_to_degrees(radians float) {
+    math.pi() > (pi float) {
+        radians > mul(180.0) > div(pi) > return()
+    }()
+}(float)
+
+45.0 > degrees_to_radians() > (rad float) {
+    println("45 degrees = {rad} radians")
+}()
+
+math.pi() > radians_to_degrees() > (deg float) {
+    println("Pi radians = {deg} degrees")
+}()
+
+// Calculate sin of an angle in degrees
+fn sin_degrees(degrees float) {
+    degrees > degrees_to_radians() > math.sin() > return()
+}(float)
+
+30.0 > sin_degrees() > (result float) {
+    println("sin(30 degrees) = {result}")
+}()
+
+90.0 > sin_degrees() > (result float) {
+    println("sin(90 degrees) = {result}")
+}()
+
+// Verify Pythagorean identity: sin^2(x) + cos^2(x) = 1
+fn verify_pythagorean_identity(radians float) {
+    radians > math.sin() > math.pow(2) > (sin_sq float) {
+        radians > math.cos() > math.pow(2) > (cos_sq float) {
+            sin_sq > add(cos_sq) > return()
+        }()
+    }()
+}(float)
+
+println("\nPythagorean identity sin^2(x) + cos^2(x) at various angles:")
+0.5 > verify_pythagorean_identity() > println()  // Should be 1
+1.0 > verify_pythagorean_identity() > println()  // Should be 1
+2.0 > verify_pythagorean_identity() > println()  // Should be 1
+
+// Calculate the angle of a right triangle given opposite and adjacent sides
+fn calculate_angle(opposite float, adjacent float) {
+    opposite > div(adjacent) > math.atan() > radians_to_degrees() > return()
+}(float)
+
+3.0 > calculate_angle(4.0) > (angle float) {
+    println("\nAngle with opposite=3, adjacent=4: {angle} degrees")
+}()
+
+// Calculate the hypotenuse using trigonometry
+fn calculate_hypotenuse(adjacent float, angle_degrees float) {
+    angle_degrees > degrees_to_radians() > math.cos() > (cos_val float) {
+        adjacent > div(cos_val) > return()
+    }()
+}(float)
+
+4.0 > calculate_hypotenuse(60.0) > (hyp float) {
+    println("Hypotenuse with adjacent=4, angle=60 degrees: {hyp}")
+}()
+
+println("\nAll trigonometry examples completed!")

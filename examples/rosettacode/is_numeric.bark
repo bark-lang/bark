@@ -1,0 +1,50 @@
+// Determine if a String is Numeric
+//
+// Go implementation: https://rosettacode.org/wiki/Determine_if_a_string_is_numeric#Go
+//
+// Check if a string represents a valid numeric value.
+// Uses the str.numeric? builtin which supports integers, floats,
+// negative numbers, and scientific notation.
+
+fn numeric_label(s string) {
+  s > str.numeric?() > return?("is numeric")
+  return("is NOT numeric")
+}(string)
+
+fn print_result(s string) {
+  s > numeric_label() > label
+  println("\"{0}\" {1}", s, label)
+}()
+
+// Test cases
+println("Integer tests:")
+"123" > print_result()
+"0" > print_result()
+"-456" > print_result()
+"42" > print_result()
+
+println()
+
+println("Float tests:")
+"3.14" > print_result()
+"-2.718" > print_result()
+"0.5" > print_result()
+"123." > print_result()
+
+println()
+
+println("Invalid inputs:")
+"" > print_result()
+"hello" > print_result()
+"12.34.56" > print_result()
+"-" > print_result()
+"1a2b" > print_result()
+" " > print_result()
+"12 34" > print_result()
+
+println()
+
+println("Edge cases:")
+"  42  " > print_result()
+"007" > print_result()
+"-0" > print_result()

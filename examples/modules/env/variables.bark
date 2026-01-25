@@ -1,0 +1,151 @@
+// Bark Env Module Examples
+// Demonstrates environment variable operations
+
+println("=== Getting Environment Variables ===")
+
+// Get common environment variables
+env.get("HOME") > (home string) {
+    println("HOME: {home}")
+}()
+
+env.get("USER") > (user string) {
+    println("USER: {user}")
+}()
+
+env.get("PATH") > (path string) {
+    // Just show first 60 chars of PATH for readability
+    path > len() > gt?(60) > (long bool) {
+        long > not() > (short bool) {
+            short > println?("PATH: {path}")
+        }()
+        long > println?("PATH: (truncated for display)")
+    }()
+}()
+
+println("\n=== Getting with Default Values ===")
+
+// Get with default if not set
+env.get_or("DATABASE_URL", "localhost:5432") > (db_url string) {
+    println("DATABASE_URL: {db_url}")
+}()
+
+env.get_or("LOG_LEVEL", "info") > (log_level string) {
+    println("LOG_LEVEL: {log_level}")
+}()
+
+env.get_or("NONEXISTENT_VAR", "default_value") > (val string) {
+    println("NONEXISTENT_VAR: {val}")
+}()
+
+println("\n=== Checking Variable Existence ===")
+
+// Check if variables exist
+env.present?("HOME") > (exists bool) {
+    println("HOME is present: {exists}")
+}()
+
+env.present?("NONEXISTENT_VAR_XYZ") > (exists bool) {
+    println("NONEXISTENT_VAR_XYZ is present: {exists}")
+}()
+
+// Check if variables are absent
+env.absent?("NONEXISTENT_VAR_XYZ") > (absent bool) {
+    println("NONEXISTENT_VAR_XYZ is absent: {absent}")
+}()
+
+env.absent?("USER") > (absent bool) {
+    println("USER is absent: {absent}")
+}()
+
+println("\n=== Conditional Configuration ===")
+
+// Use environment variables for conditional logic
+fn get_environment() {
+    env.get_or("BARK_ENV", "development") > return()
+}(string)
+
+get_environment() > (bark_env string) {
+    println("Running in environment: {bark_env}")
+}()
+
+// Check for required variables
+fn require_env(var_name string) {
+    var_name > env.present?() > (exists bool) {
+        exists > not() > (missing bool) {
+            "Required env var not set" > err() > (error_val map) {
+                missing > return?(error_val)
+            }()
+            env.get(var_name) > return()
+        }()
+    }()
+}(string)
+
+// Example: Check for optional debug flag
+env.get_or("DEBUG", "false") > (debug string) {
+    debug > eq?("true") > (is_debug bool) {
+        is_debug > println?("Debug mode enabled")
+        is_debug > not() > println?("Debug mode disabled")
+    }()
+}()
+
+println("\n=== Listing Environment Variables ===")
+
+// Get all environment variables (showing just a few)
+env.all() > (all_vars map) {
+    all_vars > map.keys() > (keys array) {
+        keys > len() > (count int) {
+            println("Total environment variables: {count}")
+        }()
+    }()
+
+    // Show a few common ones if they exist
+    all_vars > map.key_present?("SHELL") > (has_shell bool) {
+        has_shell > not() > return?()
+        all_vars > get("SHELL") > (shell string) {
+            println("SHELL from all(): {shell}")
+        }()
+    }()
+}()
+
+println("\n=== Practical Examples ===")
+
+// Build configuration from environment
+fn get_config() {
+    env.get_or("APP_HOST", "localhost") > (host string) {
+        env.get_or("APP_PORT", "8080") > (port string) {
+            env.get_or("APP_ENV", "development") > (env_val string) {
+                env.get_or("APP_DEBUG", "false") > (debug string) {
+                    {"host": host, "port": port, "env": env_val, "debug": debug} > return()
+                }()
+            }()
+        }()
+    }()
+}(map)
+
+get_config() > (config map) {
+    println("Application configuration:")
+    config > get("host") > (host string) {
+        println("  Host: {host}")
+    }()
+    config > get("port") > (port string) {
+        println("  Port: {port}")
+    }()
+    config > get("env") > (env_val string) {
+        println("  Environment: {env_val}")
+    }()
+    config > get("debug") > (debug string) {
+        println("  Debug: {debug}")
+    }()
+}()
+
+// Check for production environment
+fn is_production() {
+    env.get_or("APP_ENV", "development") > eq?("production") > return()
+}(bool)
+
+is_production() > (prod bool) {
+    prod > println?("WARNING: Running in production mode")
+    prod > not() > println?("Running in non-production mode")
+}()
+
+println("\nAll environment variable examples completed!")

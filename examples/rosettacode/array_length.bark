@@ -1,0 +1,54 @@
+// Array Length
+//
+// Go implementation: https://rosettacode.org/wiki/Array_length#Go
+//
+// Determine the length/size of an array.
+// Demonstrates using len() and size() functions.
+
+fn print_length(arr array) {
+  arr > len() > length
+  println("Array {0} has length {1}", arr, length)
+}()
+
+println("Array length examples:")
+println()
+
+// Various array sizes
+[] > print_length()
+[1] > print_length()
+[1, 2] > print_length()
+[1, 2, 3] > print_length()
+[1, 2, 3, 4, 5] > print_length()
+
+println()
+
+// String arrays
+["hello"] > print_length()
+["hello", "world"] > print_length()
+["a", "b", "c", "d", "e", "f"] > print_length()
+
+println()
+
+// Mixed types
+[1, "two", 3, "four"] > print_length()
+[true, false, true] > print_length()
+
+println()
+
+// Nested arrays
+[[1, 2], [3, 4], [5, 6]] > nested
+nested > len() > nested_len
+println("Nested array {0} has length {1}", nested, nested_len)
+
+// Length of inner arrays
+nested > get(0) > first_inner
+first_inner > len() > inner_len
+println("First inner array {0} has length {1}", first_inner, inner_len)
+
+println()
+
+// size() is an alias for len()
+println("Using size() as alias for len():")
+[1, 2, 3, 4] > arr
+arr > size() > s
+println("size([1, 2, 3, 4]) = {0}", s)

@@ -1,0 +1,158 @@
+// Bark Time Module Examples
+// Demonstrates date and time operations
+
+println("=== Getting Current Time ===")
+
+// Get current Unix timestamp (seconds)
+time.now() > (now int) {
+    println("Current timestamp (seconds): {now}")
+}()
+
+// Get current Unix timestamp (milliseconds)
+time.now_ms() > (now_ms int) {
+    println("Current timestamp (milliseconds): {now_ms}")
+}()
+
+println("\n=== Formatting Timestamps ===")
+
+// Format using strftime-style placeholders
+time.now() > (ts int) {
+    // Full date and time
+    ts > time.format("%Y-%m-%d %H:%M:%S") > (formatted string) {
+        println("Full datetime: {formatted}")
+    }()
+
+    // Just the date
+    ts > time.format("%Y-%m-%d") > (date string) {
+        println("Date only: {date}")
+    }()
+
+    // Just the time
+    ts > time.format("%H:%M:%S") > (time_str string) {
+        println("Time only: {time_str}")
+    }()
+
+    // Human-readable format
+    ts > time.format("%B %d, %Y") > (human string) {
+        println("Human readable: {human}")
+    }()
+
+    // With weekday
+    ts > time.format("%A, %B %d, %Y") > (with_day string) {
+        println("With weekday: {with_day}")
+    }()
+
+    // ISO 8601 shortcuts
+    ts > time.format("%F") > (iso_date string) {
+        println("ISO 8601 date: {iso_date}")
+    }()
+
+    ts > time.format("%F %T") > (iso_full string) {
+        println("ISO 8601 full: {iso_full}")
+    }()
+}()
+
+println("\n=== ISO 8601 Formatting ===")
+
+// Format as ISO 8601 (RFC3339)
+time.now() > (ts int) {
+    ts > time.format_iso8601() > (iso string) {
+        println("ISO 8601 format: {iso}")
+    }()
+}()
+
+println("\n=== Parsing Date Strings ===")
+
+// Parse a date string with custom format
+"2024-06-15" > time.parse("%Y-%m-%d") > capture(err, ts)
+err > absent?() > (success bool) {
+    success > not() > return?()
+    println("Parsed '2024-06-15' to timestamp: {ts}")
+
+    // Format it back to verify
+    ts > time.format("%B %d, %Y") > (formatted string) {
+        println("Formatted back: {formatted}")
+    }()
+}()
+
+// Parse date with time
+"2024-12-25 14:30:00" > time.parse("%Y-%m-%d %H:%M:%S") > capture(err2, ts2)
+err2 > absent?() > (success bool) {
+    success > not() > return?()
+    println("Parsed '2024-12-25 14:30:00' to timestamp: {ts2}")
+}()
+
+println("\n=== Parsing ISO 8601 ===")
+
+// Parse ISO 8601 format
+"2024-07-04T12:00:00Z" > time.parse_iso8601() > capture(err3, ts3)
+err3 > absent?() > (success bool) {
+    success > not() > return?()
+    println("Parsed ISO 8601 to timestamp: {ts3}")
+    ts3 > time.format("%Y-%m-%d %H:%M:%S") > (formatted string) {
+        println("Formatted: {formatted}")
+    }()
+}()
+
+println("\n=== Practical Examples ===")
+
+// Calculate time difference
+fn time_diff_days(ts1 int, ts2 int) {
+    ts2 > sub(ts1) > div(86400) > return()
+}(int)
+
+// Parse two dates and calculate difference
+"2024-01-01" > time.parse("%Y-%m-%d") > capture(err5, jan1)
+err5 > present?() > return?()
+
+"2024-12-31" > time.parse("%Y-%m-%d") > capture(err6, dec31)
+err6 > present?() > return?()
+
+jan1 > time_diff_days(dec31) > (days int) {
+    println("Days between Jan 1 and Dec 31, 2024: {days}")
+}()
+
+// Add days to a timestamp
+fn add_days(ts int, days int) {
+    days > mul(86400) > add(ts) > return()
+}(int)
+
+"2024-06-01" > time.parse("%Y-%m-%d") > capture(err7, june1)
+err7 > present?() > return?()
+
+june1 > add_days(30) > (future int) {
+    future > time.format("%Y-%m-%d") > (date string) {
+        println("30 days after June 1, 2024: {date}")
+    }()
+}()
+
+// Format timestamps for logging
+fn log_message(msg string) {
+    time.now() > (ts int) {
+        ts > time.format("[%Y-%m-%d %H:%M:%S]") > (timestamp string) {
+            str.concat(timestamp, " ", msg) > println()
+        }()
+    }()
+}()
+
+"Application started" > log_message()
+"Processing complete" > log_message()
+
+// Convert UTC to EST (UTC-5)
+fn utc_to_est(utc_ts int) {
+    utc_ts > sub(18000) > return()  // 5 hours = 18000 seconds
+}(int)
+
+time.now() > (utc_ts int) {
+    utc_ts > time.format("%H:%M:%S") > (utc_time string) {
+        println("\nUTC time: {utc_time}")
+    }()
+
+    utc_ts > utc_to_est() > (est_ts int) {
+        est_ts > time.format("%H:%M:%S") > (est_time string) {
+            println("EST time (UTC-5): {est_time}")
+        }()
+    }()
+}()
+
+println("\nAll time/datetime examples completed!")

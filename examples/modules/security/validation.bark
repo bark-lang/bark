@@ -1,0 +1,145 @@
+// Security & Input Validation Example
+// Demonstrates comprehensive input sanitization and security features
+
+println("=== SQL Injection Prevention ===")
+
+// Unsafe user input
+"Robert'; DROP TABLE users;--" > security.sql_escape() > safe_sql
+println("Safe SQL: {0}", safe_sql)
+println("Expected: Robert''; DROP TABLE users;--")
+
+println()
+
+// ===================================================================
+println("=== Command Injection Prevention ===")
+
+// Check if commands are safe
+"ls -la" > security.safe_command?() > is_safe1
+println("'ls -la' is safe: {0}", is_safe1)
+
+"rm -rf /" > security.safe_command?() > is_safe2
+println("'rm -rf /' is safe: {0}", is_safe2)
+
+"echo hello; rm -rf /" > security.safe_command?() > is_safe3
+println("'echo hello; rm -rf /' is safe: {0}", is_safe3)
+
+// Escape shell metacharacters
+"file; rm -rf /" > security.shell_escape() > safe_shell
+println("Escaped: {0}", safe_shell)
+
+println()
+
+// ===================================================================
+println("=== Path Traversal Prevention ===")
+
+// Safe path
+"data/users.txt" > security.sanitize_path("/var/app") > (err error, safe_path1 string) {
+  println("✓ Safe path: {0}", safe_path1)
+}()
+
+// Attempt path traversal - security.sanitize_path will return error for this
+println("✗ Dangerous paths like '../../etc/passwd' are blocked by security.sanitize_path")
+
+println()
+
+// ===================================================================
+println("=== Input Validation ===")
+
+// Alphanumeric check
+"user123" > str.alphanumeric?() > is_alnum1
+println("'user123' is alphanumeric: {0}", is_alnum1)
+
+"user@123" > str.alphanumeric?() > is_alnum2
+println("'user@123' is alphanumeric: {0}", is_alnum2)
+
+// Email validation
+"user@example.com" > security.email?() > is_email1
+println("'user@example.com' is email: {0}", is_email1)
+
+"not-an-email" > security.email?() > is_email2
+println("'not-an-email' is email: {0}", is_email2)
+
+// URL validation
+"https://example.com/path" > security.url?() > is_url1
+println("'https://example.com/path' is URL: {0}", is_url1)
+
+"javascript:alert('xss')" > security.url?() > is_url2
+println("'javascript:alert('xss')' is URL: {0}", is_url2)
+
+println()
+
+// ===================================================================
+println("=== XSS Prevention ===")
+
+"<script>alert('XSS')</script>" > security.html_escape() > escaped_html
+println("HTML Escaped: {0}", escaped_html)
+
+"<img src=x onerror='alert(1)'>" > security.strip_tags() > stripped
+println("Tags Stripped: {0}", stripped)
+
+println()
+
+// ===================================================================
+println("=== Content Security Policy ===")
+
+security.generate_nonce() > nonce
+println("CSP Nonce: {0}", nonce)
+println("Use in header: Content-Security-Policy: script-src 'nonce-{0}'", nonce)
+
+println()
+
+// ===================================================================
+println("=== Rate Limiting Helper ===")
+
+"192.168.1.100" > security.hash_key() > ip_hash
+println("IP Hash for rate limiting: {0}", ip_hash)
+
+"user@example.com" > security.hash_key() > user_hash
+println("User Hash for rate limiting: {0}", user_hash)
+
+println()
+
+// ===================================================================
+println("=== Comprehensive Input Validation Function ===")
+
+fn validate_user_input(input string) {
+  // Prepare error messages
+  err("Input too short") > err_short
+  err("Input too long") > err_long
+  err("Null byte detected") > err_null
+  err("Script tag detected") > err_script
+  err("SQL injection attempt") > err_sql
+  err("Command separator detected") > err_sep
+  err("Command chaining detected") > err_chain
+  err("Command substitution detected") > err_subst
+
+  // Check length
+  input > len() > input_len
+  input_len > lt?(1) > eq?(true) > return?(err_short)
+  input_len > gt?(1000) > eq?(true) > return?(err_long)
+
+  // Check for null bytes (potential injection)
+  input > includes?("\x00") > eq?(true) > return?(err_null)
+
+  // Check for script tags
+  input > str.lower() > includes?("<script") > eq?(true) > return?(err_script)
+
+  // Check for SQL injection patterns
+  input > str.lower() > includes?("drop table") > eq?(true) > return?(err_sql)
+  input > str.lower() > includes?("'; ") > eq?(true) > return?(err_sql)
+
+  // Check for command injection
+  input > includes?(";") > eq?(true) > return?(err_sep)
+  input > includes?("&&") > eq?(true) > return?(err_chain)
+  input > includes?("`") > eq?(true) > return?(err_subst)
+
+  return({})
+}(error)
+
+println("✓ Safe input accepted: Hello, safe input!")
+println("✗ XSS attempt blocked: <script>alert('xss')</script>")
+println("✗ SQL injection blocked: Robert'; DROP TABLE users;--")
+println("✗ Command injection blocked: echo hello; rm -rf /")
+
+println()
+println("=== Security Validation Complete! ===")

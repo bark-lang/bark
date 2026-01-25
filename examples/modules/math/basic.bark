@@ -1,0 +1,125 @@
+// Bark Math Module Examples - Basic Operations
+// Demonstrates basic mathematical operations
+
+println("=== Arithmetic Operations ===")
+
+// Modulo (remainder)
+17 > math.mod(5) > println()  // 2
+-7 > math.mod(3) > println()  // -1
+
+// Absolute value
+-42 > math.abs() > println()  // 42
+3.14 > math.abs() > println()  // 3.14
+-2.718 > math.abs() > println()  // 2.718
+
+println("\n=== Rounding Operations ===")
+
+// Ceiling (round up)
+3.2 > math.ceil() > println()  // 4
+-3.2 > math.ceil() > println()  // -3
+
+// Floor (round down)
+3.8 > math.floor() > println()  // 3
+-3.8 > math.floor() > println()  // -4
+
+// Round to decimal places
+3.14159 > math.round(2) > println()  // 3.14
+3.14159 > math.round(4) > println()  // 3.1416
+2.5 > math.round(0) > println()  // 3
+
+println("\n=== Min and Max ===")
+
+// Find minimum value
+math.min(5, 3, 8, 1, 9) > println()  // 1
+math.min(3.14, 2.71, 1.41) > println()  // 1.41
+
+// Find maximum value
+math.max(5, 3, 8, 1, 9) > println()  // 9
+math.max(3.14, 2.71, 1.41) > println()  // 3.14
+
+println("\n=== Power and Root Operations ===")
+
+// Square root
+16 > math.sqrt() > println()  // 4
+2 > math.sqrt() > println()  // 1.4142...
+
+// Power (exponentiation)
+2 > math.pow(10) > println()  // 1024
+3 > math.pow(4) > println()  // 81
+2.0 > math.pow(0.5) > println()  // 1.4142... (square root)
+
+// Exponential (e^x)
+1 > math.exp() > println()  // 2.718... (e)
+0 > math.exp() > println()  // 1
+
+println("\n=== Logarithms ===")
+
+// Natural logarithm (base e)
+math.e() > math.log() > println()  // 1
+10 > math.log() > println()  // 2.302...
+
+// Base-10 logarithm
+100 > math.log10() > println()  // 2
+1000 > math.log10() > println()  // 3
+
+println("\n=== Integer/Float Conversion ===")
+
+// Convert float to integer (truncates)
+3.7 > math.to_int() > println()  // 3
+-3.7 > math.to_int() > println()  // -3
+
+// Convert integer to float
+42 > math.to_float() > println()  // 42.0
+
+println("\n=== Odd/Even Checks ===")
+
+// Check if odd
+7 > math.odd?() > println()  // true
+8 > math.odd?() > println()  // false
+
+// Check if even
+7 > math.even?() > println()  // false
+8 > math.even?() > println()  // true
+
+println("\n=== Constants ===")
+
+// Mathematical constants
+math.pi() > println()  // 3.14159...
+math.e() > println()  // 2.71828...
+
+println("\n=== Practical Examples ===")
+
+// Calculate compound interest: A = P(1 + r)^t
+fn compound_interest(principal float, rate float, years int) {
+    1.0 > add(rate) > math.pow(years) > mul(principal) > return()
+}(float)
+
+1000.0 > compound_interest(0.05, 10) > (result float) {
+    println("$1000 at 5% for 10 years: {result}")
+}()
+
+// Calculate distance between two points
+fn distance(x1 float, y1 float, x2 float, y2 float) {
+    x2 > sub(x1) > math.pow(2) > (dx_sq float) {
+        y2 > sub(y1) > math.pow(2) > (dy_sq float) {
+            dx_sq > add(dy_sq) > math.sqrt() > return()
+        }()
+    }()
+}(float)
+
+0.0 > distance(0.0, 3.0, 4.0) > (dist float) {
+    println("Distance from (0,0) to (3,4): {dist}")
+}()
+
+// Check if a number is a perfect square
+fn is_perfect_square(n int) {
+    n > math.sqrt() > math.to_int() > (root int) {
+        root > mul(root) > eq?(n) > return()
+    }()
+}(bool)
+
+16 > is_perfect_square() > println()  // true
+17 > is_perfect_square() > println()  // false
+25 > is_perfect_square() > println()  // true
+
+println("\nAll basic math examples completed!")

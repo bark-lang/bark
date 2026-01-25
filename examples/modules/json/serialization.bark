@@ -1,0 +1,68 @@
+// Bark JSON Module Examples
+// Demonstrates JSON parsing and serialization
+
+println("=== JSON Stringify ===")
+
+// Convert map to JSON string
+{"name": "Alice", "age": 30} > json.stringify() > json_str
+println("JSON: {json_str}")
+
+// Convert array to JSON
+[1, 2, 3, "four", "five"] > json.stringify() > arr_json
+println("Array JSON: {arr_json}")
+
+// Convert nested structure
+{"users": [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]} > json.stringify() > nested_json
+println("Nested JSON: {nested_json}")
+
+println("\n=== JSON Stringify Pretty ===")
+
+// Pretty print JSON with indentation
+{"name": "David", "email": "david@example.com", "roles": ["admin", "user"]} > json.stringify_pretty() > pretty_json
+println("Pretty JSON:")
+println(pretty_json)
+
+println("\n=== JSON Parse ===")
+
+// Parse JSON string back to map
+json_str > json.parse() > (err error, data map) {
+    err > present?() > return?()
+
+    data > get("name") > name
+    data > get("age") > age
+    println("Parsed name: {name}")
+    println("Parsed age: {age}")
+}()
+
+println("\n=== Round-trip Example ===")
+
+// Create, stringify, parse, modify, stringify again
+{"name": "Bob", "score": 100} > json.stringify() > original
+println("Original: {original}")
+
+original > json.parse() > (err error, parsed map) {
+    err > present?() > return?()
+
+    parsed > set("score", 200) > modified
+    modified > json.stringify() > modified_json
+    println("Modified: {modified_json}")
+}()
+
+println("\n=== Practical Example: API Response ===")
+
+// Simulate API response processing
+{"status": "success", "data": {"items": [1, 2, 3]}} > json.stringify() > api_response
+
+api_response > json.parse() > (err error, response map) {
+    err > present?() > return?()
+
+    response > get("status") > status
+    println("Status: {status}")
+
+    response > get("data") > data
+    data > get("items") > items
+    items > len() > count
+    println("Found {count} items")
+}()
+
+println("\nAll JSON examples completed!")

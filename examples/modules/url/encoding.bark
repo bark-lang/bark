@@ -1,0 +1,139 @@
+// Bark URL Module Examples
+// Demonstrates URL encoding, decoding, and parsing
+
+println("=== URL Encoding ===")
+
+// Encode strings for use in URLs
+"hello world" > url.encode() > (encoded string) {
+    println("'hello world' encoded: {encoded}")
+}()
+
+"user@example.com" > url.encode() > (encoded string) {
+    println("'user@example.com' encoded: {encoded}")
+}()
+
+"key=value&foo=bar" > url.encode() > (encoded string) {
+    println("'key=value&foo=bar' encoded: {encoded}")
+}()
+
+// Special characters
+"hello/world?query=test#anchor" > url.encode() > (encoded string) {
+    println("With special chars: {encoded}")
+}()
+
+println("\n=== URL Decoding ===")
+
+// Decode URL-encoded strings
+"hello+world" > url.decode() > capture(err, decoded)
+err > absent?() > (success bool) {
+    success > not() > return?()
+    println("'hello+world' decoded: {decoded}")
+}()
+
+"user%40example.com" > url.decode() > capture(err2, decoded2)
+err2 > absent?() > (success bool) {
+    success > not() > return?()
+    println("'user%40example.com' decoded: {decoded2}")
+}()
+
+"key%3Dvalue%26foo%3Dbar" > url.decode() > capture(err3, decoded3)
+err3 > absent?() > (success bool) {
+    success > not() > return?()
+    println("'key%3Dvalue%26foo%3Dbar' decoded: {decoded3}")
+}()
+
+println("\n=== Roundtrip Encoding ===")
+
+// Encode and decode to verify roundtrip
+"Special chars: /\\?&=#" > url.encode() > (encoded string) {
+    println("Original: Special chars: /\\?&=#")
+    println("Encoded: {encoded}")
+    encoded > url.decode() > capture(err, decoded)
+    err > absent?() > (success bool) {
+        success > not() > return?()
+        println("Decoded: {decoded}")
+    }()
+}()
+
+println("\n=== URL Parsing ===")
+
+// Parse a complete URL into components
+"https://example.com:8080/path/to/resource?query=value&foo=bar#section" > url.parse() > capture(err4, parts)
+err4 > absent?() > (success bool) {
+    success > not() > return?()
+    println("Parsed URL components:")
+    parts > get("scheme") > (scheme string) {
+        println("  Scheme: {scheme}")
+    }()
+    parts > get("host") > (host string) {
+        println("  Host: {host}")
+    }()
+    parts > get("path") > (path string) {
+        println("  Path: {path}")
+    }()
+    parts > get("query") > (query string) {
+        println("  Query: {query}")
+    }()
+    parts > get("fragment") > (fragment string) {
+        println("  Fragment: {fragment}")
+    }()
+}()
+
+// Parse a simpler URL
+"http://api.example.com/v1/users" > url.parse() > capture(err5, parts2)
+err5 > absent?() > (success bool) {
+    success > not() > return?()
+    println("\nParsed simple URL:")
+    parts2 > get("scheme") > (scheme string) {
+        println("  Scheme: {scheme}")
+    }()
+    parts2 > get("host") > (host string) {
+        println("  Host: {host}")
+    }()
+    parts2 > get("path") > (path string) {
+        println("  Path: {path}")
+    }()
+}()
+
+println("\n=== Practical Examples ===")
+
+// Build a query string from parameters
+fn build_query_param(key string, value string) {
+    key > url.encode() > (enc_key string) {
+        value > url.encode() > (enc_val string) {
+            str.concat(enc_key, "=", enc_val) > return()
+        }()
+    }()
+}(string)
+
+"search" > build_query_param("hello world") > (param1 string) {
+    "page" > build_query_param("1") > (param2 string) {
+        str.concat("?", param1, "&", param2) > (query string) {
+            println("Built query string: {query}")
+        }()
+    }()
+}()
+
+// Extract and process query parameters
+fn extract_host(full_url string) {
+    full_url > url.parse() > capture(err, parts)
+    err > present?() > return?("")
+    parts > get("host") > return()
+}(string)
+
+"https://api.github.com/repos/user/project" > extract_host() > (host string) {
+    println("Extracted host: {host}")
+}()
+
+// Safely build a URL with user input
+fn safe_url_param(base_url string, param_name string, user_input string) {
+    user_input > url.encode() > (safe_input string) {
+        str.concat(base_url, "?", param_name, "=", safe_input) > return()
+    }()
+}(string)
+
+"https://search.example.com" > safe_url_param("q", "user's query & special <chars>") > (safe_url string) {
+    println("Safe URL with user input: {safe_url}")
+}()
+
+println("\nAll URL encoding examples completed!")

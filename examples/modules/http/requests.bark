@@ -1,0 +1,67 @@
+// JSON + Security Features Example
+// Demonstrates JSON processing, input validation, and sanitization
+
+println("=== JSON Operations ===")
+
+{} > set("name", "Alice") > set("age", 30) > set("role", "developer") > person
+person > json.stringify() > json_str
+println("JSON Output: {0}", json_str)
+
+json_str > json.parse() > (err error, parsed map) {
+  parsed > get("name") > name_val
+  println(name_val)
+}()
+
+println()
+
+println("=== HTML Sanitization (XSS Prevention) ===")
+
+fn sanitize_html(text string) {
+  text >
+    str.replace("&", "&amp;") >
+    str.replace("<", "&lt;") >
+    str.replace(">", "&gt;") >
+    str.replace("\"", "&quot;") >
+    str.replace("'", "&#39;") >
+    return()
+}(string)
+
+"<script>alert('XSS')</script>" > sanitize_html() > safe
+println("Input:  <script>alert('XSS')</script>")
+println("Output: {0}", safe)
+
+println()
+
+println("=== Base64 Encoding ===")
+
+"Secret Message!" > base64.encode() > encoded
+println("Encoded: {0}", encoded)
+
+encoded > base64.decode() > (err error, decoded string) {
+  println("Decoded: {0}", decoded)
+}()
+
+println()
+
+println("=== URL Encoding ===")
+
+"hello world & friends" > url.encode() > url_enc
+println("Encoded: {0}", url_enc)
+
+url_enc > url.decode() > (err error, url_dec string) {
+  println("Decoded: {0}", url_dec)
+}()
+
+println()
+
+println("=== Regex Matching ===")
+
+"user@example.com" > regex.match?(`^[a-z]+@[a-z]+\.[a-z]+$`) > eq?(true) > email_valid
+println(email_valid)
+
+"Order #12345 costs $99" > regex.find_all(`\d+`) > numbers
+numbers > len() > num_count
+println("Found {0} numbers", num_count)
+
+println()
+println("=== Complete! ===")

@@ -1,0 +1,85 @@
+// Sum of Digits
+//
+// Go implementation: https://rosettacode.org/wiki/Sum_of_digits_of_an_integer#Go
+//
+// Calculate the sum of digits of a non-negative integer.
+// Can work in any base (default base 10).
+
+// Sum digits in base 10
+fn sum_digits(n int) {
+  n > math.abs() > math.to_int() > abs_n
+
+  (0, abs_n) > (sum int, num int) {
+    num > eq?(0) > return?(sum)
+
+    num > math.mod(10) > math.to_int() > digit
+    sum > add(digit) > new_sum
+    num > div(10) > math.to_int() > next_num
+
+    repeat(new_sum, next_num)
+  }(int) > result
+
+  return(result)
+}(int)
+
+// Sum digits in arbitrary base
+fn sum_digits_base(n int, base int) {
+  n > math.abs() > math.to_int() > abs_n
+
+  (0, abs_n) > (sum int, num int) {
+    num > eq?(0) > return?(sum)
+
+    num > math.mod(base) > math.to_int() > digit
+    sum > add(digit) > new_sum
+    num > div(base) > math.to_int() > next_num
+
+    repeat(new_sum, next_num)
+  }(int) > result
+
+  return(result)
+}(int)
+
+fn print_sum(n int) {
+  n > sum_digits() > result
+  println("Sum of digits of {0} = {1}", n, result)
+}()
+
+fn print_sum_base(n int, base int) {
+  n > sum_digits_base(base) > result
+  println("Sum of digits of {0} (base {1}) = {2}", n, base, result)
+}()
+
+println("Base 10 digit sums:")
+0 > print_sum()
+1 > print_sum()
+12 > print_sum()
+123 > print_sum()
+1234 > print_sum()
+9999 > print_sum()
+
+println()
+
+println("Larger numbers:")
+12345 > print_sum()
+999999 > print_sum()
+1000000 > print_sum()
+
+println()
+
+// Rosetta Code examples
+println("Rosetta Code examples:")
+1 > print_sum()
+12345 > print_sum()
+123045 > print_sum()
+
+println()
+
+println("Different bases:")
+// 0xfe (254 in decimal) in base 16: f=15, e=14, sum=29
+254 > print_sum_base(16)
+// 0x7fff (32767) in base 16: 7+f+f+f = 7+15+15+15 = 52
+32767 > print_sum_base(16)
+// Binary: 255 = 11111111, sum = 8
+255 > print_sum_base(2)
+// Octal: 64 = 100 in octal, sum = 1
+64 > print_sum_base(8)

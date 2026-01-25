@@ -1,0 +1,43 @@
+// Least Common Multiple (LCM)
+//
+// Go implementation: https://rosettacode.org/wiki/Least_common_multiple#Go
+//
+// Find the least common multiple of two integers.
+// LCM(a, b) = |a * b| / GCD(a, b)
+
+// Greatest Common Divisor using Euclidean algorithm
+fn gcd(a int, b int) {
+  b > eq?(0) > return?(a)
+  a > math.mod(b) > remainder
+  repeat(b, remainder)
+}(int)
+
+// Least Common Multiple
+fn lcm(a int, b int) {
+  // Handle zero case
+  a > eq?(0) > return?(0)
+  b > eq?(0) > return?(0)
+
+  // LCM = |a * b| / GCD(a, b)
+  a > mul(b) > math.abs() > product
+  a > gcd(b) > divisor
+  product > div(divisor) > math.to_int() > result
+
+  return(result)
+}(int)
+
+fn print_lcm(a int, b int) {
+  a > lcm(b) > result
+  println("lcm({0}, {1}) = {2}", a, b, result)
+}()
+
+// Test cases
+12 > print_lcm(8)
+21 > print_lcm(6)
+4 > print_lcm(6)
+15 > print_lcm(20)
+18 > print_lcm(24)
+0 > print_lcm(5)
+5 > print_lcm(0)
+7 > print_lcm(7)
+12 > print_lcm(18)

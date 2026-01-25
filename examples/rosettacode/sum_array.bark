@@ -1,0 +1,33 @@
+// Sum of Array
+//
+// Go implementation: https://rosettacode.org/wiki/Sum_of_a_series#Go
+//
+// Calculate the sum of all elements in an array.
+// Common use case: data aggregation, statistics, reporting, totals.
+
+fn sum_helper(idx int, acc int, arr array, length int) {
+  idx > gte?(length) > return?(acc)
+  arr > get(idx) > val
+  acc > add(val) > new_acc
+  idx > add(1) > next_idx
+  repeat(next_idx, new_acc, arr, length)
+}(int)
+
+fn sum(arr array) {
+  arr > len() > length
+  0 > sum_helper(0, arr, length) > result
+  return(result)
+}(int)
+
+fn print_sum(arr array) {
+  arr > sum() > result
+  println("sum({0}) = {1}", arr, result)
+}()
+
+// Test cases
+[1, 2, 3, 4, 5] > print_sum()
+[10, 20, 30] > print_sum()
+[100] > print_sum()
+[] > print_sum()
+[-5, 5, -10, 10] > print_sum()
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] > print_sum()

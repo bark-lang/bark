@@ -1,0 +1,33 @@
+// Palindrome Detection
+//
+// Go implementation: https://rosettacode.org/wiki/Palindrome_detection#Go
+//
+// Check if a string reads the same forwards and backwards.
+// Common use case: input validation, word games, data verification.
+
+fn is_palindrome(s string) {
+  s > str.lower() > normalized
+  normalized > reverse() > reversed
+  normalized > eq?(reversed) > result
+  return(result)
+}(bool)
+
+fn palindrome_label(s string) {
+  s > is_palindrome() > return?("is a palindrome")
+  return("is not a palindrome")
+}(string)
+
+fn print_result(s string) {
+  s > palindrome_label() > label
+  println("\"{0}\" {1}", s, label)
+}()
+
+// Test cases
+"racecar" > print_result()
+"level" > print_result()
+"hello" > print_result()
+"A" > print_result()
+"Madam" > print_result()
+"noon" > print_result()
+"world" > print_result()
+"" > print_result()

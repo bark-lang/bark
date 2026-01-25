@@ -1,0 +1,143 @@
+// Bark Array Module Examples
+// Demonstrates array manipulation operations
+
+println("=== Array Push (Add to End) ===")
+
+// Push single element
+[1, 2, 3] > array.push(4) > println()
+
+// Push multiple elements
+[1, 2, 3] > array.push(4, 5, 6) > println()
+
+println("\n=== Array Append To (Pipe-friendly Push) ===")
+
+// Append value to array (value first, array second - for link operator)
+10 > array.append_to([1, 2, 3]) > println()
+
+println("\n=== Array Unshift (Add to Beginning) ===")
+
+// Add element to beginning
+[2, 3, 4] > array.unshift(1) > println()
+
+// Add multiple elements to beginning
+[4, 5, 6] > array.unshift(1, 2, 3) > println()
+
+println("\n=== Array Pop (Remove from End) ===")
+
+// Pop returns (modified_array, popped_element)
+[1, 2, 3, 4, 5] > array.pop() > (result array) {
+    result > get(0) > println()  // The modified array
+    result > get(1) > println()  // The popped element
+}()
+
+println("\n=== Array Shift (Remove from Beginning) ===")
+
+// Shift returns (modified_array, shifted_element)
+[1, 2, 3, 4, 5] > array.shift() > (result array) {
+    result > get(0) > println()  // The modified array
+    result > get(1) > println()  // The shifted element
+}()
+
+println("\n=== Array Slice ===")
+
+// Extract a portion of array (start, end - exclusive)
+[10, 20, 30, 40, 50] > array.slice(1, 4) > println()
+
+// Slice from beginning
+[10, 20, 30, 40, 50] > array.slice(0, 3) > println()
+
+// Slice to end
+[10, 20, 30, 40, 50] > array.slice(2, 5) > println()
+
+println("\n=== Array Dedupe (Remove Duplicates) ===")
+
+// Remove duplicate elements
+[1, 2, 2, 3, 3, 3, 4] > array.dedupe() > println()
+
+["apple", "banana", "apple", "cherry", "banana"] > array.dedupe() > println()
+
+println("\n=== Array Range (Generate Sequence) ===")
+
+// Generate range of integers (inclusive)
+array.range(1, 5) > println()
+
+array.range(0, 10) > println()
+
+array.range(-3, 3) > println()
+
+println("\n=== Practical Examples ===")
+
+// Stack operations (LIFO)
+fn stack_example() {
+    [] > stack
+
+    // Push items
+    stack > array.push(1) > stack
+    stack > array.push(2) > stack
+    stack > array.push(3) > stack
+    println("Stack after pushes: {0}", stack)
+
+    // Pop item
+    stack > array.pop() > (result array) {
+        result > get(0) > stack
+        result > get(1) > (popped int) {
+            println("Popped: {0}", popped)
+        }()
+    }()
+
+    println("Stack after pop: {0}", stack)
+}()
+
+stack_example()
+
+// Queue operations (FIFO)
+fn queue_example() {
+    [] > queue
+
+    // Enqueue (add to end)
+    queue > array.push("first") > queue
+    queue > array.push("second") > queue
+    queue > array.push("third") > queue
+    println("Queue after enqueues: {0}", queue)
+
+    // Dequeue (remove from front)
+    queue > array.shift() > (result array) {
+        result > get(0) > queue
+        result > get(1) > (dequeued string) {
+            println("Dequeued: {0}", dequeued)
+        }()
+    }()
+
+    println("Queue after dequeue: {0}", queue)
+}()
+
+queue_example()
+
+// Paginating results
+fn paginate(items array, page int, page_size int) {
+    page > mul(page_size) > start
+    start > add(page_size) > end
+
+    // Clamp end to array length
+    items > len() > total
+    end > gt?(total) > (exceeded bool) {
+        exceeded > return?(total)
+        return(end)
+    }(int) > end
+
+    items > array.slice(start, end) > return()
+}(array)
+
+array.range(1, 20) > (items array) {
+    items > paginate(0, 5) > (page0 array) {
+        println("Page 0: {0}", page0)
+    }()
+    items > paginate(1, 5) > (page1 array) {
+        println("Page 1: {0}", page1)
+    }()
+    items > paginate(2, 5) > (page2 array) {
+        println("Page 2: {0}", page2)
+    }()
+}()
+
+println("\nAll array examples completed!")

@@ -1,0 +1,27 @@
+// Greatest Common Divisor (GCD)
+//
+// Go implementation: https://rosettacode.org/wiki/Greatest_common_divisor#Go
+//
+// Find the greatest common divisor of two numbers using Euclidean algorithm.
+// Common use case: simplifying fractions, scheduling, cryptography (RSA).
+
+fn gcd(a int, b int) {
+  b > eq?(0) > return?(a)
+  a > math.mod(b) > remainder
+  repeat(b, remainder)
+}(int)
+
+fn print_gcd(a int, b int) {
+  a > gcd(b) > result
+  println("gcd({0}, {1}) = {2}", a, b, result)
+}()
+
+// Test cases
+12 > print_gcd(8)
+54 > print_gcd(24)
+48 > print_gcd(18)
+100 > print_gcd(35)
+17 > print_gcd(13)
+1071 > print_gcd(462)
+0 > print_gcd(5)
+5 > print_gcd(0)

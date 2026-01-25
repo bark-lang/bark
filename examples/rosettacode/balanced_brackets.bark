@@ -1,0 +1,75 @@
+// Balanced Brackets
+//
+// Go implementation: https://rosettacode.org/wiki/Balanced_brackets#Go
+//
+// Check if a string of brackets is balanced.
+// Each opening bracket must have a matching closing bracket.
+
+// Helper to compute new count based on character
+fn update_count(char string, count int) {
+  count > add(1) > inc
+  count > sub(1) > dec
+  char > eq?("[") > return?(inc)
+  char > eq?("]") > return?(dec)
+  return(count)
+}(int)
+
+// Check if brackets are balanced using a counter
+// For each '[' increment, for each ']' decrement
+// Balanced if counter never goes negative and ends at 0
+fn is_balanced(s string) {
+  s > len() > length
+  length > eq?(0) > return?(true)
+
+  // Split string into characters and check balance
+  s > str.split("") > chars
+
+  (0, 0) > (idx int, count int) {
+    // Check if we've processed all characters - return whether count is 0
+    idx > gte?(length) > done
+    count > eq?(0) > is_zero
+    done > return?(is_zero)
+
+    chars > get(idx) > char
+    char > update_count(count) > new_count
+
+    // If count goes negative, we have too many closing brackets
+    new_count > lt?(0) > return?(false)
+
+    idx > add(1) > next_idx
+    repeat(next_idx, new_count)
+  }(bool) > result
+
+  return(result)
+}(bool)
+
+fn balance_label(s string) {
+  s > is_balanced() > return?("balanced")
+  return("not balanced")
+}(string)
+
+fn print_result(s string) {
+  s > balance_label() > label
+  s > len() > slen
+  slen > eq?(0) > (is_empty bool) {
+    is_empty > return?("(empty)")
+    return(s)
+  }(string) > display
+  println("\"{0}\" is {1}", display, label)
+}()
+
+// Test cases
+"" > print_result()
+"[]" > print_result()
+"[][]" > print_result()
+"[[]]" > print_result()
+"[[][]]" > print_result()
+"][" > print_result()
+"][][" > print_result()
+"[]][[]" > print_result()
+"[[" > print_result()
+"]]" > print_result()
+"[[]" > print_result()
+"[]]" > print_result()
+"[[[]]]" > print_result()
+"[[]][[]]" > print_result()

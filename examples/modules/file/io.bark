@@ -1,0 +1,119 @@
+// Bark File Module Examples
+// Demonstrates file I/O operations
+
+println("=== Writing Files ===")
+
+// Write a new file (creates parent directories if needed)
+"/tmp/bark_test/hello.txt" > file.write("Hello, Bark!\nThis is a test file.\n") > (err map) {
+    err > absent?() > println?("File written successfully")
+    err > present?() > println?("Write failed: ", err)
+}()
+
+// Write another file
+"/tmp/bark_test/data.txt" > file.write("Line 1\nLine 2\nLine 3\n") > (err map) {
+    err > absent?() > println?("Data file written successfully")
+}()
+
+println("\n=== Reading Files ===")
+
+// Read file contents
+"/tmp/bark_test/hello.txt" > file.read() > capture(err, content)
+err > absent?() > (success bool) {
+    success > not() > return?()
+    println("Read file content:")
+    content > println()
+}()
+
+println("\n=== Appending to Files ===")
+
+// Append to existing file
+"/tmp/bark_test/data.txt" > file.append("Line 4 (appended)\n") > (err map) {
+    err > absent?() > println?("Content appended successfully")
+}()
+
+// Read to verify append
+"/tmp/bark_test/data.txt" > file.read() > capture(err2, content2)
+err2 > absent?() > (success bool) {
+    success > not() > return?()
+    println("File content after append:")
+    content2 > println()
+}()
+
+println("\n=== Checking File Existence ===")
+
+// Check if files exist
+"/tmp/bark_test/hello.txt" > file.exists?() > (exists bool) {
+    println("hello.txt exists: {exists}")
+}()
+
+"/tmp/bark_test/nonexistent.txt" > file.exists?() > (exists bool) {
+    println("nonexistent.txt exists: {exists}")
+}()
+
+// Check if files are absent
+"/tmp/bark_test/nonexistent.txt" > file.absent?() > (absent bool) {
+    println("nonexistent.txt is absent: {absent}")
+}()
+
+println("\n=== Getting File Info ===")
+
+// Get file information
+"/tmp/bark_test/hello.txt" > file.info() > capture(info_err, info)
+info_err > absent?() > (success bool) {
+    success > not() > return?()
+    println("File info:")
+    info > get("size") > (size int) {
+        println("  Size: {size} bytes")
+    }()
+    info > get("modified") > (modified int) {
+        println("  Modified timestamp: {modified}")
+    }()
+    info > get("is_dir") > (is_dir bool) {
+        println("  Is directory: {is_dir}")
+    }()
+}()
+
+println("\n=== Deleting Files ===")
+
+// Delete a file
+"/tmp/bark_test/hello.txt" > file.delete() > (err map) {
+    err > absent?() > println?("hello.txt deleted successfully")
+}()
+
+// Verify deletion
+"/tmp/bark_test/hello.txt" > file.absent?() > (absent bool) {
+    println("hello.txt is now absent: {absent}")
+}()
+
+println("\n=== Practical Examples ===")
+
+// Copy file by reading and writing
+fn copy_file(src string, dest string) {
+    src > file.read() > capture(read_err, content)
+    read_err > present?() > return?(read_err)
+    dest > file.write(content) > return()
+}(map)
+
+// Create source file
+"/tmp/bark_test/original.txt" > file.write("Original content") > (err map) {
+    err > absent?() > return?()
+}()
+
+// Copy it
+"/tmp/bark_test/original.txt" > copy_file("/tmp/bark_test/copy.txt") > (err map) {
+    err > absent?() > println?("File copied successfully")
+}()
+
+// Verify copy
+"/tmp/bark_test/copy.txt" > file.read() > capture(copy_err, copy_content)
+copy_err > absent?() > (success bool) {
+    success > not() > return?()
+    println("Copied content: {copy_content}")
+}()
+
+// Clean up remaining test files
+"/tmp/bark_test/data.txt" > file.delete() > (err map) {}()
+"/tmp/bark_test/original.txt" > file.delete() > (err map) {}()
+"/tmp/bark_test/copy.txt" > file.delete() > (err map) {}()
+
+println("\nAll file I/O examples completed!")

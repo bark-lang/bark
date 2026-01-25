@@ -1,0 +1,24 @@
+// FizzBuzz
+//
+// Go implementation: https://rosettacode.org/wiki/FizzBuzz#Go
+//
+// Print integers 1 to 100. For multiples of 3 print "Fizz",
+// for multiples of 5 print "Buzz", for multiples of both print "FizzBuzz".
+
+fn fizzbuzz_label(i int) {
+  i > math.mod(15) > eq?(0) > return?("FizzBuzz")
+  i > math.mod(3) > eq?(0) > return?("Fizz")
+  i > math.mod(5) > eq?(0) > return?("Buzz")
+  i > to_string() > result
+  return(result)
+}(string)
+
+fn print_fizzbuzz(arr array, idx int) {
+  arr > get(idx) > i
+  i > fizzbuzz_label() > label
+  print("{0} ", label)
+}()
+
+// Run FizzBuzz for 1 to 100
+array.range(1, 100) > each(print_fizzbuzz)
+println()

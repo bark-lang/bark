@@ -1,0 +1,44 @@
+// Leap Year
+//
+// Go implementation: https://rosettacode.org/wiki/Leap_year#Go
+//
+// Determine if a year is a leap year.
+// Common use case: calendar applications, date validation, scheduling.
+//
+// Rules:
+// - Divisible by 4 AND not divisible by 100, OR
+// - Divisible by 400
+
+fn is_leap_year(year int) {
+  // Divisible by 400 -> leap year
+  year > math.mod(400) > eq?(0) > return?(true)
+
+  // Divisible by 100 but not 400 -> not leap year
+  year > math.mod(100) > eq?(0) > return?(false)
+
+  // Divisible by 4 -> leap year
+  year > math.mod(4) > eq?(0) > return?(true)
+
+  // Otherwise -> not leap year
+  return(false)
+}(bool)
+
+fn leap_year_label(year int) {
+  year > is_leap_year() > return?("is a leap year")
+  return("is not a leap year")
+}(string)
+
+fn print_result(year int) {
+  year > leap_year_label() > label
+  println("{0} {1}", year, label)
+}()
+
+// Test cases
+1900 > print_result()
+2000 > print_result()
+2020 > print_result()
+2021 > print_result()
+2024 > print_result()
+2100 > print_result()
+1600 > print_result()
+1700 > print_result()

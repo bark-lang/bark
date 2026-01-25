@@ -1,0 +1,111 @@
+// Caesar Cipher
+//
+// Go implementation: https://rosettacode.org/wiki/Caesar_cipher#Go
+//
+// Encrypt and decrypt text using Caesar cipher.
+// Each letter is shifted by a fixed number of positions in the alphabet.
+
+// Find index of character in alphabet string, returns -1 if not found
+fn find_char_index(alpha string, c string) {
+  alpha > str.split("") > chars
+  chars > len() > length
+
+  (0) > (idx int) {
+    idx > gte?(length) > return?(-1)
+    chars > get(idx) > ch
+    ch > eq?(c) > return?(idx)
+    idx > add(1) > next
+    repeat(next)
+  }(int) > result
+
+  return(result)
+}(int)
+
+// Get character at position in alphabet
+fn get_char_at(alpha string, pos int) {
+  alpha > str.split("") > chars
+  chars > get(pos) > result
+  return(result)
+}(string)
+
+// Shift a single character by n positions
+// Only shifts A-Z and a-z, leaves other characters unchanged
+fn shift_char(c string, n int) {
+  c > eq?("") > return?("")
+
+  // Build uppercase and lowercase alphabets
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ" > upper_alpha
+  "abcdefghijklmnopqrstuvwxyz" > lower_alpha
+
+  // Check uppercase
+  upper_alpha > find_char_index(c) > upper_pos
+  upper_pos > gte?(0) > (is_upper bool) {
+    is_upper > eq?(false) > return?()
+    upper_pos > add(n) > add(26) > math.mod(26) > new_pos
+    upper_alpha > get_char_at(new_pos) > shifted
+    return(shifted)
+  }(string) > upper_result
+  upper_result > present?() > return?(upper_result)
+
+  // Check lowercase
+  lower_alpha > find_char_index(c) > lower_pos
+  lower_pos > gte?(0) > (is_lower bool) {
+    is_lower > eq?(false) > return?()
+    lower_pos > add(n) > add(26) > math.mod(26) > new_pos
+    lower_alpha > get_char_at(new_pos) > shifted
+    return(shifted)
+  }(string) > lower_result
+  lower_result > present?() > return?(lower_result)
+
+  // Not a letter, return unchanged
+  return(c)
+}(string)
+
+// Encrypt a string with Caesar cipher
+fn caesar_encrypt(text string, shift int) {
+  text > str.split("") > chars
+  chars > len() > length
+
+  ("", 0) > (result string, idx int) {
+    idx > gte?(length) > return?(result)
+
+    chars > get(idx) > c
+    c > shift_char(shift) > shifted
+    result > str.concat(shifted) > new_result
+
+    idx > add(1) > next_idx
+    repeat(new_result, next_idx)
+  }(string) > encrypted
+
+  return(encrypted)
+}(string)
+
+// Decrypt by shifting in opposite direction
+fn caesar_decrypt(text string, shift int) {
+  0 > sub(shift) > neg_shift
+  text > caesar_encrypt(neg_shift) > result
+  return(result)
+}(string)
+
+// Test the cipher
+"The Quick Brown Fox Jumps Over The Lazy Dog" > original
+
+println("Original:  {0}", original)
+
+original > caesar_encrypt(13) > encrypted
+println("Encrypted (ROT13): {0}", encrypted)
+
+encrypted > caesar_decrypt(13) > decrypted
+println("Decrypted: {0}", decrypted)
+
+println()
+
+// Test with different shift values
+"HELLO WORLD" > msg
+println("Message: {0}", msg)
+
+msg > caesar_encrypt(3) > enc3
+println("Shift 3:  {0}", enc3)
+
+enc3 > caesar_decrypt(3) > dec3
+println("Decrypt:  {0}", dec3)

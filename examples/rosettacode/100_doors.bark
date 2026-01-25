@@ -1,0 +1,77 @@
+// 100 Doors
+//
+// Go implementation: https://rosettacode.org/wiki/100_doors#Go
+//
+// Problem: There are 100 doors in a row, initially all closed.
+// You make 100 passes. On pass i, you toggle every i-th door.
+// Which doors are open after 100 passes?
+//
+// Answer: Doors that are perfect squares (1, 4, 9, 16, 25, 36, 49, 64, 81, 100)
+// because only perfect squares have an odd number of divisors.
+
+// Initialize array of 100 doors (all false = closed)
+fn init_doors() {
+  ([], 1) > (doors array, i int) {
+    i > gt?(100) > return?(doors)
+    doors > array.push(false) > new_doors
+    i > add(1) > next
+    repeat(new_doors, next)
+  }(array) > result
+  return(result)
+}(array)
+
+// Toggle door at index (0-based)
+fn toggle_door(doors array, idx int) {
+  doors > get(idx) > current
+  current > not() > toggled
+  doors > set(idx, toggled) > result
+  return(result)
+}(array)
+
+// Run pass k: toggle every k-th door (1-indexed doors, so toggle indices k-1, 2k-1, 3k-1, ...)
+fn run_pass(doors array, k int) {
+  (doors, k) > (d array, idx int) {
+    idx > gt?(100) > return?(d)
+    // idx is 1-indexed door number, array is 0-indexed
+    idx > sub(1) > arr_idx
+    d > toggle_door(arr_idx) > new_doors
+    idx > add(k) > next_idx
+    repeat(new_doors, next_idx)
+  }(array) > result
+  return(result)
+}(array)
+
+// Run all 100 passes
+fn run_all_passes(doors array) {
+  (doors, 1) > (d array, pass int) {
+    pass > gt?(100) > return?(d)
+    d > run_pass(pass) > new_doors
+    pass > add(1) > next_pass
+    repeat(new_doors, next_pass)
+  }(array) > result
+  return(result)
+}(array)
+
+// Print open doors
+fn print_open_doors(doors array) {
+  println("Open doors after 100 passes:")
+
+  (1) > (door_num int) {
+    door_num > gt?(100) > return?()
+
+    // Check if door is open (array is 0-indexed)
+    door_num > sub(1) > arr_idx
+    doors > get(arr_idx) > is_open
+    is_open > println?("Door {0} is open", door_num)
+
+    door_num > add(1) > next
+    repeat(next)
+  }()
+}()
+
+// Main execution
+init_doors() > run_all_passes() > print_open_doors()
+
+println()
+println("These are the perfect squares from 1 to 100:")
+println("1, 4, 9, 16, 25, 36, 49, 64, 81, 100")

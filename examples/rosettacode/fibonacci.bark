@@ -1,0 +1,38 @@
+// Fibonacci Sequence
+//
+// Go implementation: https://rosettacode.org/wiki/Fibonacci_sequence#Go
+//
+// Generate Fibonacci numbers: F(n) = F(n-1) + F(n-2)
+// where F(0) = 0 and F(1) = 1
+// Sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+
+// Iterative Fibonacci using tail recursion pattern
+fn fibonacci(n int) {
+  n > lte?(0) > return?(0)
+  n > eq?(1) > return?(1)
+
+  // Use tuple (target, current_idx, prev, curr) for iteration
+  // At step i: prev = F(i-1), curr = F(i)
+  // We compute F(i+1) = prev + curr
+  (n, 2, 0, 1) > (target int, i int, prev int, curr int) {
+    // Compute next Fibonacci number
+    prev > add(curr) > next_val
+
+    // When i reaches target, return the computed value
+    i > gte?(target) > return?(next_val)
+
+    i > add(1) > next_i
+    repeat(target, next_i, curr, next_val)
+  }(int) > result
+
+  return(result)
+}(int)
+
+fn print_fib(arr array, idx int) {
+  arr > get(idx) > n
+  n > fibonacci() > result
+  println("F({0}) = {1}", n, result)
+}()
+
+// Print first 21 Fibonacci numbers (F(0) to F(20))
+array.range(0, 20) > each(print_fib)

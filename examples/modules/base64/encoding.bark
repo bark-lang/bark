@@ -1,0 +1,72 @@
+// Bark Base64 Module Examples
+// Demonstrates base64 encoding and decoding
+
+println("=== Base64 Encoding ===")
+
+// Encode a simple string
+"Hello, World!" > base64.encode() > encoded1
+println("Encoded: {encoded1}")
+
+// Encode longer text
+"The quick brown fox jumps over the lazy dog" > base64.encode() > encoded2
+println("Encoded: {encoded2}")
+
+println("\n=== Base64 Decoding ===")
+
+// Decode a base64 string
+"SGVsbG8sIFdvcmxkIQ==" > base64.decode() > (err error, decoded string) {
+    err > present?() > return?()
+    println("Decoded: {decoded}")
+}()
+
+println("\n=== Round-Trip Encoding ===")
+
+// Encode then decode to verify
+"Secret message 123!" > original
+original > base64.encode() > encoded
+println("Original: {original}")
+println("Encoded:  {encoded}")
+
+encoded > base64.decode() > (err error, decoded string) {
+    err > present?() > return?()
+    println("Decoded:  {decoded}")
+
+    original > eq?(decoded) > match
+    println("Match: {match}")
+}()
+
+println("\n=== Note on Invalid Base64 ===")
+
+// Invalid base64 returns an error and stops the chain
+// In production, validate input before decoding
+println("Invalid base64 input would return an error")
+
+println("\n=== Practical Examples ===")
+
+// Encode JSON data for URL-safe transmission
+fn encode_json_data(data map) {
+    data > json.stringify() > base64.encode() > return()
+}(string)
+
+{"user_id": 123, "token": "abc"} > encode_json_data() > encoded_json
+println("Encoded JSON: {encoded_json}")
+
+// Simple obfuscation (not encryption!)
+fn obfuscate(text string) {
+    text > base64.encode() > return()
+}(string)
+
+fn deobfuscate(encoded string) {
+    encoded > base64.decode() > (err error, text string) {
+        err > present?() > return?("")
+        return(text)
+    }()
+}(string)
+
+"my-api-key-12345" > obfuscate() > hidden
+println("Obfuscated: {hidden}")
+
+hidden > deobfuscate() > revealed
+println("Revealed: {revealed}")
+
+println("\nAll base64 examples completed!")
