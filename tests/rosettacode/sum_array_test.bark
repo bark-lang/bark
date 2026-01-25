@@ -1,0 +1,22 @@
+// Tests for array sum
+
+fn sum_helper(idx int, acc int, arr array, length int) {
+  idx > gte?(length) > return?(acc)
+  arr > get(idx) > val
+  acc > add(val) > new_acc
+  idx > add(1) > next_idx
+  repeat(next_idx, new_acc, arr, length)
+}(int)
+
+fn sum(arr array) {
+  arr > len() > length
+  0 > sum_helper(0, arr, length) > result
+  return(result)
+}(int)
+
+[1, 2, 3, 4, 5] > sum() > assert(15)
+[10, 20, 30] > sum() > assert(60)
+[100] > sum() > assert(100)
+[] > sum() > assert(0)
+[-5, 5, -10, 10] > sum() > assert(0)
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] > sum() > assert(55)

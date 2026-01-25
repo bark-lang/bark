@@ -1,0 +1,15 @@
+// Tests for counting substring occurrences
+
+fn count_occurrences(haystack string, needle string) {
+  haystack > str.split(needle) > parts
+  parts > len() > num_parts
+  num_parts > sub(1) > count
+  return(count)
+}(int)
+
+"the three truths" > count_occurrences("th") > assert(3)
+"ababababab" > count_occurrences("abab") > assert(2)
+"aaaaaa" > count_occurrences("aa") > assert(3)
+"hello world" > count_occurrences("o") > assert(2)
+"mississippi" > count_occurrences("ss") > assert(2)
+"abcdef" > count_occurrences("xyz") > assert(0)

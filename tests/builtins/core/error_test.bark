@@ -1,0 +1,32 @@
+// Tests for error handling builtins
+
+// err() creates error with message
+err("test error") > err_msg() > assert("test error")
+
+// err() with context
+err("msg", {"key": "value"}) > err_context() > get("key") > assert("value")
+
+// err_add_context adds to error context
+err("msg") > err_add_context("added", "data") > err_context() > get("added") > assert("data")
+
+// Empty map {} is "no error" - absent
+{} > absent?() > assert(true)
+
+// Error map is present
+err("something") > present?() > assert(true)
+
+// Validator pattern - valid input
+fn validatePositive(n int) {
+  n > gt?(0) > return?({}, n)
+  err("must be positive") > e
+  return(e, 0)
+}(error, int)
+
+5 > validatePositive() > capture(e1, v1)
+e1 > absent?() > assert(true)
+v1 > assert(5)
+
+// Validator pattern - invalid input
+-1 > validatePositive() > capture(e2, v2)
+e2 > present?() > assert(true)
+e2 > err_msg() > assert("must be positive")

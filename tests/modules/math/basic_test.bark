@@ -1,0 +1,54 @@
+// Tests for math module basic operations
+
+// math.mod - modulo
+17 > math.mod(5) > assert(2)
+
+// math.abs - absolute value
+-42 > math.abs() > assert(42)
+42 > math.abs() > assert(42)
+
+// math.ceil - ceiling (round up)
+3.2 > math.ceil() > assert(4.0)
+-3.2 > math.ceil() > assert(-3.0)
+
+// math.floor - floor (round down)
+3.8 > math.floor() > assert(3.0)
+-3.8 > math.floor() > assert(-4.0)
+
+// math.round - round to decimal places
+3.14159 > math.round(2) > assert(3.14)
+
+// math.min - find minimum
+math.min(5, 3, 8, 1, 9) > assert(1)
+
+// math.max - find maximum
+math.max(5, 3, 8, 1, 9) > assert(9)
+
+// math.sqrt - square root
+16 > math.sqrt() > assert(4.0)
+
+// math.pow - power
+2 > math.pow(10) > assert(1024.0)
+3 > math.pow(4) > assert(81.0)
+
+// math.exp - exponential (e^x)
+0 > math.exp() > assert(1.0)
+
+// math.log10 - base-10 logarithm
+100 > math.log10() > assert(2.0)
+1000 > math.log10() > assert(3.0)
+
+// math.to_int - convert float to int
+3.7 > math.to_int() > assert(3)
+-3.7 > math.to_int() > assert(-3)
+
+// math.to_float - convert int to float
+42 > math.to_float() > assert(42.0)
+
+// math.odd? - check if odd
+7 > math.odd?() > assert(true)
+8 > math.odd?() > assert(false)
+
+// math.even? - check if even
+7 > math.even?() > assert(false)
+8 > math.even?() > assert(true)

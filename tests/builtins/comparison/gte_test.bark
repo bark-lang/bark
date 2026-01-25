@@ -1,0 +1,19 @@
+// Tests for gte?() builtin
+
+// Integer comparisons
+10 > gte?(5) > assert(true)
+5 > gte?(10) > assert(false)
+5 > gte?(5) > assert(true)
+
+// Float comparisons
+3.14 > gte?(3.0) > assert(true)
+3.14 > gte?(3.14) > assert(true)
+2.5 > gte?(3.0) > assert(false)
+
+// Negative numbers
+-1 > gte?(-5) > assert(true)
+-5 > gte?(-5) > assert(true)
+
+// Zero comparisons
+0 > gte?(0) > assert(true)
+0 > gte?(-1) > assert(true)

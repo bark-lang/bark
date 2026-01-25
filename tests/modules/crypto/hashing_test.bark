@@ -1,0 +1,49 @@
+// Tests for crypto module operations
+
+// crypto.sha256 - hash function
+crypto.sha256("hello world") > (hash string) {
+  hash > len() > assert(64)
+  hash > assert("b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9")
+}()
+
+// crypto.sha512 - stronger hash
+crypto.sha512("hello world") > (hash string) {
+  hash > len() > assert(128)
+}()
+
+// Different inputs produce different hashes
+crypto.sha256("hello") > (hash1 string) {
+  crypto.sha256("world") > (hash2 string) {
+    hash1 > ne?(hash2) > assert(true)
+  }()
+}()
+
+// Same input produces same hash
+crypto.sha256("test") > (hash1 string) {
+  crypto.sha256("test") > (hash2 string) {
+    hash1 > eq?(hash2) > assert(true)
+  }()
+}()
+
+// crypto.hmac_sha256 - HMAC signature
+crypto.hmac_sha256("important message", "secret_key") > (signature string) {
+  signature > len() > gt?(0) > assert(true)
+}()
+
+// crypto.hmac_verify - verify signature
+crypto.hmac_sha256("important message", "secret_key") > (signature string) {
+  crypto.hmac_verify("important message", signature, "secret_key") > assert(true)
+  crypto.hmac_verify("tampered message", signature, "secret_key") > assert(false)
+}()
+
+// crypto.random_bytes - generate random bytes
+crypto.random_bytes(16) > (err error, random_hex string) {
+  err > absent?() > assert(true)
+  random_hex > len() > assert(32)
+}()
+
+// crypto.random_string - generate random string
+crypto.random_string(32) > (err error, random_str string) {
+  err > absent?() > assert(true)
+  random_str > len() > assert(32)
+}()

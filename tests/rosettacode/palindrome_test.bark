@@ -1,0 +1,20 @@
+// Tests for palindrome detection
+
+fn is_palindrome(s string) {
+  s > str.lower() > normalized
+  normalized > reverse() > reversed
+  normalized > eq?(reversed) > result
+  return(result)
+}(bool)
+
+"racecar" > is_palindrome() > assert(true)
+"level" > is_palindrome() > assert(true)
+"hello" > is_palindrome() > assert(false)
+"A" > is_palindrome() > assert(true)
+"Madam" > is_palindrome() > assert(true)
+"noon" > is_palindrome() > assert(true)
+"world" > is_palindrome() > assert(false)
+"" > is_palindrome() > assert(true)
+"a" > is_palindrome() > assert(true)
+"ab" > is_palindrome() > assert(false)
+"aba" > is_palindrome() > assert(true)

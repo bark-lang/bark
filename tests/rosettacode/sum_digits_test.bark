@@ -1,0 +1,21 @@
+// Tests for sum of digits
+
+fn sum_digits(n int) {
+  n > math.abs() > math.to_int() > abs_n
+  (0, abs_n) > (sum int, num int) {
+    num > eq?(0) > return?(sum)
+    num > math.mod(10) > math.to_int() > digit
+    sum > add(digit) > new_sum
+    num > div(10) > math.to_int() > next_num
+    repeat(new_sum, next_num)
+  }(int) > result
+  return(result)
+}(int)
+
+0 > sum_digits() > assert(0)
+1 > sum_digits() > assert(1)
+12 > sum_digits() > assert(3)
+123 > sum_digits() > assert(6)
+1234 > sum_digits() > assert(10)
+9999 > sum_digits() > assert(36)
+12345 > sum_digits() > assert(15)

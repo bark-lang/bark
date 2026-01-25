@@ -1,0 +1,25 @@
+// Tests for base64 module operations
+
+// base64.encode - encode a string
+"Hello, World!" > base64.encode() > assert("SGVsbG8sIFdvcmxkIQ==")
+
+// base64.decode - decode a base64 string
+"SGVsbG8sIFdvcmxkIQ==" > base64.decode() > (err error, decoded string) {
+  err > absent?() > assert(true)
+  decoded > assert("Hello, World!")
+}()
+
+// Round-trip encoding
+"Secret message 123!" > (original string) {
+  original > base64.encode() > (encoded string) {
+    encoded > base64.decode() > (err error, decoded string) {
+      err > absent?() > assert(true)
+      decoded > assert(original)
+    }()
+  }()
+}()
+
+// Encoding JSON data for URL-safe transmission
+{"user_id": 123} > json.stringify() > base64.encode() > (encoded string) {
+  encoded > len() > gt?(0) > assert(true)
+}()

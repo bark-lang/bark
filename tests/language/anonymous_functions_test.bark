@@ -1,0 +1,64 @@
+// Tests for anonymous functions
+
+// Simple anonymous function
+5 > (n int) {
+  n > add(10) > return()
+}(int) > assert(15)
+
+// Anonymous function with multiplication
+10 > (x int) {
+  x > mul(2) > return()
+}(int) > assert(20)
+
+// Transform function
+fn transform_value(val int) {
+  val > (x int) {
+    x > mul(2) > doubled
+    doubled > add(5) > return()
+  }(int) > result
+  return(result)
+}(int)
+
+7 > transform_value() > assert(19)
+
+// Grade letter function
+fn grade_letter(score int) {
+  score > (s int) {
+    s > gte?(90) > return?("A")
+    s > gte?(80) > return?("B")
+    s > gte?(70) > return?("C")
+    s > gte?(60) > return?("D")
+    return("F")
+  }(string) > letter
+  return(letter)
+}(string)
+
+95 > grade_letter() > assert("A")
+85 > grade_letter() > assert("B")
+72 > grade_letter() > assert("C")
+65 > grade_letter() > assert("D")
+55 > grade_letter() > assert("F")
+
+// Tuple initialization
+(10, 5) > (x int, y int) {
+  x > add(y) > return()
+}(int) > assert(15)
+
+// Three-element tuple
+(1, 2, 3) > (a int, b int, c int) {
+  a > add(b) > add(c) > return()
+}(int) > assert(6)
+
+// Sum 1 to n using repeat
+fn sum_1_to_n(n int) {
+  (1, 0) > (current int, total int) {
+    total > add(current) > new_total
+    current > add(1) > next
+    next > gt?(n) > return?(new_total)
+    repeat(next, new_total)
+  }(int) > result
+  return(result)
+}(int)
+
+5 > sum_1_to_n() > assert(15)
+10 > sum_1_to_n() > assert(55)

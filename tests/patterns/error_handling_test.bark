@@ -1,0 +1,70 @@
+// Tests for error handling patterns
+
+// Error checking with present?() and absent?()
+fn check_error_present(err error) {
+  err > absent?() > (is_absent bool) {
+    is_absent > return?(true)
+    return(false)
+  }()
+}(bool)
+
+{} > check_error_present() > assert(true)
+err("test error") > check_error_present() > assert(false)
+
+// Error type uses map representation
+// Empty error map {} means success
+{} > absent?() > assert(true)
+err("failed") > present?() > assert(true)
+
+// Zero values
+"" > absent?() > assert(true)
+"hello" > present?() > assert(true)
+0 > absent?() > assert(true)
+1 > present?() > assert(true)
+{} > absent?() > assert(true)
+{"key": "value"} > present?() > assert(true)
+[] > absent?() > assert(true)
+[1, 2, 3] > present?() > assert(true)
+
+// Empty collections
+{} > size() > assert(0)
+{} > empty?() > assert(true)
+[] > len() > assert(0)
+[] > empty?() > assert(true)
+
+// Function returning error tuple
+fn successful_operation() {
+  return({}, "result")
+}(error, string)
+
+successful_operation() > (err error, result string) {
+  err > absent?() > assert(true)
+  result > assert("result")
+}()
+
+fn failed_operation() {
+  err("operation failed") > failure
+  return(failure, "")
+}(error, string)
+
+failed_operation() > (err error, result string) {
+  err > present?() > assert(true)
+  result > assert("")
+}()
+
+// Map key checking
+{"name": "alice"} > map.get_or("age", 0) > assert(0)
+{"name": "alice", "age": 25} > map.get_or("age", 0) > assert(25)
+{"name": "alice", "age": 0} > map.key_present?("age") > assert(true)
+{"name": "alice"} > map.key_absent?("email") > assert(true)
+
+// User display name pattern
+fn get_user_display_name(user map) {
+  user > map.get_or("nickname", "") > nickname
+  nickname > present?() > return?(nickname)
+  user > map.get_or("name", "Anonymous") > return()
+}(string)
+
+{"name": "John", "nickname": "Johnny"} > get_user_display_name() > assert("Johnny")
+{"name": "John"} > get_user_display_name() > assert("John")
+{} > get_user_display_name() > assert("Anonymous")

@@ -1,0 +1,50 @@
+// Tests for collection types
+
+// Array of integers
+fn processNumbers(numbers array[int]) {
+  numbers > len() > return()
+}(int)
+
+[1, 2, 3, 4, 5] > processNumbers() > assert(5)
+
+// Nested arrays
+fn countRows(matrix array[array[int]]) {
+  matrix > len() > return()
+}(int)
+
+[[1, 2], [3, 4], [5, 6]] > countRows() > assert(3)
+
+// Generic element type
+fn getLength(arr array[t]) {
+  arr > len() > return()
+}(int)
+
+[1, "two", true] > getLength() > assert(3)
+
+// Map with string keys and int values
+fn getScore(m map[string, int]) {
+  m > get("score") > return()
+}(int)
+
+{"level": 5, "score": 100} > getScore() > assert(100)
+
+// Empty array
+fn processEmpty(arr array[int]) {
+  arr > len() > return()
+}(int)
+
+[] > processEmpty() > assert(0)
+
+// Empty map
+fn processEmptyMap(m map[string, int]) {
+  m > size() > return()
+}(int)
+
+{} > processEmptyMap() > assert(0)
+
+// Function returning array[int]
+fn makeNumbers(n int) {
+  array.range(1, n) > return()
+}(array[int])
+
+5 > makeNumbers() > len() > assert(5)

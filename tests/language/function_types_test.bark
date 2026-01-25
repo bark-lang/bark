@@ -1,0 +1,41 @@
+// Tests for function types
+
+// Higher-order function taking a function parameter
+fn apply_int_fn(x int, f fn(int)(int)) {
+  x > f() > return()
+}(int)
+
+fn double(x int) {
+  x > mul(2) > return()
+}(int)
+
+fn square(x int) {
+  x > mul(x) > return()
+}(int)
+
+(5, double) > apply_int_fn() > assert(10)
+(5, square) > apply_int_fn() > assert(25)
+
+// Function with two parameters
+fn combine(a int, b int, op fn(int, int)(int)) {
+  (a, b) > op() > return()
+}(int)
+
+fn add_nums(x int, y int) {
+  x > add(y) > return()
+}(int)
+
+fn multiply_nums(x int, y int) {
+  x > mul(y) > return()
+}(int)
+
+(3, 4, add_nums) > combine() > assert(7)
+(3, 4, multiply_nums) > combine() > assert(12)
+
+// Apply twice
+fn apply_twice(x int, f fn(int)(int)) {
+  x > f() > f() > return()
+}(int)
+
+(2, double) > apply_twice() > assert(8)
+(3, double) > apply_twice() > assert(12)

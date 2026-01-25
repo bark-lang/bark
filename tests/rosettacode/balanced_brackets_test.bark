@@ -1,0 +1,44 @@
+// Tests for balanced brackets
+
+fn update_count(char string, count int) {
+  count > add(1) > inc
+  count > sub(1) > dec
+  char > eq?("[") > return?(inc)
+  char > eq?("]") > return?(dec)
+  return(count)
+}(int)
+
+fn is_balanced(s string) {
+  s > len() > length
+  length > eq?(0) > return?(true)
+  s > str.split("") > chars
+  (0, 0) > (idx int, count int) {
+    idx > gte?(length) > done
+    count > eq?(0) > is_zero
+    done > return?(is_zero)
+    chars > get(idx) > char
+    char > update_count(count) > new_count
+    new_count > lt?(0) > return?(false)
+    idx > add(1) > next_idx
+    repeat(next_idx, new_count)
+  }(bool) > result
+  return(result)
+}(bool)
+
+// Balanced
+"" > is_balanced() > assert(true)
+"[]" > is_balanced() > assert(true)
+"[][]" > is_balanced() > assert(true)
+"[[]]" > is_balanced() > assert(true)
+"[[][]]" > is_balanced() > assert(true)
+"[[[]]]" > is_balanced() > assert(true)
+"[[]][[]]" > is_balanced() > assert(true)
+
+// Not balanced
+"][" > is_balanced() > assert(false)
+"][][" > is_balanced() > assert(false)
+"[]][[]" > is_balanced() > assert(false)
+"[[" > is_balanced() > assert(false)
+"]]" > is_balanced() > assert(false)
+"[[]" > is_balanced() > assert(false)
+"[]]" > is_balanced() > assert(false)

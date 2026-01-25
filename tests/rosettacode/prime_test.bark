@@ -1,0 +1,34 @@
+// Tests for prime number check
+
+fn check_divisors(i int, limit int, n int) {
+  i > gt?(limit) > return?(true)
+  n > math.mod(i) > eq?(0) > return?(false)
+  i > add(2) > next_i
+  repeat(next_i, limit, n)
+}(bool)
+
+fn is_prime(n int) {
+  n > lt?(2) > return?(false)
+  n > eq?(2) > return?(true)
+  n > math.even?() > return?(false)
+  n > math.sqrt() > math.to_int() > limit
+  3 > check_divisors(limit, n) > result
+  return(result)
+}(bool)
+
+1 > is_prime() > assert(false)
+2 > is_prime() > assert(true)
+3 > is_prime() > assert(true)
+4 > is_prime() > assert(false)
+5 > is_prime() > assert(true)
+6 > is_prime() > assert(false)
+7 > is_prime() > assert(true)
+10 > is_prime() > assert(false)
+11 > is_prime() > assert(true)
+13 > is_prime() > assert(true)
+17 > is_prime() > assert(true)
+19 > is_prime() > assert(true)
+20 > is_prime() > assert(false)
+23 > is_prime() > assert(true)
+97 > is_prime() > assert(true)
+100 > is_prime() > assert(false)

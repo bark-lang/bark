@@ -1,0 +1,40 @@
+// Tests for remote module pattern
+
+// This file tests the concepts from remote.bark without actually importing remote modules
+// It verifies that module patterns and function calling work correctly
+
+// Simulate mathext module functions
+fn mathext_square(x float) {
+  x > mul(x) > return()
+}(float)
+
+fn mathext_cube(x float) {
+  x > mul(x) > mul(x) > return()
+}(float)
+
+// Test main function pattern
+fn main() {
+  5.0 > mathext_square() > result
+  2.0 > mathext_cube() > result2
+  result > add(result2) > return()
+}(float)
+
+// Test square function
+5.0 > mathext_square() > assert(25.0)
+2.0 > mathext_square() > assert(4.0)
+3.0 > mathext_square() > assert(9.0)
+10.0 > mathext_square() > assert(100.0)
+
+// Test cube function
+2.0 > mathext_cube() > assert(8.0)
+3.0 > mathext_cube() > assert(27.0)
+4.0 > mathext_cube() > assert(64.0)
+
+// Test that external modules work with builtin str module
+"external modules work!" > str.upper() > assert("EXTERNAL MODULES WORK!")
+"TEST" > str.lower() > assert("test")
+
+// Test main function
+main() > (result float) {
+  result > assert(33.0)
+}()

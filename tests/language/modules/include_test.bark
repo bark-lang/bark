@@ -1,0 +1,70 @@
+// Tests for module include patterns
+
+// Connection helper (would normally be in connection.bark)
+fn connect(host string, port int) {
+  port > to_string() > port_str
+  host > str.concat(":") > str.concat(port_str) > dsn
+  {} > set("dsn", dsn) > set("status", "connected") > conn
+  return({}, conn)
+}(error, map)
+
+fn disconnect(conn map) {
+  return({})
+}(error)
+
+// User functions (would normally be in users.bark)
+fn find_user(id string) {
+  connect("localhost", 5432) > (err error, conn map) {
+    err > present?() > return?(err, {})
+    {} > set("id", id) > set("name", "Alice") > user
+    conn > disconnect() > err2
+    return({}, user)
+  }(error, map)
+}(error, map)
+
+fn create_user(name string, email string) {
+  connect("localhost", 5432) > (err error, conn map) {
+    err > present?() > return?(err, {})
+    {} > set("name", name) > set("email", email) > set("id", "generated-id") > user
+    conn > disconnect() > err2
+    return({}, user)
+  }(error, map)
+}(error, map)
+
+// Posts functions (would normally be in posts.bark)
+fn find_posts_by_user(user_id string) {
+  connect("localhost", 5432) > (err error, conn map) {
+    err > present?() > return?(err, [])
+    {} > set("id", "1") > set("title", "Hello") > post1
+    {} > set("id", "2") > set("title", "World") > post2
+    [] > array.push(post1) > array.push(post2) > posts
+    conn > disconnect() > err2
+    return({}, posts)
+  }(error, array)
+}(error, array)
+
+// Test connection helper
+"localhost" > connect(5432) > (err error, conn map) {
+  err > absent?() > assert(true)
+  conn > get("status") > assert("connected")
+}()
+
+// Test find_user
+"test-id" > find_user() > (err error, user map) {
+  err > absent?() > assert(true)
+  user > get("id") > assert("test-id")
+  user > get("name") > assert("Alice")
+}()
+
+// Test create_user
+"Test" > create_user("test@example.com") > (err error, user map) {
+  err > absent?() > assert(true)
+  user > get("name") > assert("Test")
+  user > get("email") > assert("test@example.com")
+}()
+
+// Test find_posts_by_user
+"user1" > find_posts_by_user() > (err error, posts array) {
+  err > absent?() > assert(true)
+  posts > len() > assert(2)
+}()

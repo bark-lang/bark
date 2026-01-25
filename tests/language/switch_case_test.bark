@@ -1,0 +1,24 @@
+// Tests for switch/case style using anonymous functions
+
+fn full_day_name(abbr string) {
+  abbr > str.lower() > (day string) {
+    day > eq?("mon") > return?("monday")
+    day > eq?("tue") > return?("tuesday")
+    day > eq?("wed") > return?("wednesday")
+    day > eq?("thu") > return?("thursday")
+    day > eq?("thur") > return?("thursday")
+    day > eq?("fri") > return?("friday")
+    day > eq?("sat") > return?("saturday")
+    day > eq?("sun") > return?("sunday")
+    return("unknown day abbreviation")
+  }(string) > day_name
+  return(day_name)
+}(string)
+
+"mon" > full_day_name() > assert("monday")
+"MON" > full_day_name() > assert("monday")
+"wed" > full_day_name() > assert("wednesday")
+"WED" > full_day_name() > assert("wednesday")
+"fri" > full_day_name() > assert("friday")
+"sun" > full_day_name() > assert("sunday")
+"xyz" > full_day_name() > assert("unknown day abbreviation")

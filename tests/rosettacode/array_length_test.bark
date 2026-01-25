@@ -1,0 +1,20 @@
+// Tests for array length
+
+[] > len() > assert(0)
+[1] > len() > assert(1)
+[1, 2] > len() > assert(2)
+[1, 2, 3] > len() > assert(3)
+[1, 2, 3, 4, 5] > len() > assert(5)
+
+["hello"] > len() > assert(1)
+["hello", "world"] > len() > assert(2)
+["a", "b", "c", "d", "e", "f"] > len() > assert(6)
+
+[1, "two", 3, "four"] > len() > assert(4)
+[true, false, true] > len() > assert(3)
+
+// Nested arrays - len counts top-level elements
+[[1, 2], [3, 4], [5, 6]] > len() > assert(3)
+
+// size() is alias for len() on arrays
+[1, 2, 3, 4] > size() > assert(4)

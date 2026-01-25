@@ -1,0 +1,15 @@
+// Tests for not() builtin
+
+// Basic negation
+true > not() > assert(false)
+false > not() > assert(true)
+
+// Double negation
+true > not() > not() > assert(true)
+false > not() > not() > assert(false)
+
+// Chained with comparisons
+5 > gt?(3) > not() > assert(false)
+5 > lt?(3) > not() > assert(true)
+5 > eq?(5) > not() > assert(false)
+5 > ne?(5) > not() > assert(true)

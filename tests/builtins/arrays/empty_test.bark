@@ -1,0 +1,28 @@
+// Tests for empty?() builtin
+
+// Empty array
+[] > empty?() > assert(true)
+
+// Non-empty array
+[1, 2, 3] > empty?() > assert(false)
+
+// Single element array
+[42] > empty?() > assert(false)
+
+// Empty string
+"" > empty?() > assert(true)
+
+// Non-empty string
+"hello" > empty?() > assert(false)
+
+// Single character string
+"x" > empty?() > assert(false)
+
+// Empty map
+{} > empty?() > assert(true)
+
+// Non-empty map
+{"key": "value"} > empty?() > assert(false)
+
+// Whitespace string is not empty
+" " > empty?() > assert(false)

@@ -1,0 +1,30 @@
+// Tests for temperature conversion
+
+fn celsius_to_fahrenheit(c float) {
+  c > mul(9.0) > div(5.0) > add(32.0) > result
+  return(result)
+}(float)
+
+fn fahrenheit_to_celsius(f float) {
+  f > sub(32.0) > mul(5.0) > div(9.0) > result
+  return(result)
+}(float)
+
+fn celsius_to_kelvin(c float) {
+  c > add(273.15) > result
+  return(result)
+}(float)
+
+// Celsius to Fahrenheit
+0.0 > celsius_to_fahrenheit() > assert(32.0)
+100.0 > celsius_to_fahrenheit() > assert(212.0)
+-40.0 > celsius_to_fahrenheit() > assert(-40.0)
+
+// Fahrenheit to Celsius
+32.0 > fahrenheit_to_celsius() > assert(0.0)
+212.0 > fahrenheit_to_celsius() > assert(100.0)
+-40.0 > fahrenheit_to_celsius() > assert(-40.0)
+
+// Celsius to Kelvin
+0.0 > celsius_to_kelvin() > assert(273.15)
+100.0 > celsius_to_kelvin() > assert(373.15)

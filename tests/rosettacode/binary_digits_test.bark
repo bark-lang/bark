@@ -1,0 +1,28 @@
+// Tests for binary conversion
+
+fn binary_iter(result string, num int) {
+  num > eq?(0) > done
+  done > return?(result)
+  num > math.mod(2) > to_string() > bit
+  bit > str.concat(result) > new_result
+  num > div(2) > math.to_int() > next_num
+  repeat(new_result, next_num)
+}(string)
+
+fn to_binary(n int) {
+  n > eq?(0) > return?("0")
+  "" > binary_iter(n) > binary
+  return(binary)
+}(string)
+
+0 > to_binary() > assert("0")
+1 > to_binary() > assert("1")
+2 > to_binary() > assert("10")
+3 > to_binary() > assert("11")
+4 > to_binary() > assert("100")
+5 > to_binary() > assert("101")
+7 > to_binary() > assert("111")
+8 > to_binary() > assert("1000")
+15 > to_binary() > assert("1111")
+16 > to_binary() > assert("10000")
+255 > to_binary() > assert("11111111")

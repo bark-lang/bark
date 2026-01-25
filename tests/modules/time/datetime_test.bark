@@ -1,0 +1,55 @@
+// Tests for time module operations
+
+// time.now - get current timestamp (seconds)
+time.now() > (now int) {
+  now > gt?(0) > assert(true)
+}()
+
+// time.now_ms - get current timestamp (milliseconds)
+time.now_ms() > (now_ms int) {
+  now_ms > gt?(0) > assert(true)
+  time.now() > (now_s int) {
+    now_ms > gt?(now_s) > assert(true)
+  }()
+}()
+
+// time.format - format timestamp
+1718450400 > time.format("%Y-%m-%d") > (formatted string) {
+  formatted > len() > assert(10)
+}()
+
+// time.parse - parse date string
+"2024-06-15" > time.parse("%Y-%m-%d") > (err error, ts int) {
+  err > absent?() > assert(true)
+  ts > gt?(0) > assert(true)
+}()
+
+// time.parse_iso8601 - parse ISO 8601 format
+"2024-07-04T12:00:00Z" > time.parse_iso8601() > (err error, ts int) {
+  err > absent?() > assert(true)
+  ts > gt?(0) > assert(true)
+}()
+
+// time.format_iso8601 - format as ISO 8601
+time.now() > time.format_iso8601() > (iso string) {
+  iso > includes?("T") > assert(true)
+}()
+
+// Round-trip format and parse
+"2024-12-25" > time.parse("%Y-%m-%d") > (err error, ts int) {
+  err > absent?() > assert(true)
+  ts > time.format("%Y-%m-%d") > assert("2024-12-25")
+}()
+
+// Calculate time difference (days between dates)
+fn time_diff_days(ts1 int, ts2 int) {
+  ts2 > sub(ts1) > div(86400) > return()
+}(int)
+
+"2024-01-01" > time.parse("%Y-%m-%d") > (err1 error, jan1 int) {
+  err1 > absent?() > assert(true)
+  "2024-01-11" > time.parse("%Y-%m-%d") > (err2 error, jan11 int) {
+    err2 > absent?() > assert(true)
+    jan1 > time_diff_days(jan11) > assert(10)
+  }()
+}()

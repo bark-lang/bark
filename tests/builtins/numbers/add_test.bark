@@ -1,0 +1,22 @@
+// Tests for add() builtin
+
+// Basic integer addition
+5 > add(3) > assert(8)
+
+// Adding zero
+7 > add(0) > assert(7)
+
+// Adding negative numbers
+10 > add(-4) > assert(6)
+
+// Chained additions
+1 > add(2) > add(3) > add(4) > assert(10)
+
+// Float addition
+3.14 > add(1.86) > assert(5.0)
+
+// Float addition (both must be same type)
+5.0 > add(2.5) > assert(7.5)
+
+// Large numbers
+1000000 > add(999999) > assert(1999999)

@@ -1,0 +1,57 @@
+// Tests for http/requests example (JSON + Security Features)
+// Note: This example demonstrates JSON, HTML sanitization, base64, url, and regex
+
+// JSON operations
+{} > set("name", "Alice") > set("age", 30) > json.stringify() > (json_str string) {
+  json_str > includes?("Alice") > assert(true)
+  json_str > includes?("30") > assert(true)
+}()
+
+// JSON parse
+"{\"name\":\"Alice\"}" > json.parse() > (err error, parsed map) {
+  err > absent?() > assert(true)
+  parsed > get("name") > assert("Alice")
+}()
+
+// HTML Sanitization (XSS Prevention)
+fn sanitize_html(text string) {
+  text >
+    str.replace("&", "&amp;") >
+    str.replace("<", "&lt;") >
+    str.replace(">", "&gt;") >
+    str.replace("\"", "&quot;") >
+    str.replace("'", "&#39;") >
+    return()
+}(string)
+
+"<script>alert('XSS')</script>" > sanitize_html() > (safe string) {
+  safe > includes?("&lt;") > assert(true)
+  safe > includes?("&gt;") > assert(true)
+  safe > includes?("<script>") > assert(false)
+}()
+
+// Base64 encoding
+"Secret Message!" > base64.encode() > (encoded string) {
+  encoded > len() > gt?(0) > assert(true)
+  encoded > base64.decode() > (err error, decoded string) {
+    err > absent?() > assert(true)
+    decoded > assert("Secret Message!")
+  }()
+}()
+
+// URL encoding
+"hello world & friends" > url.encode() > (url_enc string) {
+  url_enc > includes?("+") > assert(true)
+  url_enc > url.decode() > (err error, url_dec string) {
+    err > absent?() > assert(true)
+    url_dec > assert("hello world & friends")
+  }()
+}()
+
+// Regex matching
+"user@example.com" > regex.match?("^[a-z]+@[a-z]+\\.[a-z]+$") > assert(true)
+
+// Find all numbers
+"Order #12345 costs $99" > regex.find_all("\\d+") > (numbers array) {
+  numbers > len() > assert(2)
+}()

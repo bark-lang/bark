@@ -1,0 +1,26 @@
+// Tests for least common multiple
+
+fn gcd(a int, b int) {
+  b > eq?(0) > return?(a)
+  a > math.mod(b) > remainder
+  repeat(b, remainder)
+}(int)
+
+fn lcm(a int, b int) {
+  a > eq?(0) > return?(0)
+  b > eq?(0) > return?(0)
+  a > mul(b) > math.abs() > product
+  a > gcd(b) > divisor
+  product > div(divisor) > math.to_int() > result
+  return(result)
+}(int)
+
+12 > lcm(8) > assert(24)
+21 > lcm(6) > assert(42)
+4 > lcm(6) > assert(12)
+15 > lcm(20) > assert(60)
+18 > lcm(24) > assert(72)
+0 > lcm(5) > assert(0)
+5 > lcm(0) > assert(0)
+7 > lcm(7) > assert(7)
+12 > lcm(18) > assert(36)

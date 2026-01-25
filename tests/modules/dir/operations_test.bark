@@ -1,0 +1,43 @@
+// Tests for dir module operations
+// Uses /tmp directory to avoid affecting the project
+
+// Check directory exists
+"/tmp" > dir.exists?() > assert(true)
+
+// Check non-existent directory
+"/nonexistent_dir_xyz_test" > dir.exists?() > assert(false)
+"/nonexistent_dir_xyz_test" > dir.absent?() > assert(true)
+
+// Create test files for listing
+"/tmp/bark_dir_test_xyz/file1.txt" > file.write("content 1") > (err1 map) {}()
+"/tmp/bark_dir_test_xyz/file2.txt" > file.write("content 2") > (err2 map) {}()
+"/tmp/bark_dir_test_xyz/file3.txt" > file.write("content 3") > (err3 map) {}()
+
+// List directory contents
+"/tmp/bark_dir_test_xyz" > dir.list() > (err error, files array) {
+  err > absent?() > assert(true)
+  files > len() > assert(3)
+}()
+
+// Listing non-existent directory returns error
+"/nonexistent_directory_xyz" > dir.list() > (err error, files array) {
+  err > present?() > assert(true)
+}()
+
+// Directory is not a file
+"/tmp/bark_dir_test_xyz" > file.exists?() > assert(false)
+
+// Count files function
+fn count_files(path string) {
+  path > dir.list() > (err error, files array) {
+    err > present?() > return?(0)
+    files > len() > return()
+  }()
+}(int)
+
+"/tmp/bark_dir_test_xyz" > count_files() > assert(3)
+
+// Clean up test files
+"/tmp/bark_dir_test_xyz/file1.txt" > file.delete() > (err map) {}()
+"/tmp/bark_dir_test_xyz/file2.txt" > file.delete() > (err map) {}()
+"/tmp/bark_dir_test_xyz/file3.txt" > file.delete() > (err map) {}()

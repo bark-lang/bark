@@ -1,0 +1,11 @@
+// Tests for 99 bottles
+
+fn bottle_word(n int) {
+  n > eq?(1) > return?("bottle")
+  return("bottles")
+}(string)
+
+1 > bottle_word() > assert("bottle")
+2 > bottle_word() > assert("bottles")
+99 > bottle_word() > assert("bottles")
+0 > bottle_word() > assert("bottles")

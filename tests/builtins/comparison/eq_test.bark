@@ -1,0 +1,22 @@
+// Tests for eq?() builtin
+
+// Integer equality
+5 > eq?(5) > assert(true)
+5 > eq?(3) > assert(false)
+
+// String equality
+"hello" > eq?("hello") > assert(true)
+"hello" > eq?("world") > assert(false)
+
+// Boolean equality
+true > eq?(true) > assert(true)
+false > eq?(false) > assert(true)
+true > eq?(false) > assert(false)
+
+// Note: eq?() uses reference equality for arrays and maps
+// Each literal creates a new object, so [1,2,3] > eq?([1,2,3]) is false
+// Use len() or size() for structural comparisons
+
+// Float equality
+3.14 > eq?(3.14) > assert(true)
+3.14 > eq?(2.71) > assert(false)

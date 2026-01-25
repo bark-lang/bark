@@ -1,0 +1,31 @@
+// Tests for len() builtin
+
+// Array length
+[1, 2, 3, 4, 5] > len() > assert(5)
+
+// Empty array
+[] > len() > assert(0)
+
+// Single element array
+[42] > len() > assert(1)
+
+// String length
+"hello" > len() > assert(5)
+
+// Empty string
+"" > len() > assert(0)
+
+// Single character string
+"x" > len() > assert(1)
+
+// For maps, use size() instead of len()
+{"a": 1, "b": 2, "c": 3} > size() > assert(3)
+
+// Empty map with size()
+{} > size() > assert(0)
+
+// Nested arrays (counts top-level)
+[[1, 2], [3, 4], [5]] > len() > assert(3)
+
+// Mixed type array
+[1, "two", true, false] > len() > assert(4)

@@ -1,0 +1,45 @@
+// Tests for string module operations
+
+// str.upper - convert to uppercase
+"hello world" > str.upper() > assert("HELLO WORLD")
+
+// str.lower - convert to lowercase
+"HELLO WORLD" > str.lower() > assert("hello world")
+
+// str.trim - remove whitespace
+"  hello world  " > str.trim() > assert("hello world")
+
+// str.starts_with? - check prefix
+"hello world" > str.starts_with?("hello") > assert(true)
+"hello world" > str.starts_with?("world") > assert(false)
+
+// str.ends_with? - check suffix
+"hello world" > str.ends_with?("world") > assert(true)
+"hello world" > str.ends_with?("hello") > assert(false)
+
+// str.replace - replace all occurrences
+"hello hello hello" > str.replace("hello", "hi") > assert("hi hi hi")
+
+// str.split - split by delimiter
+"apple,banana,cherry" > str.split(",") > len() > assert(3)
+"apple,banana,cherry" > str.split(",") > get(0) > assert("apple")
+"apple,banana,cherry" > str.split(",") > get(1) > assert("banana")
+"apple,banana,cherry" > str.split(",") > get(2) > assert("cherry")
+
+// str.join - join array with separator
+["red", "green", "blue"] > str.join(", ") > assert("red, green, blue")
+["one", "two", "three"] > str.join("-") > assert("one-two-three")
+
+// str.concat - concatenate strings
+str.concat("Hello", " ", "World", "!") > assert("Hello World!")
+
+// str.format - format with placeholders
+str.format("Name: {0}, Age: {1}", "Alice", 30) > assert("Name: Alice, Age: 30")
+
+// str.numeric? - check if string is numeric
+"123" > str.numeric?() > assert(true)
+"3.14" > str.numeric?() > assert(true)
+"-42" > str.numeric?() > assert(true)
+"1e10" > str.numeric?() > assert(true)
+"hello" > str.numeric?() > assert(false)
+"" > str.numeric?() > assert(false)

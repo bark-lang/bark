@@ -1,0 +1,42 @@
+// Tests for max/min finding
+
+fn max_helper(idx int, max_val int, arr array, length int) {
+  idx > gte?(length) > return?(max_val)
+  arr > get(idx) > val
+  max_val > math.max(val) > new_max
+  idx > add(1) > next_idx
+  repeat(next_idx, new_max, arr, length)
+}(int)
+
+fn min_helper(idx int, min_val int, arr array, length int) {
+  idx > gte?(length) > return?(min_val)
+  arr > get(idx) > val
+  min_val > math.min(val) > new_min
+  idx > add(1) > next_idx
+  repeat(next_idx, new_min, arr, length)
+}(int)
+
+fn find_max(arr array) {
+  arr > len() > length
+  length > eq?(0) > return?(0)
+  arr > get(0) > first
+  1 > max_helper(first, arr, length) > result
+  return(result)
+}(int)
+
+fn find_min(arr array) {
+  arr > len() > length
+  length > eq?(0) > return?(0)
+  arr > get(0) > first
+  1 > min_helper(first, arr, length) > result
+  return(result)
+}(int)
+
+[3, 1, 4, 1, 5, 9, 2, 6] > find_max() > assert(9)
+[3, 1, 4, 1, 5, 9, 2, 6] > find_min() > assert(1)
+[10, 20, 30, 40, 50] > find_max() > assert(50)
+[10, 20, 30, 40, 50] > find_min() > assert(10)
+[-5, -2, -8, -1] > find_max() > assert(-1)
+[-5, -2, -8, -1] > find_min() > assert(-8)
+[42] > find_max() > assert(42)
+[42] > find_min() > assert(42)

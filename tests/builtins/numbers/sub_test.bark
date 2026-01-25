@@ -1,0 +1,22 @@
+// Tests for sub() builtin
+
+// Basic integer subtraction
+10 > sub(3) > assert(7)
+
+// Subtracting zero
+5 > sub(0) > assert(5)
+
+// Subtracting negative numbers (effectively adds)
+5 > sub(-2) > assert(7)
+
+// Chained subtractions
+20 > sub(5) > sub(3) > sub(2) > assert(10)
+
+// Float subtraction
+10.5 > sub(3.5) > assert(7.0)
+
+// Result can be negative
+3 > sub(7) > assert(-4)
+
+// Subtracting from zero
+0 > sub(5) > assert(-5)

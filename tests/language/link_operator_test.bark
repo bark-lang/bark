@@ -1,0 +1,25 @@
+// Tests for link operator
+
+fn fn1() {
+  return("hello")
+}(string)
+
+fn fn2(str string) {
+  str > str.concat(" world") > return()
+}(string)
+
+// Basic function call
+fn1() > assert("hello")
+
+// Chained function call
+fn1() > fn2() > assert("hello world")
+
+// Multiple chains
+"foo" > str.concat("bar") > str.concat("baz") > assert("foobarbaz")
+
+// Numeric chains
+5 > add(3) > mul(2) > assert(16)
+
+// Boolean chains
+10 > gt?(5) > assert(true)
+10 > gt?(5) > not() > assert(false)

@@ -1,0 +1,20 @@
+// Tests for factorial
+
+fn factorial(n int) {
+  (n, 1) > (num int, acc int) {
+    num > lte?(1) > return?(acc)
+    num > sub(1) > next_num
+    acc > mul(num) > next_acc
+    repeat(next_num, next_acc)
+  }(int) > result
+  return(result)
+}(int)
+
+0 > factorial() > assert(1)
+1 > factorial() > assert(1)
+2 > factorial() > assert(2)
+3 > factorial() > assert(6)
+4 > factorial() > assert(24)
+5 > factorial() > assert(120)
+6 > factorial() > assert(720)
+10 > factorial() > assert(3628800)

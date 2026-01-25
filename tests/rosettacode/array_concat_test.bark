@@ -1,0 +1,16 @@
+// Tests for array concatenation
+// Note: array.append_to appends the piped value as a single element to target array
+// So [1,2,3] > array.append_to([4,5,6]) results in [4,5,6,[1,2,3]]
+
+// array.append_to adds the piped value as last element
+[1, 2, 3] > array.append_to([4, 5, 6]) > len() > assert(4)
+[1, 2, 3] > array.append_to([4, 5, 6]) > get(0) > assert(4)
+[1, 2, 3] > array.append_to([4, 5, 6]) > get(3) > len() > assert(3)
+
+// array.push adds element to end of piped array
+[1, 2, 3] > array.push(4) > len() > assert(4)
+[1, 2, 3] > array.push(4) > get(3) > assert(4)
+
+// Empty array with push
+[] > array.push(1) > len() > assert(1)
+[] > array.push(1) > get(0) > assert(1)

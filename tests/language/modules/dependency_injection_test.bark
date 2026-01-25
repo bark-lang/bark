@@ -1,0 +1,98 @@
+// Tests for dependency injection pattern
+
+// Postgres "driver" - connection carries its own execute function
+fn postgres_connect(host string, port int) {
+  {} >
+    set("driver", "postgres") >
+    set("host", host) >
+    set("port", port) >
+    set("execute", postgres_execute) >
+    return()
+}(map)
+
+fn postgres_execute(conn map, sql string) {
+  conn > get("host") > host
+  "Executing on postgres@" > str.concat(host) > str.concat(": ") > str.concat(sql) > msg
+  {} > set("result", msg) > set("rows", []) > result
+  return({}, result)
+}(error, map)
+
+// MySQL "driver"
+fn mysql_connect(host string, port int) {
+  {} >
+    set("driver", "mysql") >
+    set("host", host) >
+    set("port", port) >
+    set("execute", mysql_execute) >
+    return()
+}(map)
+
+fn mysql_execute(conn map, sql string) {
+  conn > get("host") > host
+  "Executing on mysql@" > str.concat(host) > str.concat(": ") > str.concat(sql) > msg
+  {} > set("result", msg) > set("rows", []) > result
+  return({}, result)
+}(error, map)
+
+// Mock "driver" - for testing
+fn mock_connect() {
+  {} >
+    set("driver", "mock") >
+    set("host", "mock") >
+    set("queries", []) >
+    set("execute", mock_execute) >
+    return()
+}(map)
+
+fn mock_execute(conn map, sql string) {
+  {} > set("result", "mock result") > set("sql", sql) > set("rows", []) > result
+  return({}, result)
+}(error, map)
+
+// Common interface
+fn db_execute(conn map, sql string) {
+  conn > get("execute") > exec_fn
+  conn > exec_fn(sql) > return()
+}(error, map)
+
+// Business logic
+fn list_users(conn map) {
+  db_execute(conn, "SELECT * FROM users")
+}(error, map)
+
+fn find_user_by_id(conn map, id string) {
+  "SELECT * FROM users WHERE id = " > str.concat(id) > sql
+  db_execute(conn, sql)
+}(error, map)
+
+// Test postgres driver
+postgres_connect("prod.example.com", 5432) > (pg_conn map) {
+  pg_conn > get("driver") > assert("postgres")
+  pg_conn > get("host") > assert("prod.example.com")
+  pg_conn > get("port") > assert(5432)
+}()
+
+// Test mysql driver
+mysql_connect("staging.example.com", 3306) > (mysql_conn map) {
+  mysql_conn > get("driver") > assert("mysql")
+  mysql_conn > get("host") > assert("staging.example.com")
+}()
+
+// Test mock driver
+mock_connect() > (mock_conn map) {
+  mock_conn > get("driver") > assert("mock")
+}()
+
+// Test list_users with mock
+mock_connect() > list_users() > (err error, result map) {
+  err > absent?() > assert(true)
+  result > get("result") > assert("mock result")
+}()
+
+// Test find_user_by_id with mock
+mock_connect() > find_user_by_id("123") > (err error, result map) {
+  err > absent?() > assert(true)
+  result > get("sql") > (sql string) {
+    sql > includes?("123") > assert(true)
+  }()
+}()

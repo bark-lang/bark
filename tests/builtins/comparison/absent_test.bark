@@ -1,0 +1,21 @@
+// Tests for absent?() builtin
+
+// Empty string is absent
+"" > absent?() > assert(true)
+
+// Empty collections are absent
+[] > absent?() > assert(true)
+{} > absent?() > assert(true)
+
+// Values are not absent
+42 > absent?() > assert(false)
+"hello" > absent?() > assert(false)
+true > absent?() > assert(false)
+false > absent?() > assert(false)
+
+// Non-empty collections are not absent
+[1, 2] > absent?() > assert(false)
+{"a": 1} > absent?() > assert(false)
+
+// Whitespace string is not absent
+" " > absent?() > assert(false)

@@ -1,0 +1,35 @@
+// Tests for data structure iteration
+
+// Map get/set operations
+{"a": 1, "b": 2} > get("a") > assert(1)
+{"a": 1} > set("b", 2) > get("b") > assert(2)
+
+// Map size
+{"a": 1, "b": 2, "c": 3} > size() > assert(3)
+{} > size() > assert(0)
+
+// Array get/set operations
+[10, 20, 30] > get(0) > assert(10)
+[10, 20, 30] > get(2) > assert(30)
+[1, 2, 3] > set(1, 99) > get(1) > assert(99)
+
+// Array len
+[1, 2, 3, 4, 5] > len() > assert(5)
+[] > len() > assert(0)
+
+// head() and tail() for arrays
+[1, 2, 3] > head() > capture(arr, idx)
+idx > assert(0)
+
+[1, 2, 3] > tail() > capture(arr2, idx2)
+idx2 > assert(2)
+
+// Sum function using each()
+fn add_to_sum(arr array, idx int) {
+  arr > get(idx) > val
+}(int)
+
+// Using array.range and iteration
+array.range(1, 5) > len() > assert(5)
+array.range(1, 5) > get(0) > assert(1)
+array.range(1, 5) > get(4) > assert(5)

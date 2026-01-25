@@ -1,0 +1,35 @@
+// Tests for JSON module operations
+
+// json.stringify - convert to JSON string
+{"name": "Alice", "age": 30} > json.stringify() > (json_str string) {
+  json_str > includes?("name") > assert(true)
+  json_str > includes?("Alice") > assert(true)
+  json_str > includes?("age") > assert(true)
+  json_str > includes?("30") > assert(true)
+}()
+
+// json.stringify array
+[1, 2, 3, "four", "five"] > json.stringify() > (arr_json string) {
+  arr_json > includes?("1") > assert(true)
+  arr_json > includes?("four") > assert(true)
+}()
+
+// json.parse - parse JSON string back to map
+"{\"name\":\"Bob\",\"score\":100}" > json.parse() > (err error, data map) {
+  err > absent?() > assert(true)
+  data > get("name") > assert("Bob")
+  data > get("score") > assert(100)
+}()
+
+// Round-trip: stringify then parse
+{"test": "value", "num": 42} > json.stringify() > json.parse() > (err error, parsed map) {
+  err > absent?() > assert(true)
+  parsed > get("test") > assert("value")
+  parsed > get("num") > assert(42)
+}()
+
+// Nested structure
+{"users": [{"id": 1, "name": "Alice"}]} > json.stringify() > (nested_json string) {
+  nested_json > includes?("users") > assert(true)
+  nested_json > includes?("Alice") > assert(true)
+}()

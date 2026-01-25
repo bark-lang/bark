@@ -1,0 +1,27 @@
+// Tests for no explicit module declaration
+
+// When no module declaration exists, functions are added to the default '_' namespace
+// This test verifies that functions work correctly without module declarations
+
+// Define a function without a module declaration
+fn add_numbers(a int, b int) {
+  a > add(b) > return()
+}(int)
+
+fn multiply_numbers(a int, b int) {
+  a > mul(b) > return()
+}(int)
+
+fn greet(name string) {
+  "Hello, " > str.concat(name) > str.concat("!") > return()
+}(string)
+
+// Test that functions work in default namespace
+5 > add_numbers(3) > assert(8)
+10 > add_numbers(20) > assert(30)
+
+5 > multiply_numbers(4) > assert(20)
+3 > multiply_numbers(7) > assert(21)
+
+"World" > greet() > assert("Hello, World!")
+"Bark" > greet() > assert("Hello, Bark!")

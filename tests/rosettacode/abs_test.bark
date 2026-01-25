@@ -1,0 +1,17 @@
+// Tests for absolute value
+
+// Integer absolute values
+0 > math.abs() > assert(0)
+1 > math.abs() > assert(1)
+-1 > math.abs() > assert(1)
+42 > math.abs() > assert(42)
+-42 > math.abs() > assert(42)
+100 > math.abs() > assert(100)
+-100 > math.abs() > assert(100)
+
+// Float absolute values
+0.0 > math.abs() > assert(0.0)
+3.14 > math.abs() > assert(3.14)
+-3.14 > math.abs() > assert(3.14)
+2.718 > math.abs() > assert(2.718)
+-2.718 > math.abs() > assert(2.718)

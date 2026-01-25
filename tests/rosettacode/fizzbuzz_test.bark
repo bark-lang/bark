@@ -1,0 +1,20 @@
+// Tests for fizzbuzz
+
+fn fizzbuzz_label(i int) {
+  i > math.mod(15) > eq?(0) > return?("FizzBuzz")
+  i > math.mod(3) > eq?(0) > return?("Fizz")
+  i > math.mod(5) > eq?(0) > return?("Buzz")
+  i > to_string() > result
+  return(result)
+}(string)
+
+1 > fizzbuzz_label() > assert("1")
+2 > fizzbuzz_label() > assert("2")
+3 > fizzbuzz_label() > assert("Fizz")
+4 > fizzbuzz_label() > assert("4")
+5 > fizzbuzz_label() > assert("Buzz")
+6 > fizzbuzz_label() > assert("Fizz")
+9 > fizzbuzz_label() > assert("Fizz")
+10 > fizzbuzz_label() > assert("Buzz")
+15 > fizzbuzz_label() > assert("FizzBuzz")
+30 > fizzbuzz_label() > assert("FizzBuzz")

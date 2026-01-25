@@ -1,0 +1,57 @@
+// Tests for 100 doors problem
+// After 100 passes, only perfect square doors remain open
+
+fn init_doors() {
+  ([], 1) > (doors array, i int) {
+    i > gt?(100) > return?(doors)
+    doors > array.push(false) > new_doors
+    i > add(1) > next
+    repeat(new_doors, next)
+  }(array) > result
+  return(result)
+}(array)
+
+fn toggle_door(doors array, idx int) {
+  doors > get(idx) > current
+  current > not() > toggled
+  doors > set(idx, toggled) > result
+  return(result)
+}(array)
+
+fn run_pass(doors array, k int) {
+  (doors, k) > (d array, idx int) {
+    idx > gt?(100) > return?(d)
+    idx > sub(1) > arr_idx
+    d > toggle_door(arr_idx) > new_doors
+    idx > add(k) > next_idx
+    repeat(new_doors, next_idx)
+  }(array) > result
+  return(result)
+}(array)
+
+fn run_all_passes(doors array) {
+  (doors, 1) > (d array, pass int) {
+    pass > gt?(100) > return?(d)
+    d > run_pass(pass) > new_doors
+    pass > add(1) > next_pass
+    repeat(new_doors, next_pass)
+  }(array) > result
+  return(result)
+}(array)
+
+// Run the simulation
+init_doors() > run_all_passes() > final_doors
+
+// Perfect square doors should be open (0-indexed)
+final_doors > get(0) > assert(true)   // Door 1
+final_doors > get(3) > assert(true)   // Door 4
+final_doors > get(8) > assert(true)   // Door 9
+final_doors > get(15) > assert(true)  // Door 16
+final_doors > get(24) > assert(true)  // Door 25
+final_doors > get(99) > assert(true)  // Door 100
+
+// Non-perfect square doors should be closed
+final_doors > get(1) > assert(false)  // Door 2
+final_doors > get(2) > assert(false)  // Door 3
+final_doors > get(4) > assert(false)  // Door 5
+final_doors > get(9) > assert(false)  // Door 10

@@ -1,0 +1,40 @@
+// Tests for math module trigonometry operations
+
+// math.pi - pi constant
+math.pi() > gt?(3.14) > assert(true)
+math.pi() > lt?(3.15) > assert(true)
+
+// math.e - e constant
+math.e() > gt?(2.71) > assert(true)
+math.e() > lt?(2.72) > assert(true)
+
+// math.sin - sine (0 radians = 0)
+0 > math.sin() > assert(0.0)
+
+// math.cos - cosine (0 radians = 1)
+0 > math.cos() > assert(1.0)
+
+// math.tan - tangent (0 radians = 0)
+0 > math.tan() > assert(0.0)
+
+// math.asin - arcsine (0 = 0 radians)
+0 > math.asin() > assert(0.0)
+
+// math.acos - arccosine (1 = 0 radians)
+1 > math.acos() > assert(0.0)
+
+// math.atan - arctangent (0 = 0 radians)
+0 > math.atan() > assert(0.0)
+
+// Verify Pythagorean identity: sin^2(x) + cos^2(x) = 1
+fn verify_pythagorean_identity(radians float) {
+  radians > math.sin() > math.pow(2) > (sin_sq float) {
+    radians > math.cos() > math.pow(2) > (cos_sq float) {
+      sin_sq > add(cos_sq) > return()
+    }()
+  }()
+}(float)
+
+0.5 > verify_pythagorean_identity() > math.round(6) > assert(1.0)
+1.0 > verify_pythagorean_identity() > math.round(6) > assert(1.0)
+2.0 > verify_pythagorean_identity() > math.round(6) > assert(1.0)

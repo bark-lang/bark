@@ -1,0 +1,7 @@
+// Error assertion tests
+
+// Test that err() creates errors with correct message
+err("test error") > assert_error("test error")
+
+// Test error with context
+err("validation failed", {"field": "email"}) > assert_error("validation failed")

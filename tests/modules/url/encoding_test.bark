@@ -1,0 +1,39 @@
+// Tests for URL module operations
+
+// url.encode - encode strings for use in URLs
+"hello world" > url.encode() > (encoded string) {
+  encoded > includes?("+") > assert(true)
+}()
+
+"user@example.com" > url.encode() > (encoded string) {
+  encoded > includes?("%40") > assert(true)
+}()
+
+// url.decode - decode URL-encoded strings
+"hello+world" > url.decode() > (err error, decoded string) {
+  err > absent?() > assert(true)
+  decoded > assert("hello world")
+}()
+
+"user%40example.com" > url.decode() > (err error, decoded string) {
+  err > absent?() > assert(true)
+  decoded > assert("user@example.com")
+}()
+
+// url.parse - parse URL into components
+"https://example.com:8080/path/to/resource?query=value#section" > url.parse() > (err error, parts map) {
+  err > absent?() > assert(true)
+  parts > get("scheme") > assert("https")
+  parts > get("host") > assert("example.com:8080")
+  parts > get("path") > assert("/path/to/resource")
+  parts > get("query") > assert("query=value")
+  parts > get("fragment") > assert("section")
+}()
+
+// Simpler URL parse
+"http://api.example.com/v1/users" > url.parse() > (err error, parts map) {
+  err > absent?() > assert(true)
+  parts > get("scheme") > assert("http")
+  parts > get("host") > assert("api.example.com")
+  parts > get("path") > assert("/v1/users")
+}()

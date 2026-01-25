@@ -1,0 +1,31 @@
+// Tests for tuple types
+
+// Basic tuple destructuring
+(10, 5) > (x int, y int) {
+  x > add(y) > return()
+}(int) > assert(15)
+
+// Three-element tuple
+(1, 2, 3) > (a int, b int, c int) {
+  a > mul(b) > add(c) > return()
+}(int) > assert(5)
+
+// Generic tuple
+fn first_of_pair(pair (t, t)) {
+  pair > (first t, _ t) {
+    return(first)
+  }(t) > return()
+}(t)
+
+(100, 200) > first_of_pair() > assert(100)
+("hello", "world") > first_of_pair() > assert("hello")
+
+// RGB to string
+fn rgb_to_string(color (int, int, int)) {
+  color > (r int, g int, b int) {
+    str.format("rgb({0}, {1}, {2})", r, g, b) > return()
+  }(string) > return()
+}(string)
+
+(255, 128, 0) > rgb_to_string() > assert("rgb(255, 128, 0)")
+(0, 0, 0) > rgb_to_string() > assert("rgb(0, 0, 0)")

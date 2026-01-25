@@ -1,0 +1,58 @@
+// Tests for parallel processing patterns
+
+// Basic parallel processing
+[1, 2, 3, 4, 5] > parallel((x int) {
+  x > add(10) > result
+  return({}, result)
+}(map, int)) > (result_tuple array) {
+  result_tuple > get(0) > (errors array) {
+    errors > all_absent?() > assert(true)
+  }()
+  result_tuple > get(1) > (results array) {
+    results > len() > assert(5)
+    results > get(0) > assert(11)
+    results > get(4) > assert(15)
+  }()
+}()
+
+// Parallel with some errors
+[1, 2, 3, 4, 5] > parallel((x int) {
+  x > math.even?() > is_even
+  is_even > (cond bool) {
+    err("Failed on even") > e
+    cond > return?(e, 0)
+    return({}, x)
+  }(map, int)
+}(map, int)) > (result_tuple array) {
+  result_tuple > get(0) > (errors array) {
+    errors > all_absent?() > assert(false)
+  }()
+}()
+
+// Parallel limited (worker pool)
+parallel_limited(2, [1, 2, 3, 4, 5], (x int) {
+  x > mul(2) > result
+  return({}, result)
+}(map, int)) > (result_tuple array) {
+  result_tuple > get(1) > (results array) {
+    results > len() > assert(5)
+    results > get(0) > assert(2)
+    results > get(4) > assert(10)
+  }()
+}()
+
+// Parallel strict (fail-fast) - all succeed
+[1, 2, 3] > parallel_strict((x int) {
+  x > mul(2) > result
+  return({}, result)
+}(map, int)) > (result_tuple array) {
+  result_tuple > get(0) > (err error) {
+    err > absent?() > assert(true)
+  }()
+  result_tuple > get(1) > (results array) {
+    results > len() > assert(3)
+    results > get(0) > assert(2)
+    results > get(1) > assert(4)
+    results > get(2) > assert(6)
+  }()
+}()

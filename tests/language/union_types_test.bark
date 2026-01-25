@@ -1,0 +1,34 @@
+// Tests for union types
+
+// Basic union type
+fn processValue(x int | string) {
+  x > to_string() > return()
+}(string)
+
+42 > processValue() > assert("42")
+"hello" > processValue() > assert("hello")
+
+// Union in array elements
+fn processArray(items array[int | string]) {
+  items > len() > return()
+}(int)
+
+[1, "two", 3, "four"] > processArray() > assert(4)
+
+// Union in map values
+fn processMap(data map[string, int | string | bool]) {
+  data > size() > return()
+}(int)
+
+{"count": 42, "name": "test", "active": true} > processMap() > assert(3)
+
+// Format value with union
+fn formatValue(v int | string | bool) {
+  v > to_string() > (s string) {
+    "[" > str.concat(s) > str.concat("]") > return()
+  }(string)
+}(string)
+
+42 > formatValue() > assert("[42]")
+"test" > formatValue() > assert("[test]")
+true > formatValue() > assert("[true]")

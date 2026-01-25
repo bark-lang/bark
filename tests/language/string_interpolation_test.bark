@@ -1,0 +1,10 @@
+// Tests for string interpolation
+
+// Variable in string
+"Alice" > name
+"Hello {name}!" > str.format() > result
+// Note: interpolation happens at println, str.format just uses placeholders
+// Testing with str.format positional style
+str.format("Hello {0}!", "world") > assert("Hello world!")
+str.format("{0} is {1}", "Alice", 30) > assert("Alice is 30")
+str.format("{0} + {1} = {2}", 1, 2, 3) > assert("1 + 2 = 3")

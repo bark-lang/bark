@@ -1,0 +1,51 @@
+// Tests for anagram detection
+
+fn char_counts(s string) {
+  s > str.lower() > str.replace(" ", "") > cleaned
+  cleaned > str.split("") > chars
+  chars > len() > length
+  ({}, 0) > (counts map, idx int) {
+    idx > gte?(length) > return?(counts)
+    chars > get(idx) > c
+    counts > map.get_or(c, 0) > current
+    current > add(1) > new_count
+    counts > set(c, new_count) > new_counts
+    idx > add(1) > next_idx
+    repeat(new_counts, next_idx)
+  }(map) > result
+  return(result)
+}(map)
+
+fn maps_equal(a map, b map) {
+  a > size() > len_a
+  b > size() > len_b
+  len_a > ne?(len_b) > return?(false)
+  a > map.keys() > a_keys
+  a_keys > len() > num_keys
+  (0) > (idx int) {
+    idx > gte?(num_keys) > return?(true)
+    a_keys > get(idx) > key
+    a > get(key) > a_val
+    b > map.get_or(key, -1) > b_val
+    a_val > ne?(b_val) > return?(false)
+    idx > add(1) > next
+    repeat(next)
+  }(bool) > result
+  return(result)
+}(bool)
+
+fn is_anagram(a string, b string) {
+  a > char_counts() > counts_a
+  b > char_counts() > counts_b
+  counts_a > maps_equal(counts_b) > result
+  return(result)
+}(bool)
+
+"listen" > is_anagram("silent") > assert(true)
+"evil" > is_anagram("vile") > assert(true)
+"dormitory" > is_anagram("dirty room") > assert(true)
+"hello" > is_anagram("world") > assert(false)
+"abc" > is_anagram("cab") > assert(true)
+"abc" > is_anagram("abd") > assert(false)
+"" > is_anagram("") > assert(true)
+"a" > is_anagram("a") > assert(true)

@@ -1,0 +1,15 @@
+// Basic assertion tests
+
+// Integer equality
+1 > assert(1)
+2 > add(2) > assert(4)
+
+// String equality
+"hello" > assert("hello")
+
+// Boolean equality
+true > assert(true)
+false > assert(false)
+
+// Computed values
+10 > sub(3) > assert(7)

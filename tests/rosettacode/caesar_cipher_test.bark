@@ -1,0 +1,78 @@
+// Tests for Caesar cipher
+
+fn find_char_index(alpha string, c string) {
+  alpha > str.split("") > chars
+  chars > len() > length
+  (0) > (idx int) {
+    idx > gte?(length) > return?(-1)
+    chars > get(idx) > ch
+    ch > eq?(c) > return?(idx)
+    idx > add(1) > next
+    repeat(next)
+  }(int) > result
+  return(result)
+}(int)
+
+fn get_char_at(alpha string, pos int) {
+  alpha > str.split("") > chars
+  chars > get(pos) > result
+  return(result)
+}(string)
+
+fn shift_char(c string, n int) {
+  c > eq?("") > return?("")
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ" > upper_alpha
+  "abcdefghijklmnopqrstuvwxyz" > lower_alpha
+  upper_alpha > find_char_index(c) > upper_pos
+  upper_pos > gte?(0) > (is_upper bool) {
+    is_upper > eq?(false) > return?()
+    upper_pos > add(n) > add(26) > math.mod(26) > new_pos
+    upper_alpha > get_char_at(new_pos) > shifted
+    return(shifted)
+  }(string) > upper_result
+  upper_result > present?() > return?(upper_result)
+  lower_alpha > find_char_index(c) > lower_pos
+  lower_pos > gte?(0) > (is_lower bool) {
+    is_lower > eq?(false) > return?()
+    lower_pos > add(n) > add(26) > math.mod(26) > new_pos
+    lower_alpha > get_char_at(new_pos) > shifted
+    return(shifted)
+  }(string) > lower_result
+  lower_result > present?() > return?(lower_result)
+  return(c)
+}(string)
+
+fn caesar_encrypt(text string, shift int) {
+  text > str.split("") > chars
+  chars > len() > length
+  ("", 0) > (result string, idx int) {
+    idx > gte?(length) > return?(result)
+    chars > get(idx) > c
+    c > shift_char(shift) > shifted
+    result > str.concat(shifted) > new_result
+    idx > add(1) > next_idx
+    repeat(new_result, next_idx)
+  }(string) > encrypted
+  return(encrypted)
+}(string)
+
+fn caesar_decrypt(text string, shift int) {
+  0 > sub(shift) > neg_shift
+  text > caesar_encrypt(neg_shift) > result
+  return(result)
+}(string)
+
+// ROT13 is self-inverse
+"ABC" > caesar_encrypt(13) > assert("NOP")
+"NOP" > caesar_decrypt(13) > assert("ABC")
+
+// Shift 3
+"HELLO" > caesar_encrypt(3) > assert("KHOOR")
+"KHOOR" > caesar_decrypt(3) > assert("HELLO")
+
+// Lowercase
+"abc" > caesar_encrypt(1) > assert("bcd")
+
+// Non-letters unchanged
+"A B" > caesar_encrypt(1) > assert("B C")
+"123" > caesar_encrypt(5) > assert("123")

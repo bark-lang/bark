@@ -1,0 +1,48 @@
+// Tests for repeat() - anonymous function recursion
+
+// Factorial using repeat
+fn factorial(n int) {
+  (n, 1) > (num int, acc int) {
+    num > lte?(1) > return?(acc)
+    num > sub(1) > next_num
+    acc > mul(num) > next_acc
+    repeat(next_num, next_acc)
+  }(int) > result
+  return(result)
+}(int)
+
+factorial(5) > assert(120)
+factorial(1) > assert(1)
+factorial(0) > assert(1)
+
+// Sum from 1 to n using repeat
+fn sum_to_n(n int) {
+  (1, 0) > (current int, total int) {
+    total > add(current) > new_total
+    current > add(1) > next
+    next > gt?(n) > return?(new_total)
+    repeat(next, new_total)
+  }(int) > result
+  return(result)
+}(int)
+
+sum_to_n(10) > assert(55)
+sum_to_n(5) > assert(15)
+sum_to_n(1) > assert(1)
+
+// Sum array using repeat
+fn sum_array(arr array) {
+  (arr, 0, 0) > (items array, idx int, total int) {
+    items > len() > arr_len
+    idx > gte?(arr_len) > return?(total)
+    items > get(idx) > value
+    total > add(value) > new_total
+    idx > add(1) > next_idx
+    repeat(items, next_idx, new_total)
+  }(int) > result
+  return(result)
+}(int)
+
+[1, 2, 3, 4, 5] > sum_array() > assert(15)
+[10, 20, 30] > sum_array() > assert(60)
+[] > sum_array() > assert(0)

@@ -1,0 +1,51 @@
+// Tests for env module operations
+
+// env.get - get common environment variables
+env.get("HOME") > (home string) {
+  home > len() > gt?(0) > assert(true)
+}()
+
+env.get("USER") > (user string) {
+  user > len() > gt?(0) > assert(true)
+}()
+
+// env.get_or - get with default if not set
+env.get_or("NONEXISTENT_VAR_XYZ_TEST", "default_value") > assert("default_value")
+
+// env.present? - check if variable exists
+env.present?("HOME") > assert(true)
+env.present?("NONEXISTENT_VAR_XYZ_TEST") > assert(false)
+
+// env.absent? - check if variable is absent
+env.absent?("NONEXISTENT_VAR_XYZ_TEST") > assert(true)
+env.absent?("USER") > assert(false)
+
+// env.all - get all environment variables
+env.all() > (all_vars map) {
+  all_vars > map.keys() > (keys array) {
+    keys > len() > gt?(0) > assert(true)
+  }()
+}()
+
+// Build configuration from environment
+fn get_config() {
+  env.get_or("APP_HOST", "localhost") > (host string) {
+    env.get_or("APP_PORT", "8080") > (port string) {
+      {"host": host, "port": port} > return()
+    }()
+  }()
+}(map)
+
+get_config() > (config map) {
+  config > get("host") > assert("localhost")
+  config > get("port") > assert("8080")
+}()
+
+// Check for environment type
+fn get_environment() {
+  env.get_or("BARK_ENV", "development") > return()
+}(string)
+
+get_environment() > (bark_env string) {
+  bark_env > len() > gt?(0) > assert(true)
+}()

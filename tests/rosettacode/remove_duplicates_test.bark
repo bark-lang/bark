@@ -1,0 +1,12 @@
+// Tests for removing duplicates
+
+[1, 2, 3, 1, 2, 3] > array.dedupe() > len() > assert(3)
+[1, 1, 1, 1] > array.dedupe() > len() > assert(1)
+[1, 2, 3, 4, 5] > array.dedupe() > len() > assert(5)
+[] > array.dedupe() > len() > assert(0)
+[42] > array.dedupe() > len() > assert(1)
+
+// Verify values
+[1, 2, 3, 1, 2, 3] > array.dedupe() > get(0) > assert(1)
+[1, 2, 3, 1, 2, 3] > array.dedupe() > get(1) > assert(2)
+[1, 2, 3, 1, 2, 3] > array.dedupe() > get(2) > assert(3)

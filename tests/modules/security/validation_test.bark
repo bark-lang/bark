@@ -1,0 +1,45 @@
+// Tests for security module operations
+
+// security.sql_escape - SQL injection prevention
+"Robert'; DROP TABLE users;--" > security.sql_escape() > (safe_sql string) {
+  safe_sql > includes?("''") > assert(true)
+}()
+
+// security.safe_command? - command safety check
+"ls -la" > security.safe_command?() > assert(true)
+"rm -rf /" > security.safe_command?() > assert(false)
+"echo hello; rm -rf /" > security.safe_command?() > assert(false)
+
+// security.shell_escape - escape shell metacharacters
+"file; rm -rf /" > security.shell_escape() > (escaped string) {
+  escaped > len() > gt?(0) > assert(true)
+}()
+
+// security.email? - email validation
+"user@example.com" > security.email?() > assert(true)
+"not-an-email" > security.email?() > assert(false)
+
+// security.url? - URL validation
+"https://example.com/path" > security.url?() > assert(true)
+"javascript:alert('xss')" > security.url?() > assert(false)
+
+// security.html_escape - XSS prevention
+"<script>alert('XSS')</script>" > security.html_escape() > (escaped string) {
+  escaped > includes?("&lt;") > assert(true)
+  escaped > includes?("&gt;") > assert(true)
+}()
+
+// security.strip_tags - remove HTML tags
+"<img src=x onerror='alert(1)'>" > security.strip_tags() > (stripped string) {
+  stripped > includes?("<") > assert(false)
+}()
+
+// security.generate_nonce - generate nonce for CSP
+security.generate_nonce() > (nonce string) {
+  nonce > len() > gt?(0) > assert(true)
+}()
+
+// security.hash_key - rate limiting helper (returns integer hash)
+"192.168.1.100" > security.hash_key() > (hash int) {
+  hash > ne?(0) > assert(true)
+}()

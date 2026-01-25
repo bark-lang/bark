@@ -1,0 +1,25 @@
+// Tests for mul() builtin
+
+// Basic integer multiplication
+5 > mul(3) > assert(15)
+
+// Multiplying by one
+7 > mul(1) > assert(7)
+
+// Multiplying by negative numbers
+4 > mul(-2) > assert(-8)
+
+// Chained multiplications
+2 > mul(3) > mul(4) > assert(24)
+
+// Float multiplication
+2.5 > mul(4.0) > assert(10.0)
+
+// Multiplying by zero
+100 > mul(0) > assert(0)
+
+// Negative times negative
+-3 > mul(-4) > assert(12)
+
+// Large numbers
+1000 > mul(1000) > assert(1000000)

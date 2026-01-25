@@ -1,0 +1,50 @@
+// Tests for regex module operations
+
+// regex.match? - basic pattern matching
+"hello world" > regex.match?("world") > assert(true)
+"hello world" > regex.match?("foo") > assert(false)
+
+// Case-sensitive matching
+"Hello World" > regex.match?("hello") > assert(false)
+"Hello World" > regex.match?("Hello") > assert(true)
+
+// Match any character with dot
+"cat" > regex.match?("c.t") > assert(true)
+"cut" > regex.match?("c.t") > assert(true)
+"ct" > regex.match?("c.t") > assert(false)
+
+// Match digits
+"abc123def" > regex.match?("[0-9]") > assert(true)
+"abcdef" > regex.match?("[0-9]") > assert(false)
+
+// Quantifiers - one or more
+"goooal" > regex.match?("go+al") > assert(true)
+"gal" > regex.match?("go+al") > assert(false)
+
+// Quantifiers - zero or more
+"goooal" > regex.match?("go*al") > assert(true)
+"gal" > regex.match?("go*al") > assert(true)
+
+// Anchors - start of string
+"hello world" > regex.match?("^hello") > assert(true)
+"say hello" > regex.match?("^hello") > assert(false)
+
+// Anchors - end of string
+"hello world" > regex.match?("world$") > assert(true)
+"world hello" > regex.match?("world$") > assert(false)
+
+// regex.find - find first match
+"The year 2024 was great" > regex.find("[0-9]+") > assert("2024")
+"no numbers here" > regex.find("[0-9]+") > assert("")
+
+// regex.find_all - find all matches
+"a1b2c3d4e5" > regex.find_all("[0-9]") > len() > assert(5)
+"hello world foo bar" > regex.find_all("\\w+") > len() > assert(4)
+
+// regex.replace - replace all occurrences
+"hello world" > regex.replace("o", "0") > assert("hell0 w0rld")
+"abc123def456" > regex.replace("[0-9]", "X") > assert("abcXXXdefXXX")
+
+// regex.split - split by pattern
+"hello   world  foo" > regex.split("\\s+") > len() > assert(3)
+"a, b,c,  d" > regex.split(",\\s*") > len() > assert(4)

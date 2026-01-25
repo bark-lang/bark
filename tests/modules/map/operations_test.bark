@@ -1,0 +1,33 @@
+// Tests for map module operations
+
+// map.get_or - get value with default
+{"name": "Alice", "age": 30} > map.get_or("name", "Unknown") > assert("Alice")
+{"name": "Alice", "age": 30} > map.get_or("email", "no@email.com") > assert("no@email.com")
+
+// map.del - delete keys
+{"a": 1, "b": 2, "c": 3} > map.del("b") > size() > assert(2)
+{"a": 1, "b": 2, "c": 3} > map.del("b") > map.key_absent?("b") > assert(true)
+
+// map.del multiple keys
+{"a": 1, "b": 2, "c": 3, "d": 4} > map.del("b", "d") > size() > assert(2)
+
+// map.keys - get all keys
+{"name": "Alice", "age": 30, "city": "NYC"} > map.keys() > len() > assert(3)
+
+// map.values - get all values
+{"x": 10, "y": 20, "z": 30} > map.values() > len() > assert(3)
+
+// map.entries - get key-value pairs as array
+{"a": 1, "b": 2, "c": 3} > map.entries() > len() > assert(3)
+
+// map.key_present? - check if key exists
+{"name": "Alice", "age": 30} > map.key_present?("name") > assert(true)
+{"name": "Alice", "age": 30} > map.key_present?("email") > assert(false)
+
+// map.key_absent? - check if key is absent
+{"name": "Alice", "age": 30} > map.key_absent?("email") > assert(true)
+{"name": "Alice", "age": 30} > map.key_absent?("name") > assert(false)
+
+// map.merge - merge two maps
+{"a": 1, "b": 2} > map.merge({"c": 3, "d": 4}) > size() > assert(4)
+{"a": 1, "b": 2} > map.merge({"b": 20, "c": 3}) > get("b") > assert(20)

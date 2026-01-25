@@ -1,0 +1,21 @@
+// Tests for present?() builtin
+
+// Values are present
+42 > present?() > assert(true)
+"hello" > present?() > assert(true)
+true > present?() > assert(true)
+false > present?() > assert(true)
+
+// Empty string is not present
+"" > present?() > assert(false)
+
+// Empty collections are not present
+[] > present?() > assert(false)
+{} > present?() > assert(false)
+
+// Non-empty collections are present
+[1, 2, 3] > present?() > assert(true)
+{"key": "value"} > present?() > assert(true)
+
+// Whitespace string is present
+" " > present?() > assert(true)

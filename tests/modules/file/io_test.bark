@@ -1,0 +1,47 @@
+// Tests for file module I/O operations
+// Uses /tmp directory to avoid affecting the project
+
+// Write and read a file
+"/tmp/bark_test_io.txt" > file.write("Hello, Bark!\nTest content.\n") > (write_err map) {
+  write_err > absent?() > assert(true)
+}()
+
+// Check file exists
+"/tmp/bark_test_io.txt" > file.exists?() > assert(true)
+
+// Check non-existent file
+"/tmp/bark_nonexistent_xyz.txt" > file.exists?() > assert(false)
+"/tmp/bark_nonexistent_xyz.txt" > file.absent?() > assert(true)
+
+// Read file contents
+"/tmp/bark_test_io.txt" > file.read() > (err error, content string) {
+  err > absent?() > assert(true)
+  content > includes?("Hello, Bark!") > assert(true)
+  content > includes?("Test content.") > assert(true)
+}()
+
+// Append to file
+"/tmp/bark_test_io.txt" > file.append("Appended line\n") > (append_err map) {
+  append_err > absent?() > assert(true)
+}()
+
+// Verify append
+"/tmp/bark_test_io.txt" > file.read() > (err error, content string) {
+  err > absent?() > assert(true)
+  content > includes?("Appended line") > assert(true)
+}()
+
+// Get file info
+"/tmp/bark_test_io.txt" > file.info() > (info_err error, info map) {
+  info_err > absent?() > assert(true)
+  info > get("size") > gt?(0) > assert(true)
+  info > get("is_dir") > assert(false)
+}()
+
+// Delete file
+"/tmp/bark_test_io.txt" > file.delete() > (del_err map) {
+  del_err > absent?() > assert(true)
+}()
+
+// Verify deletion
+"/tmp/bark_test_io.txt" > file.absent?() > assert(true)

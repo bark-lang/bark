@@ -1,0 +1,19 @@
+// Tests for lte?() builtin
+
+// Integer comparisons
+5 > lte?(10) > assert(true)
+10 > lte?(5) > assert(false)
+5 > lte?(5) > assert(true)
+
+// Float comparisons
+2.5 > lte?(3.0) > assert(true)
+3.14 > lte?(3.14) > assert(true)
+3.5 > lte?(3.0) > assert(false)
+
+// Negative numbers
+-5 > lte?(-1) > assert(true)
+-5 > lte?(-5) > assert(true)
+
+// Zero comparisons
+0 > lte?(0) > assert(true)
+-1 > lte?(0) > assert(true)

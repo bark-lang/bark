@@ -1,0 +1,31 @@
+// Tests for basic functions
+
+// Function that returns a string
+fn name() {
+  return("bark")
+}(string)
+
+name() > assert("bark")
+
+// Function with parameter that returns bool
+fn positive?(num int) {
+  num > gt?(0) > return()
+}(bool)
+
+5 > positive?() > assert(true)
+-3 > positive?() > assert(false)
+0 > positive?() > assert(false)
+
+// Constants as functions
+fn pi() {
+  return(3.14159)
+}(float)
+
+pi() > assert(3.14159)
+
+fn weekdays() {
+  return(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"])
+}(array)
+
+weekdays() > len() > assert(7)
+weekdays() > get(0) > assert("monday")

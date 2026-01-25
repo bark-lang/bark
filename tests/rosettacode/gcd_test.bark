@@ -1,0 +1,16 @@
+// Tests for greatest common divisor
+
+fn gcd(a int, b int) {
+  b > eq?(0) > return?(a)
+  a > math.mod(b) > remainder
+  repeat(b, remainder)
+}(int)
+
+12 > gcd(8) > assert(4)
+54 > gcd(24) > assert(6)
+48 > gcd(18) > assert(6)
+100 > gcd(35) > assert(5)
+17 > gcd(13) > assert(1)
+1071 > gcd(462) > assert(21)
+0 > gcd(5) > assert(5)
+5 > gcd(0) > assert(5)

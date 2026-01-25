@@ -1,0 +1,11 @@
+// Tests for comments
+
+// This is a comment
+1 > add(1) > assert(2)
+
+//spaces aren't required
+2 > add(2) > assert(4)
+
+// Comments don't affect code execution
+// 1 > add(100) > assert(101)  // This line is a comment, not executed
+1 > add(1) > assert(2)

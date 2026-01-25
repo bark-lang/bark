@@ -1,0 +1,27 @@
+// Tests for even/odd detection
+
+// even tests
+0 > math.even?() > assert(true)
+2 > math.even?() > assert(true)
+4 > math.even?() > assert(true)
+100 > math.even?() > assert(true)
+-2 > math.even?() > assert(true)
+-100 > math.even?() > assert(true)
+
+1 > math.even?() > assert(false)
+3 > math.even?() > assert(false)
+101 > math.even?() > assert(false)
+-1 > math.even?() > assert(false)
+-99 > math.even?() > assert(false)
+
+// odd tests
+1 > math.odd?() > assert(true)
+3 > math.odd?() > assert(true)
+101 > math.odd?() > assert(true)
+-1 > math.odd?() > assert(true)
+-99 > math.odd?() > assert(true)
+
+0 > math.odd?() > assert(false)
+2 > math.odd?() > assert(false)
+100 > math.odd?() > assert(false)
+-2 > math.odd?() > assert(false)

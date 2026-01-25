@@ -1,0 +1,27 @@
+// Tests for leap year
+
+fn is_leap_year(year int) {
+  year > math.mod(400) > eq?(0) > return?(true)
+  year > math.mod(100) > eq?(0) > return?(false)
+  year > math.mod(4) > eq?(0) > return?(true)
+  return(false)
+}(bool)
+
+// Divisible by 400 - leap years
+2000 > is_leap_year() > assert(true)
+1600 > is_leap_year() > assert(true)
+
+// Divisible by 100 but not 400 - not leap years
+1900 > is_leap_year() > assert(false)
+2100 > is_leap_year() > assert(false)
+1700 > is_leap_year() > assert(false)
+
+// Divisible by 4 but not 100 - leap years
+2020 > is_leap_year() > assert(true)
+2024 > is_leap_year() > assert(true)
+2016 > is_leap_year() > assert(true)
+
+// Not divisible by 4 - not leap years
+2021 > is_leap_year() > assert(false)
+2019 > is_leap_year() > assert(false)
+2023 > is_leap_year() > assert(false)

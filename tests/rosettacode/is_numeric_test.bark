@@ -1,0 +1,32 @@
+// Tests for str.numeric? builtin
+
+// Valid integers
+"123" > str.numeric?() > assert(true)
+"0" > str.numeric?() > assert(true)
+"-456" > str.numeric?() > assert(true)
+"42" > str.numeric?() > assert(true)
+"007" > str.numeric?() > assert(true)
+"-0" > str.numeric?() > assert(true)
+
+// Valid floats
+"3.14" > str.numeric?() > assert(true)
+"-2.718" > str.numeric?() > assert(true)
+"0.5" > str.numeric?() > assert(true)
+"123." > str.numeric?() > assert(true)
+
+// Scientific notation
+"1e10" > str.numeric?() > assert(true)
+"1E10" > str.numeric?() > assert(true)
+"-1.5e-3" > str.numeric?() > assert(true)
+
+// Whitespace handling (trimmed)
+"  42  " > str.numeric?() > assert(true)
+
+// Invalid inputs
+"" > str.numeric?() > assert(false)
+"hello" > str.numeric?() > assert(false)
+"12.34.56" > str.numeric?() > assert(false)
+"-" > str.numeric?() > assert(false)
+"1a2b" > str.numeric?() > assert(false)
+" " > str.numeric?() > assert(false)
+"12 34" > str.numeric?() > assert(false)

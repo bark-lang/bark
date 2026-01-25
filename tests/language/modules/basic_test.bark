@@ -1,0 +1,53 @@
+// Tests for basic module patterns
+
+// Geometry functions
+fn area_circle(radius float) {
+  radius > mul(radius) > mul(3.14159) > return()
+}(float)
+
+fn area_rectangle(width float, height float) {
+  width > mul(height) > return()
+}(float)
+
+fn validate_positive(value float) {
+  value > lt?(0.0) > return?(false)
+  return(true)
+}(bool)
+
+// Strings functions
+fn uppercase(s string) {
+  s > str.upper() > return()
+}(string)
+
+fn lowercase(s string) {
+  s > str.lower() > return()
+}(string)
+
+fn title_case(s string) {
+  s > return()
+}(string)
+
+// Test geometry functions
+5.0 > area_circle() > (area float) {
+  area > gt?(78.5) > assert(true)
+  area > lt?(78.6) > assert(true)
+}()
+
+10.0 > area_rectangle(20.0) > assert(200.0)
+5.0 > area_rectangle(5.0) > assert(25.0)
+
+// Test strings functions
+"hello world" > uppercase() > assert("HELLO WORLD")
+"BARK LANGUAGE" > lowercase() > assert("bark language")
+"hello bark language" > title_case() > assert("hello bark language")
+
+// Test main function pattern
+fn main() {
+  5.0 > area_circle() > area
+  area > gt?(0.0) > return?(area)
+  return(0.0)
+}(float)
+
+main() > (result float) {
+  result > gt?(78.0) > assert(true)
+}()
