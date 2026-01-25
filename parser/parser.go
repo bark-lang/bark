@@ -3,11 +3,44 @@ package parser
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"gitlab.com/bark-lang/bark/ast"
 	"gitlab.com/bark-lang/bark/lexer"
 	"gitlab.com/bark-lang/bark/token"
 )
+
+// ParseError represents a parser error with source location
+type ParseError struct {
+	Message    string
+	File       string
+	Line       int
+	Column     int
+	SourceLine string
+}
+
+// FormatError returns a formatted error message with source location
+func (e *ParseError) FormatError() string {
+	var sb strings.Builder
+
+	// Header: file:line:column: error: message
+	if e.File != "" {
+		fmt.Fprintf(&sb, "%s:%d:%d: error: %s\n", e.File, e.Line, e.Column, e.Message)
+	} else {
+		fmt.Fprintf(&sb, "%d:%d: error: %s\n", e.Line, e.Column, e.Message)
+	}
+
+	// Source line with pointer
+	if e.SourceLine != "" {
+		fmt.Fprintf(&sb, "  %s\n", e.SourceLine)
+		// Create pointer (spaces + caret)
+		if e.Column > 0 {
+			fmt.Fprintf(&sb, "  %s^\n", strings.Repeat(" ", e.Column-1))
+		}
+	}
+
+	return sb.String()
+}
 
 // Precedence levels for operator parsing
 const (
@@ -30,7 +63,8 @@ var precedences = map[token.TokenType]int{
 // Parser builds an AST from tokens
 type Parser struct {
 	l      *lexer.Lexer
-	errors []string
+	errors []*ParseError
+	file   string // source file name for error messages
 
 	curToken      token.Token
 	peekToken     token.Token
@@ -49,7 +83,7 @@ type (
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
-		errors: []string{},
+		errors: []*ParseError{},
 	}
 
 	// Initialize prefix parse functions
@@ -80,8 +114,38 @@ func New(l *lexer.Lexer) *Parser {
 }
 
 // Errors returns the parser errors
-func (p *Parser) Errors() []string {
+func (p *Parser) Errors() []*ParseError {
 	return p.errors
+}
+
+// SetFile sets the source file name for error messages
+func (p *Parser) SetFile(file string) {
+	p.file = file
+}
+
+// addError adds a new parse error with source location
+// Only records the first error to avoid confusing cascading errors
+func (p *Parser) addError(msg string, line, column int) {
+	if len(p.errors) > 0 {
+		return // Only show first error
+	}
+	p.errors = append(p.errors, &ParseError{
+		Message:    msg,
+		File:       p.file,
+		Line:       line,
+		Column:     column,
+		SourceLine: p.l.GetSourceLine(line),
+	})
+}
+
+// addErrorAtCurrent adds an error at the current token position
+func (p *Parser) addErrorAtCurrent(msg string) {
+	p.addError(msg, p.curToken.Line, p.curToken.Column)
+}
+
+// addErrorAtPeek adds an error at the peek token position
+func (p *Parser) addErrorAtPeek(msg string) {
+	p.addError(msg, p.peekToken.Line, p.peekToken.Column)
 }
 
 // nextToken advances the parser to the next token
@@ -294,8 +358,8 @@ func (p *Parser) parseFunctionParameters() []*ast.Parameter {
 
 	// Accept IDENT, ERROR, LPAREN (for tuple types), or FN (for function types) as type
 	if !p.peekTokenIs(token.IDENT) && !p.peekTokenIs(token.ERROR) && !p.peekTokenIs(token.LPAREN) && !p.peekTokenIs(token.FN) {
-		msg := fmt.Sprintf("expected type, got %s instead", p.peekToken.Type)
-		p.errors = append(p.errors, msg)
+		msg := fmt.Sprintf("parameter '%s' requires a type annotation", param.Name.Value)
+		p.addErrorAtPeek(msg)
 		return nil
 	}
 	p.nextToken()
@@ -314,8 +378,8 @@ func (p *Parser) parseFunctionParameters() []*ast.Parameter {
 
 		// Accept IDENT, ERROR, LPAREN (for tuple types), or FN (for function types) as type
 		if !p.peekTokenIs(token.IDENT) && !p.peekTokenIs(token.ERROR) && !p.peekTokenIs(token.LPAREN) && !p.peekTokenIs(token.FN) {
-			msg := fmt.Sprintf("expected type, got %s instead", p.peekToken.Type)
-			p.errors = append(p.errors, msg)
+			msg := fmt.Sprintf("parameter '%s' requires a type annotation", param.Name.Value)
+			p.addErrorAtPeek(msg)
 			return nil
 		}
 		p.nextToken()
@@ -654,7 +718,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	value, err := strconv.ParseInt(valueStr, 10, 64)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		p.addErrorAtCurrent(msg)
 		return nil
 	}
 
@@ -676,7 +740,7 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	value, err := strconv.ParseFloat(valueStr, 64)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as float", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		p.addErrorAtCurrent(msg)
 		return nil
 	}
 
@@ -712,7 +776,7 @@ func (p *Parser) parseNegativeNumberLiteral() ast.Expression {
 		value, err := strconv.ParseInt(valueStr, 10, 64)
 		if err != nil {
 			msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
-			p.errors = append(p.errors, msg)
+			p.addErrorAtCurrent(msg)
 			return nil
 		}
 
@@ -732,7 +796,7 @@ func (p *Parser) parseNegativeNumberLiteral() ast.Expression {
 		value, err := strconv.ParseFloat(valueStr, 64)
 		if err != nil {
 			msg := fmt.Sprintf("could not parse %q as float", p.curToken.Literal)
-			p.errors = append(p.errors, msg)
+			p.addErrorAtCurrent(msg)
 			return nil
 		}
 
@@ -741,7 +805,7 @@ func (p *Parser) parseNegativeNumberLiteral() ast.Expression {
 	default:
 		// If it's not a number, this is an error
 		msg := fmt.Sprintf("expected number after '-', got %s", p.curToken.Type)
-		p.errors = append(p.errors, msg)
+		p.addErrorAtCurrent(msg)
 		return nil
 	}
 }
@@ -866,8 +930,8 @@ func (p *Parser) parseAnonymousFunctionParameters() []*ast.Parameter {
 
 	// Accept IDENT, ERROR, LPAREN (for tuple types), or FN (for function types) as type
 	if !p.peekTokenIs(token.IDENT) && !p.peekTokenIs(token.ERROR) && !p.peekTokenIs(token.LPAREN) && !p.peekTokenIs(token.FN) {
-		msg := fmt.Sprintf("expected type, got %s instead", p.peekToken.Type)
-		p.errors = append(p.errors, msg)
+		msg := fmt.Sprintf("parameter '%s' requires a type annotation", param.Name.Value)
+		p.addErrorAtPeek(msg)
 		return nil
 	}
 	p.nextToken()
@@ -886,8 +950,8 @@ func (p *Parser) parseAnonymousFunctionParameters() []*ast.Parameter {
 
 		// Accept IDENT, ERROR, LPAREN (for tuple types), or FN (for function types) as type
 		if !p.peekTokenIs(token.IDENT) && !p.peekTokenIs(token.ERROR) && !p.peekTokenIs(token.LPAREN) && !p.peekTokenIs(token.FN) {
-			msg := fmt.Sprintf("expected type, got %s instead", p.peekToken.Type)
-			p.errors = append(p.errors, msg)
+			msg := fmt.Sprintf("parameter '%s' requires a type annotation", param.Name.Value)
+			p.addErrorAtPeek(msg)
 			return nil
 		}
 		p.nextToken()
@@ -1028,8 +1092,9 @@ func (p *Parser) parseCallExpression(left ast.Expression) ast.Expression {
 	// Function calls must be chained, not nested
 	for _, arg := range exp.Arguments {
 		if !p.isValidFunctionArgument(arg) {
-			p.errors = append(p.errors,
+			p.addError(
 				"function calls cannot be used as arguments; use chaining instead (e.g., 'foo() > bar' not 'bar(foo())')",
+				exp.Token.Line, exp.Token.Column,
 			)
 			return nil
 		}
@@ -1092,27 +1157,27 @@ func (p *Parser) parseCaptureExpression(captureToken token.Token) ast.Expression
 
 	// Move past '('
 	if !p.expectPeek(token.IDENT) {
-		p.errors = append(p.errors, "capture requires error variable as first argument")
+		p.addErrorAtPeek("capture requires error variable as first argument")
 		return nil
 	}
 	errorVar := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	// Expect comma
 	if !p.expectPeek(token.COMMA) {
-		p.errors = append(p.errors, "capture requires two arguments: capture(errVar, resultVar)")
+		p.addErrorAtPeek("capture requires two arguments: capture(errVar, resultVar)")
 		return nil
 	}
 
 	// Get result variable
 	if !p.expectPeek(token.IDENT) {
-		p.errors = append(p.errors, "capture requires result variable as second argument")
+		p.addErrorAtPeek("capture requires result variable as second argument")
 		return nil
 	}
 	resultVar := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	// Expect closing paren
 	if !p.expectPeek(token.RPAREN) {
-		p.errors = append(p.errors, "expected ')' after capture arguments")
+		p.addErrorAtPeek("expected ')' after capture arguments")
 		return nil
 	}
 
@@ -1167,9 +1232,8 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead at line %d, column %d",
-		t, p.peekToken.Type, p.peekToken.Line, p.peekToken.Column)
-	p.errors = append(p.errors, msg)
+	msg := fmt.Sprintf("expected %s, got %s instead", t, p.peekToken.Type)
+	p.addErrorAtPeek(msg)
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -1187,9 +1251,8 @@ func (p *Parser) curPrecedence() int {
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg := fmt.Sprintf("no prefix parse function for %s found at line %d, column %d",
-		t, p.curToken.Line, p.curToken.Column)
-	p.errors = append(p.errors, msg)
+	msg := fmt.Sprintf("unexpected token %s", t)
+	p.addErrorAtCurrent(msg)
 }
 
 func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {

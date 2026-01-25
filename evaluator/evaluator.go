@@ -64,6 +64,18 @@ func handleExecutionError(execErr *object.ExecutionError) {
 	_, _ = fmt.Fprint(os.Stderr, execErr.FormatError())
 }
 
+// enrichError adds source location info to an error object
+func enrichError(err *object.Error, line, column int) {
+	err.Line = line
+	err.Column = column
+	if sourceContext != nil {
+		err.File = sourceContext.File
+		if line > 0 && line <= len(sourceContext.Lines) {
+			err.SourceLine = sourceContext.Lines[line-1]
+		}
+	}
+}
+
 // newError is a convenience wrapper for helpers.NewError
 func newError(format string, a ...interface{}) *object.Error {
 	return helpers.NewError(format, a...)
@@ -170,10 +182,15 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		result := applyFunction(function, args)
-		// Enrich execution errors with source location
-		if execErr, ok := result.(*object.ExecutionError); ok {
-			execErr.Line = node.Token.Line
-			execErr.Column = node.Token.Column
+		// Enrich errors with source location
+		switch r := result.(type) {
+		case *object.ExecutionError:
+			r.Line = node.Token.Line
+			r.Column = node.Token.Column
+		case *object.Error:
+			if r.IsProgrammingError {
+				enrichError(r, node.Token.Line, node.Token.Column)
+			}
 		}
 		return result
 
@@ -587,10 +604,15 @@ func evalLinkExpression(node *ast.LinkExpression, env *object.Environment) objec
 		}
 
 		result := applyFunction(function, allArgs)
-		// Enrich execution errors with source location from the call expression
-		if execErr, ok := result.(*object.ExecutionError); ok {
-			execErr.Line = right.Token.Line
-			execErr.Column = right.Token.Column
+		// Enrich errors with source location from the call expression
+		switch r := result.(type) {
+		case *object.ExecutionError:
+			r.Line = right.Token.Line
+			r.Column = right.Token.Column
+		case *object.Error:
+			if r.IsProgrammingError {
+				enrichError(r, right.Token.Line, right.Token.Column)
+			}
 		}
 		return result
 

@@ -23,13 +23,13 @@ func main() {
 
 	l := lexer.New(string(content))
 	p := parser.New(l)
+	p.SetFile(filename)
 
 	program := p.ParseProgram()
 
 	if len(p.Errors()) > 0 {
-		fmt.Println("Parser errors:")
-		for _, msg := range p.Errors() {
-			fmt.Printf("  %s\n", msg)
+		for _, err := range p.Errors() {
+			fmt.Print(err.FormatError())
 		}
 		os.Exit(1)
 	}

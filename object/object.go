@@ -102,6 +102,11 @@ type Error struct {
 	Msg                string
 	Context            map[string]Object
 	IsProgrammingError bool // true for programming errors (wrong args, type errors)
+	// Source location fields (populated by evaluator for programming errors)
+	File       string
+	Line       int
+	Column     int
+	SourceLine string
 }
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
@@ -114,6 +119,32 @@ func (e *Error) Inspect() string {
 		return fmt.Sprintf("ERROR: %s (context: %s)", e.Msg, strings.Join(contextStr, ", "))
 	}
 	return fmt.Sprintf("ERROR: %s", e.Msg)
+}
+
+// FormatError returns a formatted error message with source location for stderr output
+func (e *Error) FormatError() string {
+	var sb strings.Builder
+
+	// Header: file:line:column: error: message
+	if e.Line > 0 {
+		if e.File != "" {
+			fmt.Fprintf(&sb, "%s:%d:%d: error: %s\n", e.File, e.Line, e.Column, e.Msg)
+		} else {
+			fmt.Fprintf(&sb, "<unknown>:%d:%d: error: %s\n", e.Line, e.Column, e.Msg)
+		}
+
+		// Source line with pointer
+		if e.SourceLine != "" {
+			fmt.Fprintf(&sb, "  %s\n", e.SourceLine)
+			// Create pointer (spaces + carets)
+			fmt.Fprintf(&sb, "%s^\n", strings.Repeat(" ", e.Column+1))
+		}
+	} else {
+		// No source location available, fall back to simple format
+		fmt.Fprintf(&sb, "error: %s\n", e.Msg)
+	}
+
+	return sb.String()
 }
 
 // ExecutionError represents a recoverable execution error
@@ -142,22 +173,21 @@ func (e *ExecutionError) FormatError() string {
 
 	// Header: file:line:column: error: message
 	if e.File != "" {
-		sb.WriteString(fmt.Sprintf("%s:%d:%d: error: %s\n", e.File, e.Line, e.Column, e.Message))
+		fmt.Fprintf(&sb, "%s:%d:%d: error: %s\n", e.File, e.Line, e.Column, e.Message)
 	} else {
-		sb.WriteString(fmt.Sprintf("<unknown>:%d:%d: error: %s\n", e.Line, e.Column, e.Message))
+		fmt.Fprintf(&sb, "<unknown>:%d:%d: error: %s\n", e.Line, e.Column, e.Message)
 	}
 
 	// Source line with pointer
 	if e.SourceLine != "" {
-		sb.WriteString(fmt.Sprintf("  %s\n", e.SourceLine))
+		fmt.Fprintf(&sb, "  %s\n", e.SourceLine)
 		// Create pointer (spaces + carets)
-		pointer := strings.Repeat(" ", e.Column+1) + "^"
-		sb.WriteString(fmt.Sprintf("%s\n", pointer))
+		fmt.Fprintf(&sb, "%s^\n", strings.Repeat(" ", e.Column+1))
 	}
 
 	// Detail line
 	if e.Detail != "" {
-		sb.WriteString(fmt.Sprintf("  = %s\n", e.Detail))
+		fmt.Fprintf(&sb, "  = %s\n", e.Detail)
 	}
 
 	return sb.String()

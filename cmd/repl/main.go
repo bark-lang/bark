@@ -38,6 +38,7 @@ func main() {
 
 		l := lexer.New(line)
 		p := parser.New(l)
+		p.SetFile("<repl>")
 
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
@@ -52,9 +53,8 @@ func main() {
 	}
 }
 
-func printParserErrors(errors []string) {
-	fmt.Println("Parser errors:")
-	for _, msg := range errors {
-		fmt.Printf("  %s\n", msg)
+func printParserErrors(errors []*parser.ParseError) {
+	for _, err := range errors {
+		fmt.Print(err.FormatError())
 	}
 }

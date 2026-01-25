@@ -322,3 +322,31 @@ func isLetter(ch rune) bool {
 func isDigit(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
+
+// GetSourceLine returns the source line at the given line number (1-indexed)
+func (l *Lexer) GetSourceLine(lineNum int) string {
+	if lineNum < 1 {
+		return ""
+	}
+	currentLine := 1
+	start := 0
+	for i := 0; i < len(l.input); i++ {
+		if currentLine == lineNum {
+			// Found the start of the line, now find the end
+			end := i
+			for end < len(l.input) && l.input[end] != '\n' {
+				end++
+			}
+			return l.input[i:end]
+		}
+		if l.input[i] == '\n' {
+			currentLine++
+			start = i + 1
+		}
+	}
+	// If we're looking for the last line and it doesn't end with newline
+	if currentLine == lineNum && start < len(l.input) {
+		return l.input[start:]
+	}
+	return ""
+}

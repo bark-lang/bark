@@ -11,7 +11,8 @@ import (
 // printFormatted handles printing with optional format support.
 // Single arg: prints the value directly.
 // Multiple args: first arg is format string with {0}, {1} placeholders.
-func printFormatted(args []object.Object) (string, *object.Error) {
+// Returns (output string, error object) where error is nil on success.
+func printFormatted(args []object.Object) (string, object.Object) {
 	if len(args) == 0 {
 		return "", nil
 	}
@@ -24,12 +25,20 @@ func printFormatted(args []object.Object) (string, *object.Error) {
 	// Multiple arguments - first is format string
 	formatStr, ok := args[0].(*object.String)
 	if !ok {
-		return "", newError("format string must be string, got=%s", args[0].Type())
+		// Provide helpful hint for common tuple mistake
+		hint := fmt.Sprintf(
+			"received %d arguments where first must be a format string, got %s instead",
+			len(args), args[0].Type(),
+		)
+		if args[0].Type() == object.ARRAY_OBJ || args[0].Type() == object.MAP_OBJ {
+			hint += ". Hint: if passing a tuple result, destructure it first: tuple > (a, b) { println(\"{a}, {b}\") }()"
+		}
+		return "", helpers.NewExecutionError("print format error", hint)
 	}
 
 	result, err := helpers.FormatString(formatStr.Value, args[1:])
 	if err != nil {
-		return "", newError("print: %s", err.Error())
+		return "", helpers.NewExecutionError("print format error", err.Error())
 	}
 	return result, nil
 }

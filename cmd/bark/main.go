@@ -53,6 +53,11 @@ func main() {
 			testArgs := args[i+1:]
 			cmdTest(testArgs)
 			return
+		case "check":
+			// Collect remaining args as paths to check
+			checkArgs := args[i+1:]
+			cmdCheck(checkArgs)
+			return
 		case "init":
 			cmdInit()
 			return
@@ -91,6 +96,8 @@ func printUsage() {
 	fmt.Println("Usage:")
 	fmt.Println("  bark <file.bark>    Run a Bark program")
 	fmt.Println("  bark -e <code>      Execute Bark code directly")
+	fmt.Println("  bark check          Check all .bark files in current directory parse correctly")
+	fmt.Println("  bark check <path>   Check .bark files in specified path recursively")
 	fmt.Println("  bark test           Run all tests in tests/ directory")
 	fmt.Println("  bark test <path>    Run a specific test file or directory")
 	fmt.Println("  bark init           Create a new bark.toml")
@@ -113,12 +120,12 @@ func runFile(filename string) {
 
 	l := lexer.New(string(content))
 	p := parser.New(l)
+	p.SetFile(filename)
 	program := p.ParseProgram()
 
 	if len(p.Errors()) > 0 {
-		fmt.Fprintf(os.Stderr, "Parser errors:\n")
-		for _, msg := range p.Errors() {
-			fmt.Fprintf(os.Stderr, "  %s\n", msg)
+		for _, err := range p.Errors() {
+			fmt.Fprint(os.Stderr, err.FormatError())
 		}
 		os.Exit(1)
 	}
@@ -180,7 +187,7 @@ func runFile(filename string) {
 		// Only programming errors are fatal - Bark error values can be returned
 		if result.Type() == object.ERROR_OBJ {
 			if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
-				fmt.Fprintf(os.Stderr, "Error: %s\n", result.Inspect())
+				fmt.Fprint(os.Stderr, errObj.FormatError())
 				os.Exit(1)
 			}
 		}
@@ -195,12 +202,12 @@ func runFile(filename string) {
 func runCode(code string) {
 	l := lexer.New(code)
 	p := parser.New(l)
+	p.SetFile("<stdin>")
 	program := p.ParseProgram()
 
 	if len(p.Errors()) > 0 {
-		fmt.Fprintf(os.Stderr, "Parser errors:\n")
-		for _, msg := range p.Errors() {
-			fmt.Fprintf(os.Stderr, "  %s\n", msg)
+		for _, err := range p.Errors() {
+			fmt.Fprint(os.Stderr, err.FormatError())
 		}
 		os.Exit(1)
 	}
@@ -245,7 +252,7 @@ func runCode(code string) {
 		// Only programming errors are fatal - Bark error values can be returned
 		if result.Type() == object.ERROR_OBJ {
 			if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
-				fmt.Fprintf(os.Stderr, "Error: %s\n", result.Inspect())
+				fmt.Fprint(os.Stderr, errObj.FormatError())
 				os.Exit(1)
 			}
 		}
@@ -491,12 +498,12 @@ func runTestFile(filename string) bool {
 
 	l := lexer.New(string(content))
 	p := parser.New(l)
+	p.SetFile(filename)
 	program := p.ParseProgram()
 
 	if len(p.Errors()) > 0 {
-		fmt.Fprintf(os.Stderr, "  Parser errors:\n")
-		for _, msg := range p.Errors() {
-			fmt.Fprintf(os.Stderr, "    %s\n", msg)
+		for _, err := range p.Errors() {
+			fmt.Fprint(os.Stderr, err.FormatError())
 		}
 		return false
 	}
@@ -541,10 +548,112 @@ func runTestFile(filename string) bool {
 	// Check for programming errors
 	if result != nil && result.Type() == object.ERROR_OBJ {
 		if errObj, ok := result.(*object.Error); ok && errObj.IsProgrammingError {
-			fmt.Fprintf(os.Stderr, "  Error: %s\n", result.Inspect())
+			fmt.Fprint(os.Stderr, errObj.FormatError())
 			return false
 		}
 	}
 
 	return !hasAssertionFailure
+}
+
+func cmdCheck(args []string) {
+	var checkPaths []string
+
+	if len(args) == 0 {
+		// Default: check current directory
+		checkPaths = []string{"."}
+	} else {
+		checkPaths = args
+	}
+
+	var allFiles []string
+	for _, path := range checkPaths {
+		files, err := collectBarkFiles(path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
+		allFiles = append(allFiles, files...)
+	}
+
+	if len(allFiles) == 0 {
+		fmt.Println("No .bark files found")
+		return
+	}
+
+	passed := 0
+	failed := 0
+	var failedFiles []string
+
+	for _, file := range allFiles {
+		ok := checkFile(file)
+		if ok {
+			passed++
+		} else {
+			failed++
+			failedFiles = append(failedFiles, file)
+		}
+	}
+
+	fmt.Println()
+	if failed == 0 {
+		fmt.Printf("All %d files parsed successfully\n", passed)
+	} else {
+		fmt.Printf("Results: %d passed, %d failed\n", passed, failed)
+		os.Exit(1)
+	}
+}
+
+// collectBarkFiles finds all .bark files in the given path recursively
+func collectBarkFiles(path string) ([]string, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("cannot access %s: %w", path, err)
+	}
+
+	if !info.IsDir() {
+		// Single file
+		if filepath.Ext(path) != ".bark" {
+			return nil, fmt.Errorf("%s is not a .bark file", path)
+		}
+		return []string{path}, nil
+	}
+
+	// Directory: walk and collect all .bark files
+	var files []string
+	err = filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && filepath.Ext(p) == ".bark" {
+			files = append(files, p)
+		}
+		return nil
+	})
+
+	return files, err
+}
+
+// checkFile parses a single file and returns true if it parsed successfully
+func checkFile(filename string) bool {
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading %s: %v\n", filename, err)
+		return false
+	}
+
+	l := lexer.New(string(content))
+	p := parser.New(l)
+	p.SetFile(filename)
+	_ = p.ParseProgram()
+
+	if len(p.Errors()) > 0 {
+		fmt.Fprintf(os.Stderr, "FAIL %s\n", filename)
+		for _, err := range p.Errors() {
+			fmt.Fprint(os.Stderr, err.FormatError())
+		}
+		return false
+	}
+
+	return true
 }
