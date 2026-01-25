@@ -1,0 +1,261 @@
+// Anonymous Functions
+//
+// Anonymous functions in Bark are inline functions that behave exactly like
+// named functions. They require explicit parameter types and return type annotations.
+//
+// Use Cases:
+// 1. Switch/case style pattern matching
+// 2. Recursive iteration with repeat?()
+// 3. One-time transformations in a chain
+// 4. Callback-style operations
+
+// Example 1: Simple anonymous function called via link operator
+// The value on the left of > becomes the first parameter
+fn example_simple() {
+  // 5 is passed as 'n' to the anonymous function
+  5 > (n int) {
+    n > add(10) > return()
+  }(int) > result
+
+  result > println()
+}()
+// Outputs: 15
+
+// Example 2: Anonymous function with multiple parameters
+// When calling via link operator, only the first parameter is provided
+// Additional parameters must be provided differently (implementation detail)
+fn example_multi_param() {
+  // This shows an anonymous function that could take multiple params
+  // In practice, multi-param anonymous functions are used with repeat?()
+  10 > (x int) {
+    x > mul(2) > return()
+  }(int) > doubled
+
+  doubled > println()
+}()
+// Outputs: 20
+
+// Example 3: Anonymous function with no return type
+fn example_no_return() {
+  42 > (n int) {
+    n > println()
+  }() > result
+}()
+// Outputs: 42
+
+// Example 4: Anonymous function for transformation
+fn transform_value(val int) {
+  val > (x int) {
+    x > mul(2) > add(5) > return()
+  }(int) > result
+
+  return(result)
+}(int)
+// transform_value(7) returns 19
+
+// Example 5: Anonymous function in switch/case pattern
+fn grade_letter(score int) {
+  score > (s int) {
+    s > gte?(90) > return?("A")
+    s > gte?(80) > return?("B")
+    s > gte?(70) > return?("C")
+    s > gte?(60) > return?("D")
+    return("F")
+  }(string) > letter
+
+  return(letter)
+}(string)
+// grade_letter(85) returns "B"
+
+// Example 6: Chaining anonymous functions
+fn example_chain() {
+  5 > (n int) {
+    n > add(3) > return()
+  }(int) > (m int) {
+    m > mul(2) > return()
+  }(int) > result
+
+  result > println()
+}()
+// Outputs: 16
+
+// Example 7: Anonymous function with variable binding inside
+fn example_binding() {
+  100 > (amount int) {
+    amount > mul(2) > doubled
+    doubled > add(50) > total
+    total > println()
+    total > return()
+  }(int) > final_result
+
+  return(final_result)
+}(int)
+// Outputs: 250, returns 250
+
+// Example 8: Anonymous function for conditional logic
+fn is_adult(age int) {
+  age > (a int) {
+    a > gte?(18) > return()
+  }(bool) > result
+
+  return(result)
+}(bool)
+// is_adult(21) returns true
+// is_adult(16) returns false
+
+// Example 9: Anonymous function with early exit
+fn find_positive(nums array) {
+  nums > head() > (arr array, idx int) {
+    idx > lt?(0) > break?(0)  // Empty array, return 0
+
+    arr > get(idx) > n > gt?(0) > return?(n)  // Found positive, return it
+
+    arr > next(idx) > nextIdx // if idx >= length of array, next(idx) returns -1
+    repeat(arr, nextIdx)
+  }() > value
+
+  return(value)
+}(int)
+// find_positive([-1, -2, 3]) returns 3
+// find_positive([-1, -2, -3]) returns 0
+
+
+// Example 10: Nested anonymous functions (edge case)
+fn example_nested() {
+  10 > (outer int) {
+    outer > add(5) > (inner int) {
+      inner > mul(2) > return()
+    }(int) > return()
+  }(int) > result
+
+  result > println()
+}()
+// Outputs: 30
+
+// Example 11: Tuples for multi-parameter initialization
+//
+// When an anonymous function needs multiple parameters, use a tuple
+// to provide all initial values at once.
+fn example_tuple_init() {
+  // Tuple (10, 5) unpacks to x=10, y=5
+  (10, 5) > (x int, y int) {
+    x > add(y) > return()
+  }(int) > result
+
+  result > println()
+}()
+// Outputs: 15
+
+// Example 12: Tuple with recursive anonymous function
+//
+// Tuples are essential for recursive patterns where you need
+// to initialize an accumulator or counter.
+fn sum_1_to_n(n int) {
+  // Initialize with (current=1, total=0)
+  (1, 0) > (current int, total int) {
+    total > add(current) > new_total
+    current > add(1) > next
+
+    next > gt?(n) > return?(new_total)
+
+    repeat(next, new_total)
+  }(int) > result
+
+  return(result)
+}(int)
+// sum_1_to_n(5) returns 15 (1+2+3+4+5)
+
+// Example 13: Three-element tuple
+fn example_three_params() {
+  // All three values are passed to the anonymous function
+  (1, 2, 3) > (a int, b int, c int) {
+    a > add(b) > add(c) > return()
+  }(int) > result
+
+  result > println()
+}()
+// Outputs: 6
+
+// Example 14: Tuple with named function
+fn calculate(a int, b int, c int) {
+  a > mul(b) > add(c) > return()
+}(int)
+
+fn example_tuple_named() {
+  // Tuples also work with named functions
+  (2, 3, 4) > calculate() > println()
+}()
+// Outputs: 10 (2*3+4)
+
+// Key Points:
+// - Anonymous functions require explicit parameter types: (param type)
+// - Return type annotation is required: }(return_type) or }() for no return
+// - Values are passed via link operator: value > (param type) { ... }
+// - Use tuples (a, b, c) to initialize multi-parameter anonymous functions
+// - Tuples unpack in order: first element -> first param, etc.
+// - Use return() to exit and return a value
+// - Use return?() for conditional early exit
+// - Anonymous functions behave exactly like named functions
+// - They can be chained: result > (x) { } > (y) { } > final
+
+// =============================================================================
+// Execute Functions
+// =============================================================================
+
+println("=== Anonymous Functions ===")
+
+println("example_simple(): ")
+example_simple()
+
+println("example_multi_param(): ")
+example_multi_param()
+
+println("example_no_return(): ")
+example_no_return()
+
+transform_value(7) > r1
+println("transform_value(7): {r1}")
+
+grade_letter(85) > r2
+println("grade_letter(85): {r2}")
+
+grade_letter(72) > r3
+println("grade_letter(72): {r3}")
+
+grade_letter(55) > r4
+println("grade_letter(55): {r4}")
+
+println("example_chain(): ")
+example_chain()
+
+example_binding() > r5
+println("example_binding(): {r5}")
+
+is_adult(21) > r6
+println("is_adult(21): {r6}")
+
+is_adult(16) > r7
+println("is_adult(16): {r7}")
+
+find_positive([-1, -2, 3]) > r8
+find_positive([-1, -2, -3]) > r8_1
+println("find_positive([-1, -2, 3]): {r8}")
+println("find_positive([-1, -2, -3]): {r8_1}")
+
+println("example_nested(): ")
+example_nested()
+
+println("example_tuple_init(): ")
+example_tuple_init()
+
+sum_1_to_n(5) > r9
+println("sum_1_to_n(5): {r9}")
+
+println("example_three_params(): ")
+example_three_params()
+
+calculate(2, 3, 4) > r10
+println("calculate(2, 3, 4): {r10}")
+
+println("example_tuple_named(): ")
+example_tuple_named()

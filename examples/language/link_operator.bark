@@ -1,0 +1,19 @@
+// Basic link - passing output from fn1 to fn2
+fn fn1(){
+  return("hello")
+}(string)
+
+fn fn2(str string){
+  str > str.concat(" world") > return()
+}(string)
+
+// Execute all functions
+println("=== Link Operator ===")
+
+fn1() > result1
+println("fn1() returns: {result1}")
+// Outputs: "fn1() returns: hello"
+
+fn1() > fn2() > result2
+println("fn1() > fn2() returns: {result2}")
+// Outputs: "fn1() > fn2() returns: hello world"

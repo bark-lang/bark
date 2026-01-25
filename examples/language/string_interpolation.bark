@@ -1,0 +1,65 @@
+// String Interpolation Examples
+// Demonstrates variable interpolation in strings
+
+println("=== Basic String Interpolation ===")
+
+// Simple variable interpolation
+"Alice" > name
+30 > age
+println("{name} is {age} years old")
+
+// Multiple variables in one string
+"Seattle" > city
+"Engineer" > job
+println("{name} works as an {job} in {city}")
+
+println()
+println("=== Map Field Access ===")
+
+// Map field interpolation
+{"name": "Bob", "email": "bob@example.com", "role": "Admin"} > user
+println("User: {user.name}")
+println("Email: {user.email}")
+println("Role: {user.role}")
+
+// Nested data (requires extraction first)
+{"user": {"name": "Charlie", "age": 25}} > data
+data > get("user") > innerUser
+println("Inner user: {innerUser.name}")
+
+println()
+println("=== Different Types ===")
+
+// Integers
+42 > answer
+println("The answer is {answer}")
+
+// Floats
+3.14159 > pi
+println("Pi is approximately {pi}")
+
+// Booleans
+true > active
+println("Active: {active}")
+
+// Arrays
+[1, 2, 3] > numbers
+println("Numbers: {numbers}")
+
+println()
+println("=== Escaping Braces ===")
+
+// Use \{ and \} for literal braces
+println("Use \{name\} syntax for interpolation")
+println("JSON example: \{\"key\": \"value\"\}")
+
+println()
+println("=== Mixing with Positional Arguments ===")
+
+// Both variable names and positional work together
+"world" > greeting
+42 > num
+println("Hello {greeting}! The number is {num}")
+
+println()
+println("=== Complete! ===")

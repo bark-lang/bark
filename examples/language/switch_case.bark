@@ -1,0 +1,44 @@
+// Anonymous function - case/switch style example
+//
+// Anonymous functions can implement case/switch logic using return?().
+// The function receives input and tests conditions, returning early on matches.
+fn full_day_name(abbr string) {
+  // The value returned by str.lower() is passed to the anonymous function.
+  // Each condition is checked and return?() exits early if true.
+  //
+  // Example flow for input "WED":
+  //    "WED" > str.lower() -> "wed"
+  //    Anonymous function receives "wed"
+  //    Check 1: "wed" > eq?("mon") -> false > return?("monday") -> no exit, continue
+  //    Check 2: "wed" > eq?("tue") -> false > return?("tuesday") -> no exit, continue
+  //    Check 3: "wed" > eq?("wed") -> true > return?("wednesday") -> exits function!
+  //    Function returns "wednesday"
+  //    "wednesday" > day_name -> variable binding
+  //
+  // The return?() function takes a boolean (from eq?) and a value.
+  // If the boolean is true, it exits the function and returns that value.
+
+  abbr > str.lower() > (day string) {
+    day > eq?("mon") > return?("monday")
+    day > eq?("tue") > return?("tuesday")
+    day > eq?("wed") > return?("wednesday")
+    day > eq?("thu") > return?("thursday")
+    day > eq?("thur") > return?("thursday")
+    day > eq?("fri") > return?("friday")
+    day > eq?("sat") > return?("saturday")
+    day > eq?("sun") > return?("sunday")
+    return("unknown day abbreviation")  // Default case
+  }(string) > day_name
+
+  return(day_name)
+}(string)
+
+
+full_day_name("WED") > println("Full day name for 'WED' is: {day_name}")
+// Outputs: "Full day name for 'WED' is: wednesday"
+full_day_name("fri") > println("Full day name for 'fri' is: {day_name}")
+// Outputs: "Full day name for 'fri' is: friday"
+full_day_name("Sun") > println("Full day name for 'Sun' is: {day_name}")
+// Outputs: "Full day name for 'Sun' is: sunday"
+full_day_name("xyz") > println("Full day name for 'xyz' is: {day_name}")
+// Outputs: "Full day name for 'xyz' is: unknown day abbreviation"
