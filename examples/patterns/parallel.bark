@@ -1,0 +1,236 @@
+// Parallel Processing in Bark
+//
+// This example demonstrates Bark's parallel processing capabilities using
+// builtin functions for concurrent execution.
+
+fn main() {
+  println("=== Parallel Processing Examples ===")
+  println("")
+
+  // Example 1: Basic parallel processing
+  example_basic_parallel()
+
+  // Example 2: Parallel with error handling
+  example_parallel_with_errors()
+
+  // Example 3: Parallel all (independent operations)
+  example_parallel_all()
+
+  // Example 4: Limited concurrency (worker pool)
+  example_parallel_limited()
+
+  // Example 5: Race pattern (first to complete)
+  example_parallel_race()
+
+  // Example 6: Strict mode (fail-fast)
+  example_parallel_strict()
+
+  return()
+}(int)
+
+// Example 1: Basic parallel processing
+fn example_basic_parallel() {
+  println("1. Basic Parallel Processing")
+  println("   Processing array elements in parallel...")
+
+  // Process numbers in parallel, adding 10 to each
+  [1, 2, 3, 4, 5] > parallel((x int) {
+    x > add(10) > result
+    return({}, result)
+  }(map, int)) > result_tuple
+
+  result_tuple > get(0) > errors
+  result_tuple > get(1) > results
+
+  // Check if all succeeded and report
+  errors > all_absent?() > all_ok
+  all_ok > eq?(true) > (ok bool) {
+    ok > return?("   All operations succeeded!")
+    return("   Some operations failed!")
+  }(string) > msg
+  msg > println()
+
+  println("   Results: {0}", results)
+  println("")
+
+  return()
+}(int)
+
+// Example 2: Parallel with error handling
+fn example_parallel_with_errors() {
+  println("2. Parallel Processing with Errors")
+  println("   Some operations will fail...")
+
+  // Simulate operations where some fail
+  [1, 2, 3, 4, 5] > parallel((x int) {
+    // Fail on even numbers
+    x > math.even?() > is_even
+    is_even > (cond bool) {
+      err("Failed on even number") > e
+      cond > return?(e, 0)
+      return({}, x)
+    }(map, int)
+  }(map, int)) > result_tuple
+
+  result_tuple > get(0) > errors
+  result_tuple > get(1) > results
+
+  // Check results and report
+  errors > all_absent?() > all_ok
+  errors > all_present?() > all_failed
+
+  all_ok > not() > eq?(true) > (has_errors bool) {
+    has_errors > return?("   Some operations failed (expected)")
+    return("")
+  }(string) > msg1
+  msg1 > len() > gt?(0) > (has_msg bool) {
+    has_msg > return?()
+    return()
+  }()
+  msg1 > println()
+
+  all_failed > eq?(true) > (failed bool) {
+    failed > return?("   All operations failed")
+    return("   Mix of success and failure")
+  }(string) > msg2
+  msg2 > println()
+
+  println("   Successful results: {0}", results)
+  println("")
+
+  return()
+}(int)
+
+// Example 3: Parallel all - execute independent operations
+fn example_parallel_all() {
+  println("3. Parallel All (Independent Operations)")
+  println("   Running multiple independent tasks...")
+
+  [
+    (dummy int) {
+      // Task 1: Sum numbers
+      15 > result
+      return({}, result)
+    }(map, int),
+    (dummy int) {
+      // Task 2: Multiply numbers
+      24 > result
+      return({}, result)
+    }(map, int),
+    (dummy int) {
+      // Task 3: Simple calculation
+      10 > add(5) > mul(2) > result
+      return({}, result)
+    }(map, int)
+  ] > parallel_all() > result_tuple
+
+  result_tuple > get(1) > results
+
+  results > get(0) > t1
+  results > get(1) > t2
+  results > get(2) > t3
+
+  println("   Task 1 result: {0}", t1)
+  println("   Task 2 result: {0}", t2)
+  println("   Task 3 result: {0}", t3)
+  println("")
+
+  return()
+}(int)
+
+// Example 4: Limited concurrency with worker pool
+fn example_parallel_limited() {
+  println("4. Parallel Limited (Worker Pool)")
+  println("   Processing with max 2 concurrent operations...")
+
+  // Create array of 10 items but only process 2 at a time
+  parallel_limited(2, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (x int) {
+    x > mul(2) > result
+    return({}, result)
+  }(map, int)) > result_tuple
+
+  result_tuple > get(1) > results
+
+  results > len() > count
+
+  println("   Processed {0} items", count)
+  println("   Results: {0}", results)
+  println("")
+
+  return()
+}(int)
+
+// Example 5: Race pattern - first to complete wins
+fn example_parallel_race() {
+  println("5. Parallel Race (First to Complete)")
+  println("   Racing multiple operations...")
+
+  [
+    (dummy int) {
+      42 > result
+      return({}, result)
+    }(map, int),
+    (dummy int) {
+      100 > result
+      return({}, result)
+    }(map, int),
+    (dummy int) {
+      7 > result
+      return({}, result)
+    }(map, int)
+  ] > parallel_race() > result_tuple
+
+  result_tuple > get(1) > winner
+
+  println("   First result: {0}", winner)
+  println("")
+
+  return()
+}(int)
+
+// Example 6: Strict mode - fail fast
+fn example_parallel_strict() {
+  println("6. Parallel Strict (Fail-Fast)")
+
+  // First try: all succeed
+  println("   Try 1: All operations succeed...")
+  [1, 2, 3] > parallel_strict((x int) {
+    x > mul(2) > result
+    return({}, result)
+  }(map, int)) > result_tuple1
+
+  result_tuple1 > get(0) > err1
+  result_tuple1 > get(1) > results1
+
+  err1 > absent?() > eq?(true) > (no_error bool) {
+    no_error > return?("   Success!")
+    return("   Failed (unexpected)")
+  }(string) > msg1
+  msg1 > println()
+  println("   Results: {0}", results1)
+
+  // Second try: one fails
+  println("   Try 2: One operation fails...")
+  [1, 2, 3, 4, 5] > parallel_strict((x int) {
+    x > eq?(3) > is_three
+    is_three > (cond bool) {
+      err("Failed on 3") > e
+      cond > return?(e, 0)
+      return({}, x)
+    }(map, int)
+  }(map, int)) > result_tuple2
+
+  result_tuple2 > get(1) > results2
+
+  results2 > len() > eq?(0) > (is_empty bool) {
+    is_empty > return?("   Failed fast as expected (results empty)")
+    return("   Unexpected: got results")
+  }(string) > msg2
+  msg2 > println()
+
+  println("")
+
+  return()
+}(int)
+
+main()

@@ -1,0 +1,79 @@
+// Memoization Example
+//
+// Demonstrates the mfn keyword for memoized functions.
+// Memoized functions automatically cache results based on arguments.
+
+// Fibonacci - classic example of memoization benefits
+// Without memoization: O(2^n) time complexity
+// With memoization: O(n) time complexity
+mfn fib(n int) {
+    n > lte?(1) > return?(n)
+    n > sub(1) > fib() > a
+    n > sub(2) > fib() > b
+    a > add(b) > return()
+}(int)
+
+println("Fibonacci sequence (memoized):")
+array.range(0, 20) > each((arr array, i int) {
+    arr > get(i) > n
+    n > fib() > result
+    println("fib({0}) = {1}", n, result)
+}())
+
+println()
+
+// Factorial - another common recursive example
+mfn factorial(n int) {
+    n > lte?(1) > return?(1)
+    n > sub(1) > factorial() > prev
+    n > mul(prev) > return()
+}(int)
+
+println("Factorials (memoized):")
+array.range(0, 12) > each((arr array, i int) {
+    arr > get(i) > n
+    n > factorial() > result
+    println("{0}! = {1}", n, result)
+}())
+
+println()
+
+// Ackermann function - extremely recursive
+// Without memoization, even small inputs take forever
+mfn ackermann(m int, n int) {
+    // Base case: m = 0 -> return n + 1
+    m > eq?(0) > (is_zero bool) {
+        is_zero > eq?(false) > return?()
+        n > add(1) > return()
+    }(int) > base_result
+    base_result > present?() > return?(base_result)
+
+    // Case: n = 0 -> return A(m-1, 1)
+    n > eq?(0) > (is_n_zero bool) {
+        is_n_zero > eq?(false) > return?()
+        m > sub(1) > ackermann(1) > return()
+    }(int) > zero_result
+    zero_result > present?() > return?(zero_result)
+
+    // Recursive case: A(m-1, A(m, n-1))
+    m > sub(1) > m_minus_1
+    n > sub(1) > n_minus_1
+    m > ackermann(n_minus_1) > inner
+    m_minus_1 > ackermann(inner) > return()
+}(int)
+
+fn print_ackermann(m int, n int) {
+    m > ackermann(n) > result
+    println("A({0}, {1}) = {2}", m, n, result)
+}()
+
+println("Ackermann function (memoized):")
+0 > print_ackermann(5)
+1 > print_ackermann(5)
+2 > print_ackermann(5)
+3 > print_ackermann(5)
+// A(4, 1) = 65533 - even with memoization this is large!
+3 > print_ackermann(10)
+
+println()
+println("Memoization complete!")

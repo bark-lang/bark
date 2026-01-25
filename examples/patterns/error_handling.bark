@@ -1,0 +1,419 @@
+// Error Checking Examples
+// Demonstrates error checking and zero value semantics
+
+// =============================================================================
+// Error Checking with present?() and absent?()
+// =============================================================================
+
+fn check_error_present(err error) {
+  err > absent?() > println?("Operation succeeded") > return()
+
+  err > err_msg() > eprintln()
+}
+
+fn check_error_absent(err error) {
+  // Check if error is absent (empty map)
+  err > absent?() > println?("No error occurred")
+}
+
+// =============================================================================
+// Zero Values
+// =============================================================================
+
+// Each type has a defined zero value:
+// - string: ""
+// - bool: false
+// - int: 0
+// - uint: 0
+// - float: 0.0
+// - error: {} (empty error map)
+// - map: {}
+// - array: []
+// - regex: (must be explicitly created)
+
+fn demonstrate_zero_values() {
+  "" > empty_string          // Zero value for string
+  false > zero_bool          // Zero value for bool
+  0 > zero_int               // Zero value for int
+  0.0 > zero_float           // Zero value for float
+  {} > empty_map             // Zero value for map
+  [] > empty_array           // Zero value for array
+  {} > empty_error           // Zero value for error (success)
+
+  // Note: empty collections use size() for maps, len() for arrays
+  empty_map > size() > println()      // 0
+  empty_array > len() > println()     // 0
+  empty_error > absent?() > println() // true (no error)
+}
+
+// =============================================================================
+// Error Type and Checking
+// =============================================================================
+
+// error type uses map representation internally
+// Empty error map {} means "no error" (success)
+// Non-empty error map means an error occurred
+
+fn successful_operation() {
+  // Return empty error to indicate success
+  return({}, "result")
+}(error, string)
+
+fn failed_operation() {
+  // Return error with message
+  err("operation failed") > failure
+  return(failure, "")
+}(error, string)
+
+fn check_operation_result(err error, result string) {
+  err > absent?() > continue?() > result > println() > return()
+
+  err > err_msg() > eprintln()
+}
+
+// =============================================================================
+// Error Propagation with return?()
+// =============================================================================
+
+fn process_with_propagation(input string) {
+  // Validate input
+  input > validate() > (err1, validated)
+  err1 > return?(err1, "")  // If err1 is present, return immediately with zero values
+
+  // Process validated input - only executes if err1 was absent
+  validated > transform() > (err2, result)
+  err2 > return?(err2, "")
+
+  // Return success
+  return({}, result)
+}(error, string)
+
+// =============================================================================
+// Collections and Zero Values
+// =============================================================================
+
+// Maps error on missing keys - use map.get_or or check first
+fn map_missing_key() {
+  {"name": "alice"} > user
+
+  // Use map.get_or to handle missing keys gracefully
+  user > map.get_or("age", 0) > age
+  // age is now 0 (the default)
+
+  age > eq?(0) > (isZero bool) {
+    isZero > not() > return?()
+    println("Age not found or is zero")
+  }()
+}
+
+// Use get_or to provide explicit default
+fn map_with_default() {
+  {"name": "alice"} > user
+
+  // Provide explicit default value
+  user > map.get_or("age", 25) > age
+  // age is now 25
+}
+
+// Use map.key_present?() to distinguish missing keys from zero values
+fn check_key_exists() {
+  {"name": "alice", "age": 0} > user
+  user > map.key_present?("age") > println?("Age key exists (value may be 0)")
+  user > map.key_absent?("email") > println?("Email key does not exist")
+}
+
+// Array access - invalid index logs to stderr but program continues
+fn array_access() {
+  [1, 2, 3] > items
+
+  // Valid access
+  items > get(0) > first
+  first > println()
+
+  // Invalid access - logs error to stderr, chain stops, but program continues
+  items > get(10) > println()
+
+  // This line still runs
+  println("Program continues after invalid access")
+}
+
+// =============================================================================
+// Truthy and Falsy Values
+// =============================================================================
+
+// Falsy values: false, 0, 0.0, "", {}, []
+// All other values are truthy
+
+fn check_truthiness() {
+  // Empty string is falsy
+  "" > empty
+  empty > present?() > (p bool) {
+    p > not() > return?()
+    println("Empty string is truthy (won't print)")
+  }()
+  empty > absent?() > (a bool) {
+    a > not() > return?()
+    println("Empty string is falsy")
+  }()
+
+  // Non-empty string is truthy
+  "hello" > greeting
+  greeting > present?() > (p2 bool) {
+    p2 > not() > return?()
+    println("Non-empty string is truthy")
+  }()
+}
+
+fn check_collection_truthiness() {
+  // Empty collections are falsy
+  {} > empty_map
+  empty_map > present?() > (p1 bool) {
+    p1 > not() > return?()
+    println("Empty map is truthy (won't print)")
+  }()
+  empty_map > absent?() > (a1 bool) {
+    a1 > not() > return?()
+    println("Empty map is falsy")
+  }()
+
+  [] > empty_array
+  empty_array > present?() > (p2 bool) {
+    p2 > not() > return?()
+    println("Empty array is truthy (won't print)")
+  }()
+  empty_array > absent?() > (a2 bool) {
+    a2 > not() > return?()
+    println("Empty array is falsy")
+  }()
+
+  // Non-empty collections are truthy
+  {"key": "value"} > mymap
+  mymap > present?() > (p3 bool) {
+    p3 > not() > return?()
+    println("Non-empty map is truthy")
+  }()
+}
+
+fn check_error_truthiness() {
+  // Empty error (no error) is falsy
+  {} > success
+  success > present?() > (p1 bool) {
+    p1 > not() > return?()
+    println("Success error is truthy (won't print)")
+  }()
+  success > absent?() > (a1 bool) {
+    a1 > not() > return?()
+    println("Success error is falsy")
+  }()
+
+  // Non-empty error (has error) is truthy
+  err("failed") > e
+  e > present?() > (p2 bool) {
+    p2 > not() > return?()
+    e > err_msg() > msg
+    println("{0} - Error is truthy", msg)
+  }()
+}
+
+// =============================================================================
+// Empty vs Non-Empty Collections
+// =============================================================================
+
+fn demonstrate_empty_collections() {
+  // Empty collections have length 0
+  {} > empty_map
+  empty_map > size() > println()       // 0
+  empty_map > empty?() > println()     // true
+
+  [] > empty_array
+  empty_array > len() > println()      // 0
+  empty_array > empty?() > println()   // true
+
+  // Empty error (success) is also empty
+  {} > success
+  success > absent?() > println()      // true (no error)
+  success > size() > println()         // 0
+}
+
+// =============================================================================
+// return?() and Zero Values
+// =============================================================================
+
+// When return?() causes early return, values must be explicitly provided
+fn multi_return_with_return(input string) {
+  // If validation fails, return?() returns (err, "", 0)
+  input > validate() > (err, result)
+  err > return?(err, "", 0)  // Early return with explicit values if err is truthy
+
+  // Continue processing only if err was falsy
+  result > transform() > processed
+  return({}, processed, 42)
+}(error, string, int)
+
+// =============================================================================
+// Real-World Example: Optional Fields
+// =============================================================================
+
+fn get_user_display_name(user map) {
+  // Try to get nickname first, use map.get_or to handle missing
+  user > map.get_or("nickname", "") > nickname
+
+  // If nickname is present (non-empty), return it
+  nickname > present?() > return?(nickname)
+
+  // Otherwise return name or Anonymous
+  user > map.get_or("name", "Anonymous") > return()
+}(string)
+
+// Better pattern: use get_or with fallback chain
+fn get_user_display_name_better(user map) {
+  // Try nickname first
+  user > map.get_or("nickname", "") > nickname
+
+  // If nickname is present, return it
+  nickname > present?() > return?(nickname)
+
+  // Fall back to name, then to "Anonymous"
+  user > map.get_or("name", "Anonymous") > return()
+}(string)
+
+// =============================================================================
+// Real-World Example: Validation with Error Checking
+// =============================================================================
+
+fn validate_user_input(data map) {
+  // Check required fields using map.key_absent?()
+  err("email is required") > email_err
+  data > map.key_absent?("email") > return?(email_err, {})
+
+  err("username is required") > username_err
+  data > map.key_absent?("username") > return?(username_err, {})
+
+  data > get("email") > email
+  data > get("username") > username
+
+  // Optional field with default
+  data > map.get_or("age", 0) > age
+
+  // Build validated user
+  return({}, {"email": email, "username": username, "age": age})
+}(error, map)
+
+// =============================================================================
+// Real-World Example: Safe Chain with Error Checking
+// =============================================================================
+
+fn safe_user_processing(user_id int) {
+  // Fetch user from database
+  user_id > fetch_user() > (err1, user)
+  err1 > return?(err1, "")
+
+  // Validate user data
+  user > validate_user() > (err2, validated)
+  err2 > return?(err2, "")
+
+  // Process validated user
+  validated > process_user() > (err3, result)
+  err3 > return?(err3, "")
+
+  // Return success
+  return({}, result)
+}(error, map)
+
+// =============================================================================
+// Execute Functions
+// =============================================================================
+
+println("=== Error Checking ===")
+
+// Error checking with present?() and absent?()
+println("check_error_present(err(\"test error\")): ")
+err("test error") > check_error_present()
+
+println("check_error_present({}): ")
+{} > check_error_present()
+
+println("check_error_absent({}): ")
+{} > check_error_absent()
+
+// Zero values demonstration
+println("demonstrate_zero_values(): ")
+demonstrate_zero_values()
+
+// Operation results - returns (error, string) tuple
+println("successful_operation(): ")
+successful_operation() > (err_val error, result string) {
+  println(err_val)
+  println(result)
+}()
+
+println("failed_operation(): ")
+failed_operation() > (err_val error, result string) {
+  println(err_val)
+  println(result)
+}()
+
+println("check_operation_result({}, \"success result\"): ")
+{} > check_operation_result("success result")
+
+println("check_operation_result(err(\"failed\"), \"\"): ")
+err("failed") > check_operation_result("")
+
+// Map key checking
+println("map_missing_key(): ")
+map_missing_key()
+
+println("map_with_default(): ")
+map_with_default()
+
+println("check_key_exists(): ")
+check_key_exists()
+
+// Array access
+println("array_access(): ")
+array_access()
+
+// Truthiness
+println("check_truthiness(): ")
+check_truthiness()
+
+println("check_collection_truthiness(): ")
+check_collection_truthiness()
+
+println("check_error_truthiness(): ")
+check_error_truthiness()
+
+// Empty collections
+println("demonstrate_empty_collections(): ")
+demonstrate_empty_collections()
+
+// User display name
+{"name": "John", "nickname": "Johnny"} > get_user_display_name() > display1
+println("get_user_display_name({{\"name\": \"John\", \"nickname\": \"Johnny\"}}): {0}", display1)
+
+{"name": "John"} > get_user_display_name() > display2
+println("get_user_display_name({{\"name\": \"John\"}}): {0}", display2)
+
+{"name": "John"} > get_user_display_name_better() > display3
+println("get_user_display_name_better({{\"name\": \"John\"}}): {0}", display3)
+
+// Validation - returns (error, map) tuple
+println("validate_user_input({\"email\": \"test@example.com\", \"username\": \"john\"}): ")
+{"email": "test@example.com", "username": "john"} > validate_user_input() > (err_v error, user map) {
+  println(err_v)
+  println(user)
+}()
+
+println("validate_user_input({\"username\": \"john\"}): ")
+{"username": "john"} > validate_user_input() > (err_v error, user map) {
+  println(err_v)
+  println(user)
+}()
+
+// Note: The following functions depend on undefined helpers (validate, fetch_user, etc.):
+// - process_with_propagation
+// - multi_return_with_return
+// - safe_user_processing
+// These demonstrate patterns but are not runnable.
+
+println("=== End of Error Checking Examples ===")
