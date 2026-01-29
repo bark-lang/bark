@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -9,6 +10,25 @@ import (
 	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
 	"gitlab.com/bark-lang/bark/object"
 )
+
+// MaxResponseBodySize is the maximum allowed HTTP response body size (10MB)
+const MaxResponseBodySize = 10 * 1024 * 1024
+
+// ErrResponseTooLarge is returned when response body exceeds MaxResponseBodySize
+var ErrResponseTooLarge = errors.New("response body exceeds 10MB limit")
+
+// readResponseBody reads the response body with a size limit
+func readResponseBody(body io.ReadCloser) ([]byte, error) {
+	limitedReader := io.LimitReader(body, MaxResponseBodySize+1)
+	data, err := io.ReadAll(limitedReader)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) > MaxResponseBodySize {
+		return nil, ErrResponseTooLarge
+	}
+	return data, nil
+}
 
 // InitHTTP initializes HTTP client operations
 func InitHTTP() map[string]*object.Builtin {
@@ -41,8 +61,8 @@ func InitHTTP() map[string]*object.Builtin {
 				}
 				defer func() { _ = resp.Body.Close() }()
 
-				// Read response body
-				body, err := io.ReadAll(resp.Body)
+				// Read response body with size limit
+				body, err := readResponseBody(resp.Body)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
@@ -97,8 +117,8 @@ func InitHTTP() map[string]*object.Builtin {
 				}
 				defer func() { _ = resp.Body.Close() }()
 
-				// Read response body
-				body, err := io.ReadAll(resp.Body)
+				// Read response body with size limit
+				body, err := readResponseBody(resp.Body)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
@@ -166,8 +186,8 @@ func InitHTTP() map[string]*object.Builtin {
 				}
 				defer func() { _ = resp.Body.Close() }()
 
-				// Read response body
-				body, err := io.ReadAll(resp.Body)
+				// Read response body with size limit
+				body, err := readResponseBody(resp.Body)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
@@ -228,8 +248,8 @@ func InitHTTP() map[string]*object.Builtin {
 				}
 				defer func() { _ = resp.Body.Close() }()
 
-				// Read response body
-				body, err := io.ReadAll(resp.Body)
+				// Read response body with size limit
+				body, err := readResponseBody(resp.Body)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
@@ -321,8 +341,8 @@ func InitHTTP() map[string]*object.Builtin {
 				}
 				defer func() { _ = resp.Body.Close() }()
 
-				// Read response body
-				body, err := io.ReadAll(resp.Body)
+				// Read response body with size limit
+				body, err := readResponseBody(resp.Body)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{

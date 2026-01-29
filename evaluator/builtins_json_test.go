@@ -302,6 +302,69 @@ func TestJSONStringifyPrettyErrors(t *testing.T) {
 	}
 }
 
+func TestJSONParseDepthLimit(t *testing.T) {
+	// Generate JSON with 101 levels of nesting (exceeds 100 limit)
+	// Use escaped quotes for bark string literal
+	deepJSON := ""
+	for i := 0; i < 101; i++ {
+		deepJSON += `{\"a\":`
+	}
+	deepJSON += "1"
+	for i := 0; i < 101; i++ {
+		deepJSON += "}"
+	}
+
+	input := `json.parse("` + deepJSON + `")`
+	evaluated := testEval(input)
+
+	// Should return tuple with error
+	tpl, ok := evaluated.(*object.Tuple)
+	if !ok {
+		t.Fatalf("expected Tuple, got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if len(tpl.Elements) != 2 {
+		t.Fatalf("expected tuple with 2 elements, got=%d", len(tpl.Elements))
+	}
+
+	// First element should be Error
+	errObj, ok := tpl.Elements[0].(*object.Error)
+	if !ok {
+		t.Fatalf("expected Error at index 0, got=%T", tpl.Elements[0])
+	}
+
+	if errObj.Msg != "JSON nesting depth exceeds 100 levels" {
+		t.Errorf("wrong error message. expected=%q, got=%q", "JSON nesting depth exceeds 100 levels", errObj.Msg)
+	}
+}
+
+func TestJSONParseAtDepthLimit(t *testing.T) {
+	// Generate JSON with exactly 100 levels of nesting (at limit, should succeed)
+	// Use escaped quotes for bark string literal
+	deepJSON := ""
+	for i := 0; i < 100; i++ {
+		deepJSON += `{\"a\":`
+	}
+	deepJSON += "1"
+	for i := 0; i < 100; i++ {
+		deepJSON += "}"
+	}
+
+	input := `json.parse("` + deepJSON + `") > capture(e, r)
+e > size()`
+	evaluated := testEval(input)
+
+	// Should succeed - error should be empty map with size 0
+	num, ok := evaluated.(*object.Integer)
+	if !ok {
+		t.Fatalf("expected Integer, got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if num.Value != 0 {
+		t.Errorf("expected 0 (no error), got=%d", num.Value)
+	}
+}
+
 func TestJSONRoundTrip(t *testing.T) {
 	tests := []struct {
 		input   string

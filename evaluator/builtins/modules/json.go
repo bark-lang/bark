@@ -2,10 +2,17 @@ package modules
 
 import (
 	"encoding/json"
+	"errors"
 
 	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
 	"gitlab.com/bark-lang/bark/object"
 )
+
+// MaxJSONDepth is the maximum allowed nesting depth for JSON parsing (100 levels)
+const MaxJSONDepth = 100
+
+// ErrJSONDepthExceeded is returned when JSON nesting exceeds MaxJSONDepth
+var ErrJSONDepthExceeded = errors.New("JSON nesting depth exceeds 100 levels")
 
 // InitJSON initializes JSON operations
 func InitJSON() map[string]*object.Builtin {
@@ -36,8 +43,20 @@ func InitJSON() map[string]*object.Builtin {
 					}
 				}
 
-				// Convert JSON data to bark object
-				barkObj := jsonTobark(data)
+				// Convert JSON data to bark object with depth tracking
+				barkObj, err := jsonTobark(data, 0)
+				if err != nil {
+					// Return error tuple: (error, {})
+					return &object.Tuple{
+						Elements: []object.Object{
+							&object.Error{
+								Msg:     err.Error(),
+								Context: make(map[string]object.Object),
+							},
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
 
 				// Return success tuple: ({}, data)
 				return &object.Tuple{
@@ -89,8 +108,12 @@ func InitJSON() map[string]*object.Builtin {
 	}
 }
 
-// jsonTobark converts JSON data (from unmarshal) to bark objects
-func jsonTobark(data interface{}) object.Object {
+// jsonTobark converts JSON data (from unmarshal) to bark objects with depth tracking
+func jsonTobark(data interface{}, depth int) (object.Object, error) {
+	if depth > MaxJSONDepth {
+		return nil, ErrJSONDepthExceeded
+	}
+
 	switch v := data.(type) {
 	case map[string]interface{}:
 		// JSON object → bark map
@@ -99,43 +122,51 @@ func jsonTobark(data interface{}) object.Object {
 
 		// Maintain key order (Go 1.12+ maintains map iteration order for json)
 		for key, value := range v {
-			pairs[key] = jsonTobark(value)
+			converted, err := jsonTobark(value, depth+1)
+			if err != nil {
+				return nil, err
+			}
+			pairs[key] = converted
 			keys = append(keys, key)
 		}
 
-		return &object.Map{Pairs: pairs, Keys: keys}
+		return &object.Map{Pairs: pairs, Keys: keys}, nil
 
 	case []interface{}:
 		// JSON array → bark array
 		elements := make([]object.Object, len(v))
 		for i, item := range v {
-			elements[i] = jsonTobark(item)
+			converted, err := jsonTobark(item, depth+1)
+			if err != nil {
+				return nil, err
+			}
+			elements[i] = converted
 		}
-		return &object.Array{Elements: elements}
+		return &object.Array{Elements: elements}, nil
 
 	case string:
-		return &object.String{Value: v}
+		return &object.String{Value: v}, nil
 
 	case float64:
 		// JSON numbers are always float64
 		// Convert to int if whole number, otherwise float
 		if v == float64(int64(v)) {
-			return &object.Integer{Value: int64(v)}
+			return &object.Integer{Value: int64(v)}, nil
 		}
 		// Note: bark doesn't have a Float type yet, so we convert to int
 		// This might lose precision for non-integer numbers
-		return &object.Integer{Value: int64(v)}
+		return &object.Integer{Value: int64(v)}, nil
 
 	case bool:
-		return helpers.NativeBoolToBooleanObject(v)
+		return helpers.NativeBoolToBooleanObject(v), nil
 
 	case nil:
 		// JSON null → empty string
-		return &object.String{Value: ""}
+		return &object.String{Value: ""}, nil
 
 	default:
 		// Unknown type
-		return &object.String{Value: ""}
+		return &object.String{Value: ""}, nil
 	}
 }
 
