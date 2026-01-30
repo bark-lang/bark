@@ -10,3 +10,6 @@ evaluator.test
 /dist/
 /build/
 
+# Generated test data
+/testdata/*.json
+
