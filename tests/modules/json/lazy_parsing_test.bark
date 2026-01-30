@@ -1,0 +1,89 @@
+// Tests for JSON lazy parsing operations
+
+// json.parse_lazy - create lazy map from JSON string
+"{\"name\": \"Alice\", \"age\": 30, \"active\": true}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+}()
+
+// lazy.keys - get all keys without parsing values
+"{\"a\": 1, \"b\": 2, \"c\": 3}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.keys() > keys
+    keys > len() > assert(3)
+    keys > get(0) > assert("a")
+    keys > get(1) > assert("b")
+    keys > get(2) > assert("c")
+}()
+
+// lazy.get - access specific field
+"{\"name\": \"Bob\", \"score\": 100}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("name") > assert("Bob")
+    data > lazy.get("score") > assert(100)
+}()
+
+// lazy.get - returns null for missing keys
+"{\"exists\": true}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("missing") > absent?() > assert(true)
+}()
+
+// lazy.get - nested object access
+"{\"user\": {\"name\": \"Alice\", \"id\": 42}}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("user") > user
+    user > get("name") > assert("Alice")
+    user > get("id") > assert(42)
+}()
+
+// lazy.get - array access
+"{\"items\": [1, 2, 3, 4, 5]}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("items") > items
+    items > len() > assert(5)
+    items > get(0) > assert(1)
+    items > get(4) > assert(5)
+}()
+
+// lazy.get - caches parsed values (second access uses cache)
+"{\"cached\": \"value\"}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("cached") > first_access
+    data > lazy.get("cached") > second_access
+    first_access > assert(second_access)
+}()
+
+// lazy.materialize - convert to regular map
+"{\"x\": 10, \"y\": 20}" > json.parse_lazy() > (err error, lazy_data lazy_map) {
+    err > absent?() > assert(true)
+    lazy_data > lazy.materialize() > (err error, full_map map) {
+        err > absent?() > assert(true)
+        full_map > get("x") > assert(10)
+        full_map > get("y") > assert(20)
+    }()
+}()
+
+// json.parse_lazy - error on non-object JSON
+"[1, 2, 3]" > json.parse_lazy() > (err error, data lazy_map) {
+    err > present?() > assert(true)
+}()
+
+// json.parse_lazy - error on invalid JSON
+"not valid json" > json.parse_lazy() > (err error, data lazy_map) {
+    err > present?() > assert(true)
+}()
+
+// Complex nested structure
+"{\"response\": {\"status\": \"ok\", \"data\": {\"users\": [{\"id\": 1}, {\"id\": 2}]}}}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.get("response") > response
+    response > get("status") > assert("ok")
+    response > get("data") > get("users") > len() > assert(2)
+}()
+
+// Keys extraction with nested objects and arrays
+"{\"id\": 1, \"meta\": {\"a\": 1}, \"tags\": [1, 2]}" > json.parse_lazy() > (err error, data lazy_map) {
+    err > absent?() > assert(true)
+    data > lazy.keys() > keys
+    keys > len() > assert(3)
+}()

@@ -1,0 +1,70 @@
+// bark JSON Lazy Parsing Examples
+// Demonstrates memory-efficient JSON handling for large payloads
+
+println("=== Lazy JSON Parsing ===")
+
+// Create a large JSON string (simulating API response)
+"{\"id\": 12345, \"name\": \"Alice\", \"email\": \"alice@example.com\", \"metadata\": {\"created\": \"2024-01-01\", \"updated\": \"2024-01-15\"}, \"tags\": [\"admin\", \"active\"]}" > large_json
+
+// Parse lazily - only extracts keys, doesn't parse values yet
+large_json > json.parse_lazy() > (err error, data lazy_map) {
+    err > present?() > return?()
+
+    println("Created lazy map (values not parsed yet)")
+
+    // Get all available keys without parsing values
+    data > lazy.keys() > keys
+    println("Available keys: {keys}")
+
+    // Access specific field - parses only this field
+    data > lazy.get("name") > name
+    println("Name: {name}")
+
+    // Access another field - parses only this field
+    data > lazy.get("email") > email
+    println("Email: {email}")
+
+    // Access nested structure
+    data > lazy.get("metadata") > metadata
+    println("Metadata: {metadata}")
+}()
+
+println("\n=== Selective Field Access ===")
+
+// When you only need one field from a large JSON
+"{\"status\": \"success\", \"count\": 1000, \"data\": [{\"id\": 1}, {\"id\": 2}, {\"id\": 3}]}" > response_json
+
+response_json > json.parse_lazy() > (err error, response lazy_map) {
+    err > present?() > return?()
+
+    // Only parse the status field - ignore the large data array
+    response > lazy.get("status") > status
+    println("Status: {status}")
+
+    response > lazy.get("count") > count
+    println("Count: {count}")
+    // data array is never parsed, saving memory
+}()
+
+println("\n=== Materialize Full Object ===")
+
+// Convert lazy map to regular map when you need all fields
+"{\"a\": 1, \"b\": 2, \"c\": 3}" > simple_json
+
+simple_json > json.parse_lazy() > (err error, lazy_data lazy_map) {
+    err > present?() > return?()
+
+    // Materialize converts to regular map (parses everything)
+    lazy_data > lazy.materialize() > (err error, full_map map) {
+        err > present?() > return?()
+        println("Full map: {full_map}")
+
+        full_map > get("a") > a
+        full_map > get("b") > b
+        full_map > get("c") > c
+        a > add(b) > add(c) > sum
+        println("Sum of values: {sum}")
+    }()
+}()
+
+println("\nAll lazy parsing examples completed!")

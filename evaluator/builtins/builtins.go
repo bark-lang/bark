@@ -96,7 +96,13 @@ func GetAll() map[string]*object.Builtin {
 	for name, fn := range modules.InitMap() {
 		builtins[name] = fn
 	}
+	for name, fn := range modules.InitIter() {
+		builtins[name] = fn
+	}
 	for name, fn := range modules.InitSQL() {
+		builtins[name] = fn
+	}
+	for name, fn := range modules.InitLazy() {
 		builtins[name] = fn
 	}
 

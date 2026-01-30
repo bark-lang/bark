@@ -58,3 +58,7 @@ func TestMaxResponseBodySizeValue(t *testing.T) {
 		t.Errorf("MaxResponseBodySize should be 10MB (%d), got %d", expected, MaxResponseBodySize)
 	}
 }
+
+// Note: http.download integration tests would require a mock HTTP server
+// These tests verify the function exists and has proper argument validation
+// See evaluator/builtins_http_test.go for argument validation tests

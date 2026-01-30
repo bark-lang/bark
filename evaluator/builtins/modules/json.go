@@ -1,8 +1,10 @@
 package modules
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
 	"gitlab.com/bark-lang/bark/object"
@@ -105,7 +107,339 @@ func InitJSON() map[string]*object.Builtin {
 				return &object.String{Value: string(jsonBytes)}
 			},
 		},
+
+		"json.parse_stream": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("json.parse_stream requires 1 argument (iterator), got=%d", len(args))
+				}
+
+				iter, ok := args[0].(*object.Iterator)
+				if !ok {
+					return helpers.NewError("json.parse_stream requires iterator argument, got=%s", args[0].Type())
+				}
+
+				// Collect all chunks from iterator into a buffer
+				var buf bytes.Buffer
+				for !iter.IsExhausted() {
+					chunk, hasMore, err := iter.Next()
+					if err != nil {
+						return &object.Tuple{
+							Elements: []object.Object{
+								helpers.WrapError(err),
+								&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+							},
+						}
+					}
+					if !hasMore {
+						iter.MarkExhausted()
+						break
+					}
+					if str, ok := chunk.(*object.String); ok {
+						buf.WriteString(str.Value)
+					}
+				}
+
+				// Parse using json.Decoder for streaming efficiency
+				decoder := json.NewDecoder(&buf)
+				var data interface{}
+				if err := decoder.Decode(&data); err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
+
+				// Convert JSON data to bark object with depth tracking
+				barkObj, err := jsonTobark(data, 0)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							&object.Error{
+								Msg:     err.Error(),
+								Context: make(map[string]object.Object),
+							},
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
+
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						barkObj,
+					},
+				}
+			},
+		},
+
+		"json.parse_lazy": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("json.parse_lazy requires 1 argument (json_string), got=%d", len(args))
+				}
+
+				jsonStr, ok := args[0].(*object.String)
+				if !ok {
+					return helpers.NewError("json.parse_lazy requires string argument, got=%s", args[0].Type())
+				}
+
+				// Validate that the JSON is a valid object (starts with {)
+				trimmed := strings.TrimSpace(jsonStr.Value)
+				emptyLazyMap := &object.LazyMap{
+					RawJSON:     "{}",
+					ParsedKeys:  make(map[string]object.Object),
+					AllKeys:     []string{},
+					FullyParsed: true,
+				}
+
+				if len(trimmed) == 0 || trimmed[0] != '{' {
+					return &object.Tuple{
+						Elements: []object.Object{
+							&object.Error{
+								Msg:     "json.parse_lazy requires JSON object (starts with {)",
+								Context: make(map[string]object.Object),
+							},
+							emptyLazyMap,
+						},
+					}
+				}
+
+				// Extract top-level keys using json.Decoder token parsing
+				keys, err := extractTopLevelKeys(trimmed)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							emptyLazyMap,
+						},
+					}
+				}
+
+				// Create lazy map with raw JSON and empty cache
+				lazyMap := &object.LazyMap{
+					RawJSON:     trimmed,
+					ParsedKeys:  make(map[string]object.Object),
+					AllKeys:     keys,
+					FullyParsed: false,
+				}
+
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						lazyMap,
+					},
+				}
+			},
+		},
 	}
+}
+
+// InitLazy initializes lazy map operations
+func InitLazy() map[string]*object.Builtin {
+	return map[string]*object.Builtin{
+		"lazy.get": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 2 {
+					return helpers.NewError("lazy.get requires 2 arguments (lazy_map, key), got=%d", len(args))
+				}
+
+				lazyMap, ok := args[0].(*object.LazyMap)
+				if !ok {
+					return helpers.NewError("lazy.get requires lazy_map argument, got=%s", args[0].Type())
+				}
+
+				key, ok := args[1].(*object.String)
+				if !ok {
+					return helpers.NewError("lazy.get requires string key, got=%s", args[1].Type())
+				}
+
+				// Check if field is already parsed
+				if value, exists := lazyMap.ParsedKeys[key.Value]; exists {
+					return value
+				}
+
+				// Check if key exists in the JSON
+				keyExists := false
+				for _, k := range lazyMap.AllKeys {
+					if k == key.Value {
+						keyExists = true
+						break
+					}
+				}
+				if !keyExists {
+					return &object.Null{}
+				}
+
+				// Parse the specific field on demand
+				value, err := parseFieldFromJSON(lazyMap.RawJSON, key.Value)
+				if err != nil {
+					return helpers.NewError("lazy.get failed to parse field '%s': %s", key.Value, err.Error())
+				}
+
+				// Cache the parsed value
+				lazyMap.ParsedKeys[key.Value] = value
+
+				// Check if all fields are now parsed
+				if len(lazyMap.ParsedKeys) == len(lazyMap.AllKeys) {
+					lazyMap.FullyParsed = true
+				}
+
+				return value
+			},
+		},
+
+		"lazy.keys": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("lazy.keys requires 1 argument (lazy_map), got=%d", len(args))
+				}
+
+				lazyMap, ok := args[0].(*object.LazyMap)
+				if !ok {
+					return helpers.NewError("lazy.keys requires lazy_map argument, got=%s", args[0].Type())
+				}
+
+				// Return array of all keys
+				elements := make([]object.Object, len(lazyMap.AllKeys))
+				for i, key := range lazyMap.AllKeys {
+					elements[i] = &object.String{Value: key}
+				}
+
+				return &object.Array{Elements: elements}
+			},
+		},
+
+		"lazy.materialize": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("lazy.materialize requires 1 argument (lazy_map), got=%d", len(args))
+				}
+
+				lazyMap, ok := args[0].(*object.LazyMap)
+				if !ok {
+					return helpers.NewError("lazy.materialize requires lazy_map argument, got=%s", args[0].Type())
+				}
+
+				// Parse the entire JSON into a regular Map
+				var data interface{}
+				if err := json.Unmarshal([]byte(lazyMap.RawJSON), &data); err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
+
+				barkObj, err := jsonTobark(data, 0)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							&object.Error{
+								Msg:     err.Error(),
+								Context: make(map[string]object.Object),
+							},
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
+
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						barkObj,
+					},
+				}
+			},
+		},
+	}
+}
+
+// parseFieldFromJSON parses a specific field from a JSON object string
+func parseFieldFromJSON(jsonStr, fieldName string) (object.Object, error) {
+	decoder := json.NewDecoder(strings.NewReader(jsonStr))
+
+	// Expect opening brace
+	token, err := decoder.Token()
+	if err != nil {
+		return nil, err
+	}
+	if delim, ok := token.(json.Delim); !ok || delim != '{' {
+		return nil, errors.New("expected JSON object")
+	}
+
+	// Iterate through key-value pairs
+	for decoder.More() {
+		// Get key
+		keyToken, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		}
+
+		key, ok := keyToken.(string)
+		if !ok {
+			continue
+		}
+
+		if key == fieldName {
+			// Found our field - decode the value
+			var value interface{}
+			if err := decoder.Decode(&value); err != nil {
+				return nil, err
+			}
+			return jsonTobark(value, 0)
+		}
+
+		// Skip this value by decoding and discarding
+		var skip interface{}
+		if err := decoder.Decode(&skip); err != nil {
+			return nil, err
+		}
+	}
+
+	return &object.Null{}, nil
+}
+
+// extractTopLevelKeys extracts all top-level keys from a JSON object without fully parsing values
+func extractTopLevelKeys(jsonStr string) ([]string, error) {
+	decoder := json.NewDecoder(strings.NewReader(jsonStr))
+	keys := []string{}
+
+	// Expect opening brace
+	token, err := decoder.Token()
+	if err != nil {
+		return nil, err
+	}
+	if delim, ok := token.(json.Delim); !ok || delim != '{' {
+		return nil, errors.New("expected JSON object")
+	}
+
+	// Read key-value pairs until we hit the closing brace
+	for decoder.More() {
+		// Read key
+		keyToken, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		}
+
+		key, ok := keyToken.(string)
+		if !ok {
+			return nil, errors.New("expected string key in JSON object")
+		}
+
+		keys = append(keys, key)
+
+		// Skip the value using Decode (handles nested objects/arrays correctly)
+		var skip interface{}
+		if err := decoder.Decode(&skip); err != nil {
+			return nil, err
+		}
+	}
+
+	return keys, nil
 }
 
 // jsonTobark converts JSON data (from unmarshal) to bark objects with depth tracking

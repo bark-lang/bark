@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -13,6 +14,9 @@ import (
 
 // MaxResponseBodySize is the maximum allowed HTTP response body size (10MB)
 const MaxResponseBodySize = 10 * 1024 * 1024
+
+// StreamChunkSize is the buffer size for streaming HTTP responses (64KB)
+const StreamChunkSize = 64 * 1024
 
 // ErrResponseTooLarge is returned when response body exceeds MaxResponseBodySize
 var ErrResponseTooLarge = errors.New("response body exceeds 10MB limit")
@@ -359,6 +363,152 @@ func InitHTTP() map[string]*object.Builtin {
 					Elements: []object.Object{
 						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
 						responseMap,
+					},
+				}
+			},
+		},
+
+		"http.download": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 2 {
+					return helpers.NewError("http.download requires 2 arguments (url, filepath), got=%d", len(args))
+				}
+
+				url, ok := args[0].(*object.String)
+				if !ok {
+					return helpers.NewError("http.download requires string url, got=%s", args[0].Type())
+				}
+
+				filepath, ok := args[1].(*object.String)
+				if !ok {
+					return helpers.NewError("http.download requires string filepath, got=%s", args[1].Type())
+				}
+
+				// Create HTTP client with 30-second timeout
+				client := &http.Client{
+					Timeout: 30 * time.Second,
+				}
+
+				// Make GET request
+				resp, err := client.Get(url.Value)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.String{Value: ""},
+						},
+					}
+				}
+				defer func() { _ = resp.Body.Close() }()
+
+				// Create the output file
+				out, err := os.Create(filepath.Value)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.String{Value: ""},
+						},
+					}
+				}
+				defer func() { _ = out.Close() }()
+
+				// Stream directly to file (no memory limit needed - writes directly to disk)
+				_, err = io.Copy(out, resp.Body)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.String{Value: ""},
+						},
+					}
+				}
+
+				// Return success tuple: ({}, filepath)
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						&object.String{Value: filepath.Value},
+					},
+				}
+			},
+		},
+
+		"http.get_stream": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("http.get_stream requires 1 argument (url), got=%d", len(args))
+				}
+
+				url, ok := args[0].(*object.String)
+				if !ok {
+					return helpers.NewError("http.get_stream requires string argument, got=%s", args[0].Type())
+				}
+
+				// Create HTTP client with no timeout for streaming
+				client := &http.Client{}
+
+				// Make GET request
+				resp, err := client.Get(url.Value)
+				if err != nil {
+					return &object.Tuple{
+						Elements: []object.Object{
+							helpers.WrapError(err),
+							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						},
+					}
+				}
+
+				// Create iterator that reads chunks from response body
+				buf := make([]byte, StreamChunkSize)
+				iterator := &object.Iterator{
+					Source: "http",
+					Next: func() (object.Object, bool, error) {
+						n, err := resp.Body.Read(buf)
+						if n > 0 {
+							// Return the chunk as a string
+							return &object.String{Value: string(buf[:n])}, true, nil
+						}
+						if err == io.EOF {
+							return nil, false, nil
+						}
+						if err != nil {
+							return nil, false, err
+						}
+						return nil, false, nil
+					},
+					Close: func() error {
+						return resp.Body.Close()
+					},
+				}
+
+				// Build response info map (without body)
+				responseInfo := &object.Map{
+					Pairs: make(map[string]object.Object),
+					Keys:  []string{"status", "headers", "url", "stream"},
+				}
+				responseInfo.Pairs["status"] = &object.Integer{Value: int64(resp.StatusCode)}
+
+				// Add headers
+				headersMap := &object.Map{
+					Pairs: make(map[string]object.Object),
+					Keys:  make([]string, 0, len(resp.Header)),
+				}
+				for headerName, headerValues := range resp.Header {
+					if len(headerValues) > 0 {
+						headersMap.Pairs[headerName] = &object.String{Value: headerValues[0]}
+						headersMap.Keys = append(headersMap.Keys, headerName)
+					}
+				}
+				responseInfo.Pairs["headers"] = headersMap
+				responseInfo.Pairs["url"] = &object.String{Value: resp.Request.URL.String()}
+				responseInfo.Pairs["stream"] = iterator
+
+				// Return success tuple: ({}, response_info)
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						responseInfo,
 					},
 				}
 			},

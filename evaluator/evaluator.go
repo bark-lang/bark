@@ -831,16 +831,18 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 
 // typeMap maps type names to object types for runtime validation
 var typeMap = map[string]object.ObjectType{
-	"int":    object.INTEGER_OBJ,
-	"float":  object.FLOAT_OBJ,
-	"string": object.STRING_OBJ,
-	"bool":   object.BOOLEAN_OBJ,
-	"array":  object.ARRAY_OBJ,
-	"map":    object.MAP_OBJ,
-	"fn":     object.FUNCTION_OBJ,
-	"null":   object.NULL_OBJ,
-	"t":      "", // Generic type - accepts any type
-	"error":  "", // Special type - accepts maps (bark error convention)
+	"int":      object.INTEGER_OBJ,
+	"float":    object.FLOAT_OBJ,
+	"string":   object.STRING_OBJ,
+	"bool":     object.BOOLEAN_OBJ,
+	"array":    object.ARRAY_OBJ,
+	"map":      object.MAP_OBJ,
+	"fn":       object.FUNCTION_OBJ,
+	"null":     object.NULL_OBJ,
+	"iterator": object.ITERATOR_OBJ,
+	"lazy_map": object.LAZY_MAP_OBJ,
+	"t":        "", // Generic type - accepts any type
+	"error":    "", // Special type - accepts maps (bark error convention)
 }
 
 // validateType checks if an object matches the expected type annotation

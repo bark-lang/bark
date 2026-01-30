@@ -31,6 +31,8 @@ const (
 	TUPLE_OBJ             = "TUPLE"
 	SQL_CONN_OBJ          = "SQL_CONN"
 	SQL_TX_OBJ            = "SQL_TX"
+	ITERATOR_OBJ          = "ITERATOR"
+	LAZY_MAP_OBJ          = "LAZY_MAP"
 )
 
 // Object is the interface that all runtime objects must implement
@@ -686,6 +688,40 @@ func (e *Environment) Set(name string, val Object) Object {
 	return val
 }
 
+// IteratorNextFunc is the function signature for iterator's Next method
+// Returns (value, hasMore) - if hasMore is false, iteration is complete
+type IteratorNextFunc func() (Object, bool, error)
+
+// IteratorCloseFunc is called to clean up iterator resources
+type IteratorCloseFunc func() error
+
+// Iterator represents a lazy sequence that produces values on demand
+// Used for streaming HTTP responses, file reads, etc.
+type Iterator struct {
+	Next      IteratorNextFunc  // Function to get next value
+	Close     IteratorCloseFunc // Function to clean up resources
+	Source    string            // Description of the source (e.g., "http", "file")
+	exhausted bool              // True when iteration is complete
+}
+
+func (it *Iterator) Type() ObjectType { return ITERATOR_OBJ }
+func (it *Iterator) Inspect() string {
+	if it.exhausted {
+		return fmt.Sprintf("<iterator:%s exhausted>", it.Source)
+	}
+	return fmt.Sprintf("<iterator:%s>", it.Source)
+}
+
+// IsExhausted returns true if the iterator has no more values
+func (it *Iterator) IsExhausted() bool {
+	return it.exhausted
+}
+
+// MarkExhausted marks the iterator as exhausted
+func (it *Iterator) MarkExhausted() {
+	it.exhausted = true
+}
+
 // SQLConnection represents a database connection
 type SQLConnection struct {
 	DB     *sql.DB
@@ -715,4 +751,27 @@ type SQLTransaction struct {
 func (st *SQLTransaction) Type() ObjectType { return SQL_TX_OBJ }
 func (st *SQLTransaction) Inspect() string {
 	return fmt.Sprintf("<sql.transaction driver=%s>", st.Driver)
+}
+
+// LazyMap represents a JSON object that parses fields on-demand
+// Used for memory-efficient handling of large JSON payloads
+type LazyMap struct {
+	RawJSON     string            // Original JSON string
+	ParsedKeys  map[string]Object // Cache of already-parsed fields
+	AllKeys     []string          // All top-level keys (populated on first access)
+	FullyParsed bool              // True if all fields have been parsed
+}
+
+func (lm *LazyMap) Type() ObjectType { return LAZY_MAP_OBJ }
+func (lm *LazyMap) Inspect() string {
+	if lm.FullyParsed {
+		pairs := []string{}
+		for _, key := range lm.AllKeys {
+			if value, ok := lm.ParsedKeys[key]; ok {
+				pairs = append(pairs, fmt.Sprintf("%s: %s", key, value.Inspect()))
+			}
+		}
+		return "{" + strings.Join(pairs, ", ") + "}"
+	}
+	return "<lazy_map>"
 }
