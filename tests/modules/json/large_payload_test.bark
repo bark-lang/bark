@@ -1,0 +1,61 @@
+// Tests for large JSON payload handling
+// Run `go run testdata/generate.go -out testdata` first to generate test files
+
+// Test small.json (~15KB, 100 users)
+"testdata/small.json" > file.read() > (err error, content string) {
+    err > absent?() > assert(true)
+
+    content > json.parse() > (err error, data map) {
+        err > absent?() > assert(true)
+        data > get("users") > len() > assert(100)
+        data > get("meta") > get("total") > assert(100)
+        data > get("users") > get(0) > get("name") > assert("User 0")
+    }()
+}()
+
+// Test lazy parsing on small.json
+"testdata/small.json" > file.read() > (err error, content string) {
+    err > absent?() > assert(true)
+
+    content > json.parse_lazy() > (err error, data lazy_map) {
+        err > absent?() > assert(true)
+        data > lazy.keys() > len() > assert(2)
+        data > lazy.get("meta") > get("total") > assert(100)
+    }()
+}()
+
+// Test medium.json (~1.5MB, 10000 users)
+"testdata/medium.json" > file.read() > (err error, content string) {
+    err > absent?() > assert(true)
+
+    content > json.parse() > (err error, data map) {
+        err > absent?() > assert(true)
+        data > get("users") > len() > assert(10000)
+        data > get("meta") > get("total") > assert(10000)
+        data > get("users") > get(5000) > get("id") > assert(5000)
+    }()
+}()
+
+// Test lazy parsing on medium.json - only access meta
+"testdata/medium.json" > file.read() > (err error, content string) {
+    err > absent?() > assert(true)
+
+    content > json.parse_lazy() > (err error, data lazy_map) {
+        err > absent?() > assert(true)
+        data > lazy.get("meta") > get("total") > assert(10000)
+    }()
+}()
+
+// Test string interning benefits - repeated keys across objects
+"testdata/small.json" > file.read() > (err error, content string) {
+    err > absent?() > assert(true)
+
+    content > json.parse() > (err error, data map) {
+        err > absent?() > assert(true)
+
+        // All user objects have same keys - interning should reduce memory
+        data > get("users") > get(0) > get("email") > str.ends_with?("@example.com") > assert(true)
+        data > get("users") > get(50) > get("email") > str.ends_with?("@example.com") > assert(true)
+        data > get("users") > get(99) > get("email") > str.ends_with?("@example.com") > assert(true)
+    }()
+}()
