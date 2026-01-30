@@ -30,23 +30,8 @@ func InitJSON() map[string]*object.Builtin {
 					return helpers.NewError("json.parse requires string argument, got=%s", args[0].Type())
 				}
 
-				// Parse JSON into interface{}
-				var data interface{}
-				if err := json.Unmarshal([]byte(jsonStr.Value), &data); err != nil {
-					// Return error tuple: (error, {})
-					return &object.Tuple{
-						Elements: []object.Object{
-							&object.Error{
-								Msg:     err.Error(),
-								Context: make(map[string]object.Object),
-							},
-							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
-						},
-					}
-				}
-
-				// Convert JSON data to bark object with depth tracking
-				barkObj, err := jsonTobark(data, 0)
+				// Parse JSON directly to Bark objects (memory-efficient, skips interface{})
+				barkObj, err := parseJSONDirect([]byte(jsonStr.Value))
 				if err != nil {
 					// Return error tuple: (error, {})
 					return &object.Tuple{
@@ -140,27 +125,12 @@ func InitJSON() map[string]*object.Builtin {
 					}
 				}
 
-				// Parse using json.Decoder for streaming efficiency
-				decoder := json.NewDecoder(&buf)
-				var data interface{}
-				if err := decoder.Decode(&data); err != nil {
-					return &object.Tuple{
-						Elements: []object.Object{
-							helpers.WrapError(err),
-							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
-						},
-					}
-				}
-
-				// Convert JSON data to bark object with depth tracking
-				barkObj, err := jsonTobark(data, 0)
+				// Parse directly to Bark objects (memory-efficient, skips interface{})
+				barkObj, err := parseJSONFromReader(&buf)
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
-							&object.Error{
-								Msg:     err.Error(),
-								Context: make(map[string]object.Object),
-							},
+							helpers.WrapError(err),
 							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
 						},
 					}
@@ -323,25 +293,12 @@ func InitLazy() map[string]*object.Builtin {
 					return helpers.NewError("lazy.materialize requires lazy_map argument, got=%s", args[0].Type())
 				}
 
-				// Parse the entire JSON into a regular Map
-				var data interface{}
-				if err := json.Unmarshal([]byte(lazyMap.RawJSON), &data); err != nil {
-					return &object.Tuple{
-						Elements: []object.Object{
-							helpers.WrapError(err),
-							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
-						},
-					}
-				}
-
-				barkObj, err := jsonTobark(data, 0)
+				// Parse directly to Bark objects (memory-efficient, skips interface{})
+				barkObj, err := parseJSONDirect([]byte(lazyMap.RawJSON))
 				if err != nil {
 					return &object.Tuple{
 						Elements: []object.Object{
-							&object.Error{
-								Msg:     err.Error(),
-								Context: make(map[string]object.Object),
-							},
+							helpers.WrapError(err),
 							&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
 						},
 					}
@@ -361,6 +318,7 @@ func InitLazy() map[string]*object.Builtin {
 // parseFieldFromJSON parses a specific field from a JSON object string
 func parseFieldFromJSON(jsonStr, fieldName string) (object.Object, error) {
 	decoder := json.NewDecoder(strings.NewReader(jsonStr))
+	interner := newStringInterner()
 
 	// Expect opening brace
 	token, err := decoder.Token()
@@ -385,12 +343,8 @@ func parseFieldFromJSON(jsonStr, fieldName string) (object.Object, error) {
 		}
 
 		if key == fieldName {
-			// Found our field - decode the value
-			var value interface{}
-			if err := decoder.Decode(&value); err != nil {
-				return nil, err
-			}
-			return jsonTobark(value, 0)
+			// Found our field - parse directly to Bark object
+			return parseJSONTokens(decoder, 0, interner)
 		}
 
 		// Skip this value by decoding and discarding
@@ -442,66 +396,126 @@ func extractTopLevelKeys(jsonStr string) ([]string, error) {
 	return keys, nil
 }
 
-// jsonTobark converts JSON data (from unmarshal) to bark objects with depth tracking
-func jsonTobark(data interface{}, depth int) (object.Object, error) {
+// stringInterner reuses string allocations for repeated keys
+type stringInterner struct {
+	cache map[string]string
+}
+
+func newStringInterner() *stringInterner {
+	return &stringInterner{cache: make(map[string]string)}
+}
+
+func (si *stringInterner) intern(s string) string {
+	if cached, ok := si.cache[s]; ok {
+		return cached
+	}
+	si.cache[s] = s
+	return s
+}
+
+// parseJSONTokens parses JSON directly to Bark objects using token-based parsing.
+// This avoids the intermediate interface{} representation for better memory efficiency.
+func parseJSONTokens(decoder *json.Decoder, depth int, interner *stringInterner) (object.Object, error) {
 	if depth > MaxJSONDepth {
 		return nil, ErrJSONDepthExceeded
 	}
 
-	switch v := data.(type) {
-	case map[string]interface{}:
-		// JSON object → bark map
-		pairs := make(map[string]object.Object)
-		keys := make([]string, 0, len(v))
+	token, err := decoder.Token()
+	if err != nil {
+		return nil, err
+	}
 
-		// Maintain key order (Go 1.12+ maintains map iteration order for json)
-		for key, value := range v {
-			converted, err := jsonTobark(value, depth+1)
-			if err != nil {
+	switch t := token.(type) {
+	case json.Delim:
+		switch t {
+		case '{':
+			// Parse object
+			pairs := make(map[string]object.Object)
+			keys := make([]string, 0)
+
+			for decoder.More() {
+				// Read key
+				keyToken, err := decoder.Token()
+				if err != nil {
+					return nil, err
+				}
+				key, ok := keyToken.(string)
+				if !ok {
+					return nil, errors.New("expected string key in JSON object")
+				}
+
+				// Intern the key for memory efficiency
+				internedKey := interner.intern(key)
+
+				// Parse value recursively
+				value, err := parseJSONTokens(decoder, depth+1, interner)
+				if err != nil {
+					return nil, err
+				}
+
+				pairs[internedKey] = value
+				keys = append(keys, internedKey)
+			}
+
+			// Consume closing brace
+			if _, err := decoder.Token(); err != nil {
 				return nil, err
 			}
-			pairs[key] = converted
-			keys = append(keys, key)
-		}
 
-		return &object.Map{Pairs: pairs, Keys: keys}, nil
+			return &object.Map{Pairs: pairs, Keys: keys}, nil
 
-	case []interface{}:
-		// JSON array → bark array
-		elements := make([]object.Object, len(v))
-		for i, item := range v {
-			converted, err := jsonTobark(item, depth+1)
-			if err != nil {
+		case '[':
+			// Parse array
+			elements := make([]object.Object, 0)
+
+			for decoder.More() {
+				elem, err := parseJSONTokens(decoder, depth+1, interner)
+				if err != nil {
+					return nil, err
+				}
+				elements = append(elements, elem)
+			}
+
+			// Consume closing bracket
+			if _, err := decoder.Token(); err != nil {
 				return nil, err
 			}
-			elements[i] = converted
+
+			return &object.Array{Elements: elements}, nil
 		}
-		return &object.Array{Elements: elements}, nil
 
 	case string:
-		return &object.String{Value: v}, nil
+		return &object.String{Value: t}, nil
 
 	case float64:
-		// JSON numbers are always float64
-		// Convert to int if whole number, otherwise float
-		if v == float64(int64(v)) {
-			return &object.Integer{Value: int64(v)}, nil
+		// Convert to int if whole number
+		if t == float64(int64(t)) {
+			return &object.Integer{Value: int64(t)}, nil
 		}
-		// Note: bark doesn't have a Float type yet, so we convert to int
-		// This might lose precision for non-integer numbers
-		return &object.Integer{Value: int64(v)}, nil
+		return &object.Integer{Value: int64(t)}, nil
 
 	case bool:
-		return helpers.NativeBoolToBooleanObject(v), nil
+		return helpers.NativeBoolToBooleanObject(t), nil
 
 	case nil:
-		// JSON null → empty string
-		return &object.String{Value: ""}, nil
-
-	default:
-		// Unknown type
 		return &object.String{Value: ""}, nil
 	}
+
+	return &object.String{Value: ""}, nil
+}
+
+// parseJSONDirect parses a JSON string directly to Bark objects without intermediate interface{}.
+func parseJSONDirect(jsonData []byte) (object.Object, error) {
+	decoder := json.NewDecoder(bytes.NewReader(jsonData))
+	interner := newStringInterner()
+	return parseJSONTokens(decoder, 0, interner)
+}
+
+// parseJSONFromReader parses JSON from an io.Reader directly to Bark objects.
+func parseJSONFromReader(reader *bytes.Buffer) (object.Object, error) {
+	decoder := json.NewDecoder(reader)
+	interner := newStringInterner()
+	return parseJSONTokens(decoder, 0, interner)
 }
 
 // barkToJSON converts bark objects to JSON-compatible interface{}
