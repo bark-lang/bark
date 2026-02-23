@@ -1,0 +1,20 @@
+// Tests for neq?() builtin
+
+// Integer inequality
+5 > neq?(3) > assert(true)
+5 > neq?(5) > assert(false)
+
+// String inequality
+"hello" > neq?("world") > assert(true)
+"hello" > neq?("hello") > assert(false)
+
+// Boolean inequality
+true > neq?(false) > assert(true)
+true > neq?(true) > assert(false)
+
+// Note: neq?() uses reference equality for arrays and maps
+// Each literal creates a new object, so comparisons always show ne
+
+// Float inequality
+3.14 > neq?(2.71) > assert(true)
+3.14 > neq?(3.14) > assert(false)

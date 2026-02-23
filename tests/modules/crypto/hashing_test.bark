@@ -14,7 +14,7 @@ crypto.sha512("hello world") > (hash string) {
 // Different inputs produce different hashes
 crypto.sha256("hello") > (hash1 string) {
   crypto.sha256("world") > (hash2 string) {
-    hash1 > ne?(hash2) > assert(true)
+    hash1 > neq?(hash2) > assert(true)
   }()
 }()
 

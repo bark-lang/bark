@@ -36,7 +36,7 @@ fn char_counts(s string) {
 fn maps_equal(a map, b map) {
   a > size() > len_a
   b > size() > len_b
-  len_a > ne?(len_b) > return?(false)
+  len_a > neq?(len_b) > return?(false)
 
   // Check each key in a exists in b with same value
   a > map.keys() > a_keys
@@ -49,7 +49,7 @@ fn maps_equal(a map, b map) {
     a > get(key) > a_val
     b > map.get_or(key, -1) > b_val
 
-    a_val > ne?(b_val) > return?(false)
+    a_val > neq?(b_val) > return?(false)
 
     idx > add(1) > next
     repeat(next)

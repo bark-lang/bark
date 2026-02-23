@@ -95,7 +95,7 @@ the following builtin functions are available in the global namespace and may no
 add div mul sub
 
 // comparison (9)
-absent? eq? gt? gte? lt? lte? ne? not present?
+absent? eq? gt? gte? lt? lte? neq? not present?
 
 // arrays (2)
 empty? len
@@ -736,7 +736,7 @@ fn fetch_and_save(url string, path string) {
 
   // Check status
   response > get("status") > status
-  status > ne?(200) > return?(err("HTTP error"))
+  status > neq?(200) > return?(err("HTTP error"))
 
   // Parse JSON response
   response > get("body") > json.parse() > (e2, data)
@@ -1218,7 +1218,7 @@ String manipulation functions are in the `str` module:
 #### comparison functions
 
 - `eq?(a t, b t)(bool)` - returns true if a equals b
-- `ne?(a t, b t)(bool)` - returns true if a not equal to b
+- `neq?(a t, b t)(bool)` - returns true if a not equal to b
 - `lt?(a t, b t)(bool)` - returns true if a less than b
 - `gt?(a t, b t)(bool)` - returns true if a greater than b
 - `lte?(a t, b t)(bool)` - returns true if a less than or equal to b

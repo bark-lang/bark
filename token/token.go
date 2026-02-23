@@ -96,7 +96,7 @@ func IsBuiltin(ident string) bool {
 		"last": true, "len": true, "list_dir": true, "lowercase": true,
 		"lte?": true, "lt?": true, "match?": true, "match_indices": true,
 		"max": true, "merge": true, "min": true, "mod": true,
-		"mul": true, "ne?": true, "next": true, "not": true,
+		"mul": true, "neq?": true, "next": true, "not": true,
 		"now": true, "now_ms": true, "odd?": true, "parse_iso8601": true,
 		"parse_json": true, "parse_time": true, "pop": true, "present?": true,
 		"prev": true, "print": true, "print?": true, "println": true, "println?": true, "push": true, "read_file": true, "regex": true,

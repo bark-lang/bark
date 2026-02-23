@@ -41,5 +41,5 @@ security.generate_nonce() > (nonce string) {
 
 // security.hash_key - rate limiting helper (returns integer hash)
 "192.168.1.100" > security.hash_key() > (hash int) {
-  hash > ne?(0) > assert(true)
+  hash > neq?(0) > assert(true)
 }()

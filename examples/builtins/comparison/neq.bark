@@ -1,0 +1,27 @@
+// neq?(value) - Check if two values are not equal
+// Returns: boolean
+
+// Integer inequality
+5 > neq?(3) > println() // Output: true
+5 > neq?(5) > println() // Output: false
+
+// String inequality
+"hello" > neq?("world") > println() // Output: true
+"hello" > neq?("hello") > println() // Output: false
+
+// Boolean inequality
+true > neq?(false) > println() // Output: true
+true > neq?(true) > println() // Output: false
+
+// Array inequality
+[1, 2, 3] > neq?([1, 2]) > println() // Output: true
+[1, 2, 3] > neq?([1, 2, 3]) > println() // Output: false
+
+// Useful for conditional logic
+fn validate_name(name string) {
+  name > neq?("") > return?("Name is valid")
+  return("Name is empty")
+}(string)
+
+"Alice" > validate_name() > println() // Output: Name is valid
+"" > validate_name() > println() // Output: Name is empty
