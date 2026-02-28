@@ -4,7 +4,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 // Lexer tokenizes bark source code

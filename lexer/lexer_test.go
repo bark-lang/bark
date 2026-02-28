@@ -3,7 +3,7 @@ package lexer
 import (
 	"testing"
 
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 func TestNextToken_Operators(t *testing.T) {

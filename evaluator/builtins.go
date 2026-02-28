@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	builtinspkg "gitlab.com/bark-lang/bark/evaluator/builtins"
-	"gitlab.com/bark-lang/bark/object"
+	builtinspkg "gitlab.com/bark-lang/barki/evaluator/builtins"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // builtins contains all builtin functions

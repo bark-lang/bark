@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/parser"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/parser"
 )
 
 func main() {

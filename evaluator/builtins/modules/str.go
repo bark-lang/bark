@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/evaluator/builtins/helpers"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitStr initializes string manipulation operations

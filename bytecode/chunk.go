@@ -3,7 +3,7 @@ package bytecode
 import (
 	"encoding/binary"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // Chunk holds bytecode instructions and associated data

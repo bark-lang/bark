@@ -6,8 +6,8 @@ import (
 	"errors"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/evaluator/builtins/helpers"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // MaxJSONDepth is the maximum allowed nesting depth for JSON parsing (100 levels)

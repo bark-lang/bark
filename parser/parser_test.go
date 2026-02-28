@@ -3,8 +3,8 @@ package parser
 import (
 	"testing"
 
-	"gitlab.com/bark-lang/bark/ast"
-	"gitlab.com/bark-lang/bark/lexer"
+	"gitlab.com/bark-lang/barki/ast"
+	"gitlab.com/bark-lang/barki/lexer"
 )
 
 func TestModuleStatement(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/ast"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/ast"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // Compiler compiles AST nodes to bytecode

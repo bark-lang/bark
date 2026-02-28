@@ -3,8 +3,8 @@ package modules
 import (
 	"encoding/base64"
 
-	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/evaluator/builtins/helpers"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitBase64 initializes base64 encoding operations

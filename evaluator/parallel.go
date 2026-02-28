@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitParallelBuiltins creates parallel processing builtins with access to applyFunction

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/bark-lang/bark/evaluator"
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/object"
-	"gitlab.com/bark-lang/bark/parser"
+	"gitlab.com/bark-lang/barki/evaluator"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/object"
+	"gitlab.com/bark-lang/barki/parser"
 )
 
 const PROMPT = ">> "

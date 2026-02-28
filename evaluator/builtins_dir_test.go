@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 func TestDirListBuiltin(t *testing.T) {

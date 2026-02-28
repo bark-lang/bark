@@ -3,7 +3,7 @@ package evaluator
 import (
 	"testing"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 func TestBase64EncodeBuiltin(t *testing.T) {

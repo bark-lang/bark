@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"gitlab.com/bark-lang/bark/ast"
+	"gitlab.com/bark-lang/barki/ast"
 )
 
 // ObjectType represents the type of an object

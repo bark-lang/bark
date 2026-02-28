@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/ast"
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/ast"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 // ParseError represents a parser error with source location

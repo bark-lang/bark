@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/bytecode"
-	"gitlab.com/bark-lang/bark/evaluator"
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/manifest"
-	"gitlab.com/bark-lang/bark/object"
-	"gitlab.com/bark-lang/bark/parser"
+	"gitlab.com/bark-lang/barki/bytecode"
+	"gitlab.com/bark-lang/barki/evaluator"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/manifest"
+	"gitlab.com/bark-lang/barki/object"
+	"gitlab.com/bark-lang/barki/parser"
 )
 
 // useBytecode controls whether to use the bytecode VM or tree-walking interpreter
@@ -600,6 +600,9 @@ func cmdCheck(args []string) {
 		fmt.Printf("All %d files parsed successfully\n", passed)
 	} else {
 		fmt.Printf("Results: %d passed, %d failed\n", passed, failed)
+		for _, f := range failedFiles {
+			fmt.Printf("  FAIL: %s\n", f)
+		}
 		os.Exit(1)
 	}
 }

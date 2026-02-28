@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/evaluator/builtins/helpers"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitDataStructures initializes data structure operations that work on both arrays and maps

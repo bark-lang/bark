@@ -3,7 +3,7 @@ package ast
 import (
 	"testing"
 
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 func TestString(t *testing.T) {

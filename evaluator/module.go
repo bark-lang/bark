@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/ast"
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/manifest"
-	"gitlab.com/bark-lang/bark/object"
-	"gitlab.com/bark-lang/bark/parser"
+	"gitlab.com/bark-lang/barki/ast"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/manifest"
+	"gitlab.com/bark-lang/barki/object"
+	"gitlab.com/bark-lang/barki/parser"
 )
 
 // Module represents a loaded bark module

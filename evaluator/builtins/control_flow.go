@@ -1,7 +1,7 @@
 package builtins
 
 import (
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitControlFlow initializes control flow operations

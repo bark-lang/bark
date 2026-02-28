@@ -1,4 +1,4 @@
-module gitlab.com/bark-lang/bark
+module gitlab.com/bark-lang/barki
 
 go 1.25.5
 

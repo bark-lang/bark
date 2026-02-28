@@ -88,8 +88,7 @@ func TestLockfileGetModule(t *testing.T) {
 	mod := lf.GetModule("json")
 	if mod == nil {
 		t.Fatal("GetModule(\"json\") returned nil")
-	}
-	if mod.Version != "v1.0.0" {
+	} else if mod.Version != "v1.0.0" {
 		t.Errorf("version = %q, want %q", mod.Version, "v1.0.0")
 	}
 
@@ -177,8 +176,7 @@ func TestLockfileToTOML(t *testing.T) {
 	mod := parsed.GetModule("json")
 	if mod == nil {
 		t.Fatal("module 'json' not found after round-trip")
-	}
-	if mod.Version != "v1.0.0" {
+	} else if mod.Version != "v1.0.0" {
 		t.Errorf("round-trip version = %q, want %q", mod.Version, "v1.0.0")
 	}
 }
@@ -336,8 +334,7 @@ func TestLoadLockfileNotExist(t *testing.T) {
 	}
 	if lf == nil {
 		t.Fatal("LoadLockfile should return empty lockfile, not nil")
-	}
-	if len(lf.Modules) != 0 {
+	} else if len(lf.Modules) != 0 {
 		t.Errorf("empty lockfile should have 0 modules, got %d", len(lf.Modules))
 	}
 }

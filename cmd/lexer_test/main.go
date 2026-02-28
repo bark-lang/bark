@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 func main() {

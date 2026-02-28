@@ -65,10 +65,10 @@ func main() {
 	flag.Parse()
 
 	sizes := map[string]int{
-		"small.json":  100,      // ~15KB
-		"medium.json": 10000,    // ~1.5MB
-		"large.json":  100000,   // ~15MB
-		"xlarge.json": 1000000,  // ~150MB
+		"small.json":  100,     // ~15KB
+		"medium.json": 10000,   // ~1.5MB
+		"large.json":  100000,  // ~15MB
+		"xlarge.json": 1000000, // ~150MB
 	}
 
 	for name, count := range sizes {

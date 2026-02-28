@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gitlab.com/bark-lang/bark/lexer"
-	"gitlab.com/bark-lang/bark/object"
-	"gitlab.com/bark-lang/bark/parser"
+	"gitlab.com/bark-lang/barki/lexer"
+	"gitlab.com/bark-lang/barki/object"
+	"gitlab.com/bark-lang/barki/parser"
 )
 
 // Helper function to create a temporary module file for testing

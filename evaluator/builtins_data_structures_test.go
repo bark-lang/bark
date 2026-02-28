@@ -3,7 +3,7 @@ package evaluator
 import (
 	"testing"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // Tests for polymorphic data structure builtins (get, set, first, last, next, prev, head, tail)

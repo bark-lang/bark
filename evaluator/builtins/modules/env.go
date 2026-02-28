@@ -3,8 +3,8 @@ package modules
 import (
 	"os"
 
-	"gitlab.com/bark-lang/bark/evaluator/builtins/helpers"
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/evaluator/builtins/helpers"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 // InitEnv initializes environment variable operations

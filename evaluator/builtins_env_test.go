@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/bark-lang/bark/object"
+	"gitlab.com/bark-lang/barki/object"
 )
 
 func TestEnvGetBuiltin(t *testing.T) {

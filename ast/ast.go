@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"gitlab.com/bark-lang/bark/token"
+	"gitlab.com/bark-lang/barki/token"
 )
 
 // Node is the interface that all AST nodes must implement
