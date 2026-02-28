@@ -11,7 +11,7 @@ Bark organizes built-in functions into two namespaces:
 Fundamental operations that are always available without a module prefix:
 
 - **Numbers (4)** - `add()`, `sub()`, `mul()`, `div()`
-- **Comparison (9)** - `eq?()`, `ne?()`, `gt?()`, `gte?()`, `lt?()`, `lte?()`, `not()`, `present?()`, `absent?()`
+- **Comparison (9)** - `eq?()`, `neq?()`, `gt?()`, `gte?()`, `lt?()`, `lte?()`, `not()`, `present?()`, `absent?()`
 - **Arrays (2)** - `len()`, `empty?()`
 - **Data Structures - polymorphic (12)** - `get()`, `set()`, `first()`, `last()`, `next()`, `prev()`, `head()`, `tail()`, `includes?()`, `excludes?()`, `reverse()`, `size()`
 - **Iteration (1)** - `each()`

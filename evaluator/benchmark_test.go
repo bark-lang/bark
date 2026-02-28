@@ -696,10 +696,10 @@ func BenchmarkDiv(b *testing.B) {
 // Comparison Builtins - Complete Coverage
 // =============================================================================
 
-// BenchmarkNe benchmarks not equal
-func BenchmarkNe(b *testing.B) {
+// BenchmarkNeq benchmarks not equal
+func BenchmarkNeq(b *testing.B) {
 	env := object.NewEnvironment()
-	l := lexer.New("ne?(5, 3)")
+	l := lexer.New("neq?(5, 3)")
 	p := parser.New(l)
 	program := p.ParseProgram()
 
