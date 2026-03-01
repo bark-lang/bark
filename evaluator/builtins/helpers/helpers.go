@@ -33,13 +33,14 @@ func NewError(format string, a ...interface{}) *object.Error {
 	}
 }
 
-// WrapError creates a new programming error from a Go error.
-// This is useful for wrapping errors from Go standard library calls.
+// WrapError creates a runtime error from a Go error for use in error tuples.
+// These are recoverable errors (not programming errors) that can flow through
+// tuple destructuring without halting execution.
 func WrapError(err error) *object.Error {
 	return &object.Error{
 		Msg:                err.Error(),
 		Context:            make(map[string]object.Object),
-		IsProgrammingError: true,
+		IsProgrammingError: false,
 	}
 }
 
