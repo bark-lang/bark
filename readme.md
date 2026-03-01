@@ -4,18 +4,6 @@ an experimental programming language that emphasizes simplicity and consistency 
 
 ---
 
-## origin
-
-Unlike [Slim](https://github.com/slim-template/slim), which had a clear application in mind from the start, bark began as a purely syntactical challenge. I defined behavior rules like the left-to-right process semantics, output of one function as input to the next, etc... and wanted to see if I could make them work.
-
-This idea first came to mind around ten years ago. Over the years, bark would randomly resurface and some unresolved syntax issue would find its resolution. I wasn't close enough to a complete syntax to attempt implementation, even though I did try couple of times with both Go and Rust, but those didn't go far because I'd quickly run into an unresolved issue with the syntax.
-
-Eventually the syntax felt well-defined enough to try again. That's where we are today.
-
-Now that it actually works, I have some thoughts on where bark might be useful. I'm also working through [Rosetta Code](https://rosettacode.org) examples and adding them to bark's examples. This has been a great exercise for finding where bark falls short and where additional built-in functions or some functional tweaks could simplify things.
-
----
-
 ## what it is
 
 bark is an experiment in consistent code construction. everything flows in one direction:
