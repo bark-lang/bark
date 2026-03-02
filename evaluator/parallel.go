@@ -279,7 +279,8 @@ func parallelRaceFunc(args ...object.Object) object.Object {
 	}
 	resultChan := make(chan raceResult, len(functions.Elements))
 
-	// Launch all functions
+	// Launch all functions with WaitGroup to ensure all goroutines finish
+	var wg sync.WaitGroup
 	for i, elem := range functions.Elements {
 		fn, ok := elem.(*object.Function)
 		if !ok {
@@ -287,7 +288,10 @@ func parallelRaceFunc(args ...object.Object) object.Object {
 			return newError("parallel_race() array element %d must be function, got %s", i, elem.Type())
 		}
 
+		wg.Add(1)
 		go func(function *object.Function) {
+			defer wg.Done()
+
 			// Check if already canceled
 			select {
 			case <-ctx.Done():
@@ -329,7 +333,11 @@ func parallelRaceFunc(args ...object.Object) object.Object {
 
 	// Wait for first result
 	first := <-resultChan
-	cancel() // Cancel remaining goroutines
+	cancel() // Signal remaining goroutines to stop
+
+	// Wait for all goroutines to finish before returning,
+	// so they don't race on the shared environment
+	wg.Wait()
 
 	// Return (error, result) as tuple
 	return &object.Array{
