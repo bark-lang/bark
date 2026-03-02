@@ -1,0 +1,22 @@
+// Tests for deep path get() — variadic get with multiple keys
+
+// nested map access
+{"user": {"name": "Alice"}} > get("user", "name") > assert("Alice")
+
+// deeply nested
+{"a": {"b": {"c": 42}}} > get("a", "b", "c") > assert(42)
+
+// mixed map and array
+{"items": [10, 20, 30]} > get("items", 1) > assert(20)
+
+// array then map
+[{"name": "first"}, {"name": "second"}] > get(0, "name") > assert("first")
+[{"name": "first"}, {"name": "second"}] > get(1, "name") > assert("second")
+
+// three levels: map -> array -> map
+{"data": [{"id": 1}, {"id": 2}]} > get("data", 0, "id") > assert(1)
+{"data": [{"id": 1}, {"id": 2}]} > get("data", 1, "id") > assert(2)
+
+// single arg still works (backward compatible)
+[10, 20, 30] > get(1) > assert(20)
+{"key": "value"} > get("key") > assert("value")

@@ -1,0 +1,106 @@
+// Tests for array.map, array.filter, array.reduce, array.sort, array.sort_by
+
+// --- array.map ---
+
+// map over integers
+[1, 2, 3] > array.map((x int) { x > mul(2) }(int)) > get(0) > assert(2)
+[1, 2, 3] > array.map((x int) { x > mul(2) }(int)) > get(1) > assert(4)
+[1, 2, 3] > array.map((x int) { x > mul(2) }(int)) > get(2) > assert(6)
+
+// map preserves length
+[1, 2, 3, 4, 5] > array.map((x int) { x > add(10) }(int)) > len() > assert(5)
+
+// map over strings
+["hello", "world"] > array.map((s string) { s > str.upper() }(string)) > get(0) > assert("HELLO")
+
+// map over empty array
+[] > array.map((x int) { x > mul(2) }(int)) > len() > assert(0)
+
+// --- array.filter ---
+
+// filter integers
+[1, 2, 3, 4, 5] > array.filter((x int) { x > gt?(3) }(bool)) > len() > assert(2)
+[1, 2, 3, 4, 5] > array.filter((x int) { x > gt?(3) }(bool)) > get(0) > assert(4)
+[1, 2, 3, 4, 5] > array.filter((x int) { x > gt?(3) }(bool)) > get(1) > assert(5)
+
+// filter with eq?
+[1, 2, 3, 2, 1] > array.filter((x int) { x > eq?(2) }(bool)) > len() > assert(2)
+
+// filter all out
+[1, 2, 3] > array.filter((x int) { x > gt?(10) }(bool)) > len() > assert(0)
+
+// filter none out
+[10, 20, 30] > array.filter((x int) { x > gt?(5) }(bool)) > len() > assert(3)
+
+// filter empty array
+[] > array.filter((x int) { x > gt?(0) }(bool)) > len() > assert(0)
+
+// --- array.reduce ---
+
+// sum integers
+[1, 2, 3, 4] > array.reduce((acc int, x int) { acc > add(x) }(int), 0) > assert(10)
+
+// product
+[1, 2, 3, 4] > array.reduce((acc int, x int) { acc > mul(x) }(int), 1) > assert(24)
+
+// reduce with string concatenation
+["a", "b", "c"] > array.reduce((acc string, x string) { acc > str.concat(x) }(string), "") > assert("abc")
+
+// reduce empty array returns initial
+[] > array.reduce((acc int, x int) { acc > add(x) }(int), 42) > assert(42)
+
+// reduce single element
+[5] > array.reduce((acc int, x int) { acc > add(x) }(int), 0) > assert(5)
+
+// --- array.sort ---
+
+// sort integers
+[3, 1, 4, 1, 5, 9, 2, 6] > array.sort() > get(0) > assert(1)
+[3, 1, 4, 1, 5, 9, 2, 6] > array.sort() > get(1) > assert(1)
+[3, 1, 4, 1, 5, 9, 2, 6] > array.sort() > get(7) > assert(9)
+
+// sort strings
+["banana", "apple", "cherry"] > array.sort() > get(0) > assert("apple")
+["banana", "apple", "cherry"] > array.sort() > get(1) > assert("banana")
+["banana", "apple", "cherry"] > array.sort() > get(2) > assert("cherry")
+
+// sort already sorted
+[1, 2, 3] > array.sort() > get(0) > assert(1)
+[1, 2, 3] > array.sort() > get(2) > assert(3)
+
+// sort empty
+[] > array.sort() > len() > assert(0)
+
+// sort single element
+[42] > array.sort() > get(0) > assert(42)
+
+// sort does not mutate original
+fn test_sort_immutable() {
+  [3, 1, 2] > (arr array) {
+    arr > array.sort()
+    // original should be unchanged
+    arr > get(0) > assert(3)
+  }()
+}()
+
+// --- array.sort_by ---
+
+// sort maps by string key
+[{"name": "Charlie"}, {"name": "Alice"}, {"name": "Bob"}]
+  > array.sort_by((u map) { u > get("name") }(string))
+  > get(0)
+  > get("name")
+  > assert("Alice")
+
+[{"name": "Charlie"}, {"name": "Alice"}, {"name": "Bob"}]
+  > array.sort_by((u map) { u > get("name") }(string))
+  > get(2)
+  > get("name")
+  > assert("Charlie")
+
+// sort maps by integer key
+[{"age": 30}, {"age": 20}, {"age": 25}]
+  > array.sort_by((u map) { u > get("age") }(int))
+  > get(0)
+  > get("age")
+  > assert(20)

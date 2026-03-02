@@ -13,46 +13,52 @@ func InitDataStructures() map[string]*object.Builtin {
 	return map[string]*object.Builtin{
 		"get": {
 			Fn: func(args ...object.Object) object.Object {
-				if len(args) != 2 {
-					return newError("wrong number of arguments. got=%d, want=2", len(args))
+				if len(args) < 2 {
+					return newError("wrong number of arguments. got=%d, want=2+", len(args))
 				}
 
-				// Handle maps
-				if m, ok := args[0].(*object.Map); ok {
-					key, ok := args[1].(*object.String)
-					if !ok {
-						return newError("map key must be STRING, got %s", args[1].Type())
+				// Walk through each path segment
+				current := args[0]
+				for _, pathArg := range args[1:] {
+					// Handle maps
+					if m, ok := current.(*object.Map); ok {
+						key, ok := pathArg.(*object.String)
+						if !ok {
+							return newError("map key must be STRING, got %s", pathArg.Type())
+						}
+
+						val, exists := m.Pairs[key.Value]
+						if !exists {
+							return helpers.NewExecutionError(
+								"key not found",
+								fmt.Sprintf("key \"%s\" does not exist in map", key.Value),
+							)
+						}
+						current = val
+						continue
 					}
 
-					if val, exists := m.Pairs[key.Value]; exists {
-						return val
+					// Handle arrays
+					if arr, ok := current.(*object.Array); ok {
+						index, ok := pathArg.(*object.Integer)
+						if !ok {
+							return newError("array index must be INTEGER, got %s", pathArg.Type())
+						}
+
+						if index.Value < 0 || index.Value >= int64(len(arr.Elements)) {
+							return helpers.NewExecutionError(
+								"index out of bounds",
+								fmt.Sprintf("index %d is out of range for array of length %d", index.Value, len(arr.Elements)),
+							)
+						}
+						current = arr.Elements[index.Value]
+						continue
 					}
-					// Return execution error for missing keys (stops chain, doesn't crash)
-					return helpers.NewExecutionError(
-						"key not found",
-						fmt.Sprintf("key \"%s\" does not exist in map", key.Value),
-					)
+
+					return newError("cannot index into %s with get()", current.Type())
 				}
 
-				// Handle arrays
-				if arr, ok := args[0].(*object.Array); ok {
-					index, ok := args[1].(*object.Integer)
-					if !ok {
-						return newError("array index must be INTEGER, got %s", args[1].Type())
-					}
-
-					if index.Value < 0 || index.Value >= int64(len(arr.Elements)) {
-						// Return execution error (stops chain, doesn't crash)
-						return helpers.NewExecutionError(
-							"index out of bounds",
-							fmt.Sprintf("index %d is out of range for array of length %d", index.Value, len(arr.Elements)),
-						)
-					}
-
-					return arr.Elements[index.Value]
-				}
-
-				return newError("first argument to `get` must be MAP or ARRAY, got %s", args[0].Type())
+				return current
 			},
 		},
 

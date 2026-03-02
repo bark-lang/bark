@@ -21,6 +21,11 @@ func init() {
 	for name, fn := range InitIterationBuiltins() {
 		builtins[name] = fn
 	}
+
+	// Add functional builtins (these need access to applyFunction)
+	for name, fn := range InitFunctionalBuiltins() {
+		builtins[name] = fn
+	}
 }
 
 // SetTestMode enables or disables test mode.

@@ -53,11 +53,10 @@ func TestGetBuiltinErrors(t *testing.T) {
 		input           string
 		expectedMessage string
 	}{
-		{`get([1, 2, 3])`, "wrong number of arguments. got=1, want=2"},
-		{`get([1, 2, 3], 0, 1)`, "wrong number of arguments. got=3, want=2"},
+		{`get([1, 2, 3])`, "wrong number of arguments. got=1, want=2+"},
 		{`get([1, 2, 3], "key")`, "array index must be INTEGER, got STRING"},
 		{`get({"a": "b"}, 1)`, "map key must be STRING, got INTEGER"},
-		{`get(42, 0)`, "first argument to `get` must be MAP or ARRAY, got INTEGER"},
+		{`get(42, 0)`, "cannot index into INTEGER with get()"},
 	}
 
 	for _, tt := range programErrors {
