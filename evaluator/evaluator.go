@@ -841,6 +841,8 @@ var typeMap = map[string]object.ObjectType{
 	"null":     object.NULL_OBJ,
 	"iterator": object.ITERATOR_OBJ,
 	"lazy_map": object.LAZY_MAP_OBJ,
+	"sql_conn": object.SQL_CONN_OBJ,
+	"sql_tx":   object.SQL_TX_OBJ,
 	"t":        "", // Generic type - accepts any type
 	"error":    "", // Special type - accepts maps (bark error convention)
 }

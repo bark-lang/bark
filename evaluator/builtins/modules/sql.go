@@ -308,12 +308,12 @@ func getExecer(obj object.Object) (Execer, string, error) {
 	}
 }
 
-// errorTuple creates an error tuple (error, null)
+// errorTuple creates an error tuple (error, {})
 func errorTuple(msg string) *object.Tuple {
 	return &object.Tuple{
 		Elements: []object.Object{
 			&object.Error{Msg: msg, Context: make(map[string]object.Object)},
-			helpers.NULL,
+			&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
 		},
 	}
 }
