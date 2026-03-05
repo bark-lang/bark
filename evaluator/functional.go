@@ -9,11 +9,18 @@ import (
 // InitFunctionalBuiltins creates higher-order array builtins with access to applyFunction
 func InitFunctionalBuiltins() map[string]*object.Builtin {
 	return map[string]*object.Builtin{
-		"array.map":     {Fn: arrayMapFunc},
-		"array.filter":  {Fn: arrayFilterFunc},
-		"array.reduce":  {Fn: arrayReduceFunc},
-		"array.sort":    {Fn: arraySortFunc},
-		"array.sort_by": {Fn: arraySortByFunc},
+		"array.map":      {Fn: arrayMapFunc},
+		"array.filter":   {Fn: arrayFilterFunc},
+		"array.reduce":   {Fn: arrayReduceFunc},
+		"array.sort":     {Fn: arraySortFunc},
+		"array.sort_by":  {Fn: arraySortByFunc},
+		"array.sum":      {Fn: arraySumFunc},
+		"array.min":      {Fn: arrayMinFunc},
+		"array.max":      {Fn: arrayMaxFunc},
+		"array.min_by":   {Fn: arrayMinByFunc},
+		"array.max_by":   {Fn: arrayMaxByFunc},
+		"array.flatten":  {Fn: arrayFlattenFunc},
+		"array.group_by": {Fn: arrayGroupByFunc},
 	}
 }
 
@@ -210,6 +217,302 @@ func arraySortByFunc(args ...object.Object) object.Object {
 	}
 
 	return &object.Array{Elements: result}
+}
+
+// array.sum returns the sum of numeric elements in an array
+// Usage: [1, 2, 3] > array.sum()
+func arraySumFunc(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("array.sum requires 1 argument (array), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.sum requires array argument, got=%s", args[0].Type())
+	}
+
+	if len(arr.Elements) == 0 {
+		return &object.Integer{Value: 0}
+	}
+
+	var intSum int64
+	var floatSum float64
+	isFloat := false
+
+	for _, elem := range arr.Elements {
+		switch v := elem.(type) {
+		case *object.Integer:
+			if isFloat {
+				floatSum += float64(v.Value)
+			} else {
+				intSum += v.Value
+			}
+		case *object.Float:
+			if !isFloat {
+				floatSum = float64(intSum)
+				isFloat = true
+			}
+			floatSum += v.Value
+		default:
+			return newError("array.sum requires numeric elements, got=%s", elem.Type())
+		}
+	}
+
+	if isFloat {
+		return &object.Float{Value: floatSum}
+	}
+	return &object.Integer{Value: intSum}
+}
+
+// array.min returns the minimum element in an array
+// Usage: [3, 1, 2] > array.min()
+func arrayMinFunc(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("array.min requires 1 argument (array), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.min requires array argument, got=%s", args[0].Type())
+	}
+
+	if len(arr.Elements) == 0 {
+		return newError("array.min requires non-empty array")
+	}
+
+	min := arr.Elements[0]
+	for _, elem := range arr.Elements[1:] {
+		cmp, err := compareObjects(elem, min)
+		if err != nil {
+			return err
+		}
+		if cmp < 0 {
+			min = elem
+		}
+	}
+
+	return min
+}
+
+// array.max returns the maximum element in an array
+// Usage: [3, 1, 2] > array.max()
+func arrayMaxFunc(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("array.max requires 1 argument (array), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.max requires array argument, got=%s", args[0].Type())
+	}
+
+	if len(arr.Elements) == 0 {
+		return newError("array.max requires non-empty array")
+	}
+
+	max := arr.Elements[0]
+	for _, elem := range arr.Elements[1:] {
+		cmp, err := compareObjects(elem, max)
+		if err != nil {
+			return err
+		}
+		if cmp > 0 {
+			max = elem
+		}
+	}
+
+	return max
+}
+
+// array.min_by returns the element with the minimum derived key
+// Usage: users > array.min_by((u map) { u > get("age") }(int))
+func arrayMinByFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("array.min_by requires 2 arguments (array, function), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.min_by requires array as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("array.min_by requires function as second argument, got=%s", args[1].Type())
+	}
+
+	if len(arr.Elements) == 0 {
+		return newError("array.min_by requires non-empty array")
+	}
+
+	minElem := arr.Elements[0]
+	minKey := applyFunction(fn, []object.Object{minElem})
+	if isError(minKey) {
+		return minKey
+	}
+	if isExecutionError(minKey) {
+		return minKey
+	}
+
+	for _, elem := range arr.Elements[1:] {
+		key := applyFunction(fn, []object.Object{elem})
+		if isError(key) {
+			return key
+		}
+		if isExecutionError(key) {
+			return key
+		}
+		cmp, err := compareObjects(key, minKey)
+		if err != nil {
+			return err
+		}
+		if cmp < 0 {
+			minElem = elem
+			minKey = key
+		}
+	}
+
+	return minElem
+}
+
+// array.max_by returns the element with the maximum derived key
+// Usage: users > array.max_by((u map) { u > get("age") }(int))
+func arrayMaxByFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("array.max_by requires 2 arguments (array, function), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.max_by requires array as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("array.max_by requires function as second argument, got=%s", args[1].Type())
+	}
+
+	if len(arr.Elements) == 0 {
+		return newError("array.max_by requires non-empty array")
+	}
+
+	maxElem := arr.Elements[0]
+	maxKey := applyFunction(fn, []object.Object{maxElem})
+	if isError(maxKey) {
+		return maxKey
+	}
+	if isExecutionError(maxKey) {
+		return maxKey
+	}
+
+	for _, elem := range arr.Elements[1:] {
+		key := applyFunction(fn, []object.Object{elem})
+		if isError(key) {
+			return key
+		}
+		if isExecutionError(key) {
+			return key
+		}
+		cmp, err := compareObjects(key, maxKey)
+		if err != nil {
+			return err
+		}
+		if cmp > 0 {
+			maxElem = elem
+			maxKey = key
+		}
+	}
+
+	return maxElem
+}
+
+// array.flatten flattens nested arrays. Optional depth argument limits depth.
+// Usage: [[1, 2], [3, [4, 5]]] > array.flatten()
+// Usage: [[1, [2]], [3, [4, [5]]]] > array.flatten(1)
+func arrayFlattenFunc(args ...object.Object) object.Object {
+	if len(args) < 1 || len(args) > 2 {
+		return newError("array.flatten requires 1-2 arguments (array[, depth]), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.flatten requires array as first argument, got=%s", args[0].Type())
+	}
+
+	maxDepth := int64(-1) // -1 means unlimited
+	if len(args) == 2 {
+		depth, ok := args[1].(*object.Integer)
+		if !ok {
+			return newError("array.flatten depth must be integer, got=%s", args[1].Type())
+		}
+		if depth.Value < 0 {
+			return newError("array.flatten depth must be non-negative, got=%d", depth.Value)
+		}
+		maxDepth = depth.Value
+	}
+
+	result := flattenArray(arr, maxDepth, 0)
+	return &object.Array{Elements: result}
+}
+
+func flattenArray(arr *object.Array, maxDepth int64, currentDepth int64) []object.Object {
+	result := make([]object.Object, 0, len(arr.Elements))
+	for _, elem := range arr.Elements {
+		if inner, ok := elem.(*object.Array); ok && (maxDepth == -1 || currentDepth < maxDepth) {
+			result = append(result, flattenArray(inner, maxDepth, currentDepth+1)...)
+		} else {
+			result = append(result, elem)
+		}
+	}
+	return result
+}
+
+// array.group_by groups elements by a derived key, returns a map of arrays
+// Usage: [1, 2, 3, 4, 5] > array.group_by((x int) { x > mod(2) > to_string() }(string))
+func arrayGroupByFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("array.group_by requires 2 arguments (array, function), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.group_by requires array as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("array.group_by requires function as second argument, got=%s", args[1].Type())
+	}
+
+	groups := make(map[string][]object.Object)
+	order := make([]string, 0)
+
+	for _, elem := range arr.Elements {
+		key := applyFunction(fn, []object.Object{elem})
+		if isError(key) {
+			return key
+		}
+		if isExecutionError(key) {
+			return key
+		}
+
+		keyStr, ok := key.(*object.String)
+		if !ok {
+			return newError("array.group_by key function must return string, got=%s", key.Type())
+		}
+
+		if _, exists := groups[keyStr.Value]; !exists {
+			order = append(order, keyStr.Value)
+		}
+		groups[keyStr.Value] = append(groups[keyStr.Value], elem)
+	}
+
+	pairs := make(map[string]object.Object)
+	for _, k := range order {
+		pairs[k] = &object.Array{Elements: groups[k]}
+	}
+
+	return &object.Map{Pairs: pairs, Keys: order}
 }
 
 // isTruthyValue determines if a value is truthy for filter predicates.
