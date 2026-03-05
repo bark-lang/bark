@@ -245,5 +245,28 @@ func InitComparison() map[string]*object.Builtin {
 				}
 			},
 		},
+		"coalesce": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) < 2 {
+					return newError("wrong number of arguments. got=%d, want=2+", len(args))
+				}
+				// Return first non-absent, non-error value
+				// Last argument is the default
+				for _, arg := range args[:len(args)-1] {
+					switch arg.(type) {
+					case *object.Null:
+						continue
+					case *object.Error:
+						continue
+					case *object.ExecutionError:
+						continue
+					default:
+						return arg
+					}
+				}
+				// All values were absent/error, return default (last arg)
+				return args[len(args)-1]
+			},
+		},
 	}
 }

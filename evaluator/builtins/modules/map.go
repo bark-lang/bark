@@ -163,6 +163,59 @@ func InitMap() map[string]*object.Builtin {
 			},
 		},
 
+		"map.from_entries": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("map.from_entries requires 1 argument (array), got=%d", len(args))
+				}
+
+				arr, ok := args[0].(*object.Array)
+				if !ok {
+					return helpers.NewError("map.from_entries requires array argument, got=%s", args[0].Type())
+				}
+
+				pairs := make(map[string]object.Object)
+				keys := make([]string, 0, len(arr.Elements))
+
+				for i, elem := range arr.Elements {
+					switch entry := elem.(type) {
+					case *object.Map:
+						// {"key": k, "value": v} format
+						keyVal, hasKey := entry.Pairs["key"]
+						valVal, hasValue := entry.Pairs["value"]
+						if !hasKey || !hasValue {
+							return helpers.NewError("map.from_entries: entry %d must have 'key' and 'value' fields", i)
+						}
+						keyStr, ok := keyVal.(*object.String)
+						if !ok {
+							return helpers.NewError("map.from_entries: entry %d 'key' must be string, got=%s", i, keyVal.Type())
+						}
+						if _, exists := pairs[keyStr.Value]; !exists {
+							keys = append(keys, keyStr.Value)
+						}
+						pairs[keyStr.Value] = valVal
+					case *object.Array:
+						// [key, value] format
+						if len(entry.Elements) != 2 {
+							return helpers.NewError("map.from_entries: array entry %d must have 2 elements, got=%d", i, len(entry.Elements))
+						}
+						keyStr, ok := entry.Elements[0].(*object.String)
+						if !ok {
+							return helpers.NewError("map.from_entries: entry %d key must be string, got=%s", i, entry.Elements[0].Type())
+						}
+						if _, exists := pairs[keyStr.Value]; !exists {
+							keys = append(keys, keyStr.Value)
+						}
+						pairs[keyStr.Value] = entry.Elements[1]
+					default:
+						return helpers.NewError("map.from_entries: entry %d must be map or array, got=%s", i, elem.Type())
+					}
+				}
+
+				return &object.Map{Pairs: pairs, Keys: keys}
+			},
+		},
+
 		"map.merge": {
 			Fn: func(args ...object.Object) object.Object {
 				if len(args) < 2 {
