@@ -198,5 +198,35 @@ func InitArray() map[string]*object.Builtin {
 				return &object.Array{Elements: elements}
 			},
 		},
+
+		"array.zip": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 2 {
+					return helpers.NewError("array.zip requires 2 arguments (array, array), got=%d", len(args))
+				}
+
+				arr1, ok := args[0].(*object.Array)
+				if !ok {
+					return helpers.NewError("array.zip requires array as first argument, got=%s", args[0].Type())
+				}
+
+				arr2, ok := args[1].(*object.Array)
+				if !ok {
+					return helpers.NewError("array.zip requires array as second argument, got=%s", args[1].Type())
+				}
+
+				length := len(arr1.Elements)
+				if len(arr2.Elements) < length {
+					length = len(arr2.Elements)
+				}
+
+				result := make([]object.Object, length)
+				for i := 0; i < length; i++ {
+					result[i] = &object.Array{Elements: []object.Object{arr1.Elements[i], arr2.Elements[i]}}
+				}
+
+				return &object.Array{Elements: result}
+			},
+		},
 	}
 }

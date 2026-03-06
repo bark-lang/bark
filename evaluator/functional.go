@@ -9,18 +9,20 @@ import (
 // InitFunctionalBuiltins creates higher-order array builtins with access to applyFunction
 func InitFunctionalBuiltins() map[string]*object.Builtin {
 	return map[string]*object.Builtin{
-		"array.map":      {Fn: arrayMapFunc},
-		"array.filter":   {Fn: arrayFilterFunc},
-		"array.reduce":   {Fn: arrayReduceFunc},
-		"array.sort":     {Fn: arraySortFunc},
-		"array.sort_by":  {Fn: arraySortByFunc},
-		"array.sum":      {Fn: arraySumFunc},
-		"array.min":      {Fn: arrayMinFunc},
-		"array.max":      {Fn: arrayMaxFunc},
-		"array.min_by":   {Fn: arrayMinByFunc},
-		"array.max_by":   {Fn: arrayMaxByFunc},
-		"array.flatten":  {Fn: arrayFlattenFunc},
-		"array.group_by": {Fn: arrayGroupByFunc},
+		"array.map":       {Fn: arrayMapFunc},
+		"array.filter":    {Fn: arrayFilterFunc},
+		"array.reduce":    {Fn: arrayReduceFunc},
+		"array.sort":      {Fn: arraySortFunc},
+		"array.sort_by":   {Fn: arraySortByFunc},
+		"array.sum":       {Fn: arraySumFunc},
+		"array.min":       {Fn: arrayMinFunc},
+		"array.max":       {Fn: arrayMaxFunc},
+		"array.min_by":    {Fn: arrayMinByFunc},
+		"array.max_by":    {Fn: arrayMaxByFunc},
+		"array.flatten":   {Fn: arrayFlattenFunc},
+		"array.group_by":  {Fn: arrayGroupByFunc},
+		"array.find":      {Fn: arrayFindFunc},
+		"array.dedupe_by": {Fn: arrayDedupeByFunc},
 	}
 }
 
@@ -536,6 +538,77 @@ func isTruthyValue(obj object.Object) bool {
 	default:
 		return true
 	}
+}
+
+// array.find returns the first element matching a predicate, or absent if none found
+// Usage: [1, 2, 3, 4, 5] > array.find((x int) { x > gt?(3) }(bool))
+func arrayFindFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("array.find requires 2 arguments (array, function), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.find requires array as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("array.find requires function as second argument, got=%s", args[1].Type())
+	}
+
+	for _, elem := range arr.Elements {
+		val := applyFunction(fn, []object.Object{elem})
+		if isError(val) {
+			return val
+		}
+		if isExecutionError(val) {
+			return val
+		}
+		if isTruthyValue(val) {
+			return elem
+		}
+	}
+
+	return &object.Null{}
+}
+
+// array.dedupe_by deduplicates elements by a derived key function
+// Usage: users > array.dedupe_by((u map) { u > get("id") }(int))
+func arrayDedupeByFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("array.dedupe_by requires 2 arguments (array, function), got=%d", len(args))
+	}
+
+	arr, ok := args[0].(*object.Array)
+	if !ok {
+		return newError("array.dedupe_by requires array as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("array.dedupe_by requires function as second argument, got=%s", args[1].Type())
+	}
+
+	seen := make(map[string]bool)
+	result := make([]object.Object, 0)
+
+	for _, elem := range arr.Elements {
+		key := applyFunction(fn, []object.Object{elem})
+		if isError(key) {
+			return key
+		}
+		if isExecutionError(key) {
+			return key
+		}
+		keyStr := key.Inspect()
+		if !seen[keyStr] {
+			seen[keyStr] = true
+			result = append(result, elem)
+		}
+	}
+
+	return &object.Array{Elements: result}
 }
 
 // compareObjects compares two objects for sorting.

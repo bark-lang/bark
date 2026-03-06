@@ -105,6 +105,9 @@ func GetAll() map[string]*object.Builtin {
 	for name, fn := range modules.InitLazy() {
 		builtins[name] = fn
 	}
+	for name, fn := range modules.InitCSV() {
+		builtins[name] = fn
+	}
 
 	return builtins
 }
