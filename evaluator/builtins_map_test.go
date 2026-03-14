@@ -199,8 +199,8 @@ func TestMapEntriesBuiltin(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{`{"a": 1, "b": 2} > map.entries()`, `[[a, 1], [b, 2]]`},
-		{`{"name": "Alice"} > map.entries()`, `[[name, Alice]]`},
+		{`{"a": 1, "b": 2} > map.entries()`, `[(a, 1), (b, 2)]`},
+		{`{"name": "Alice"} > map.entries()`, `[(name, Alice)]`},
 		{`{} > map.entries()`, `[]`},
 	}
 

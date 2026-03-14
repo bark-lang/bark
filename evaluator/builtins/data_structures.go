@@ -108,14 +108,14 @@ func InitDataStructures() map[string]*object.Builtin {
 				if m, ok := args[0].(*object.Map); ok {
 					if len(m.Keys) == 0 {
 						// Return ("", zero_value)
-						return &object.Array{Elements: []object.Object{
+						return &object.Tuple{Elements: []object.Object{
 							&object.String{Value: ""},
 							&object.Integer{Value: 0},
 						}}
 					}
 
 					firstKey := m.Keys[0]
-					return &object.Array{Elements: []object.Object{
+					return &object.Tuple{Elements: []object.Object{
 						&object.String{Value: firstKey},
 						m.Pairs[firstKey],
 					}}
@@ -152,14 +152,14 @@ func InitDataStructures() map[string]*object.Builtin {
 				if m, ok := args[0].(*object.Map); ok {
 					if len(m.Keys) == 0 {
 						// Return ("", zero_value)
-						return &object.Array{Elements: []object.Object{
+						return &object.Tuple{Elements: []object.Object{
 							&object.String{Value: ""},
 							&object.Integer{Value: 0},
 						}}
 					}
 
 					lastKey := m.Keys[len(m.Keys)-1]
-					return &object.Array{Elements: []object.Object{
+					return &object.Tuple{Elements: []object.Object{
 						&object.String{Value: lastKey},
 						m.Pairs[lastKey],
 					}}

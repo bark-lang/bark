@@ -110,7 +110,7 @@ func InitMap() map[string]*object.Builtin {
 
 				entries := make([]object.Object, 0, len(m.Keys))
 				for _, k := range m.Keys {
-					entry := &object.Array{Elements: []object.Object{
+					entry := &object.Tuple{Elements: []object.Object{
 						&object.String{Value: k},
 						m.Pairs[k],
 					}}
@@ -207,8 +207,21 @@ func InitMap() map[string]*object.Builtin {
 							keys = append(keys, keyStr.Value)
 						}
 						pairs[keyStr.Value] = entry.Elements[1]
+					case *object.Tuple:
+						// (key, value) format
+						if len(entry.Elements) != 2 {
+							return helpers.NewError("map.from_entries: tuple entry %d must have 2 elements, got=%d", i, len(entry.Elements))
+						}
+						keyStr, ok := entry.Elements[0].(*object.String)
+						if !ok {
+							return helpers.NewError("map.from_entries: entry %d key must be string, got=%s", i, entry.Elements[0].Type())
+						}
+						if _, exists := pairs[keyStr.Value]; !exists {
+							keys = append(keys, keyStr.Value)
+						}
+						pairs[keyStr.Value] = entry.Elements[1]
 					default:
-						return helpers.NewError("map.from_entries: entry %d must be map or array, got=%s", i, elem.Type())
+						return helpers.NewError("map.from_entries: entry %d must be map, array, or tuple, got=%s", i, elem.Type())
 					}
 				}
 

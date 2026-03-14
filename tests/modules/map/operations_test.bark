@@ -17,7 +17,7 @@
 // map.values - get all values
 {"x": 10, "y": 20, "z": 30} > map.values() > len() > assert(3)
 
-// map.entries - get key-value pairs as array
+// map.entries - get key-value pairs as array of tuples
 {"a": 1, "b": 2, "c": 3} > map.entries() > len() > assert(3)
 
 // map.key_present? - check if key exists

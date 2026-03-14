@@ -226,19 +226,19 @@ func TestFirstBuiltin(t *testing.T) {
 		{
 			`{"name": "John", "age": "30"} > first()`,
 			func(t *testing.T, obj object.Object) {
-				arr, ok := obj.(*object.Array)
+				tuple, ok := obj.(*object.Tuple)
 				if !ok {
-					t.Errorf("object is not Array. got=%T", obj)
+					t.Errorf("object is not Tuple. got=%T", obj)
 					return
 				}
-				if len(arr.Elements) != 2 {
-					t.Errorf("array has wrong length. got=%d, want=2", len(arr.Elements))
+				if len(tuple.Elements) != 2 {
+					t.Errorf("tuple has wrong length. got=%d, want=2", len(tuple.Elements))
 					return
 				}
 				// Should return first key (insertion order)
-				str, ok := arr.Elements[0].(*object.String)
+				str, ok := tuple.Elements[0].(*object.String)
 				if !ok {
-					t.Errorf("first element is not String. got=%T", arr.Elements[0])
+					t.Errorf("first element is not String. got=%T", tuple.Elements[0])
 					return
 				}
 				if str.Value != "name" {
@@ -249,14 +249,14 @@ func TestFirstBuiltin(t *testing.T) {
 		{
 			`{} > first()`,
 			func(t *testing.T, obj object.Object) {
-				arr, ok := obj.(*object.Array)
+				tuple, ok := obj.(*object.Tuple)
 				if !ok {
-					t.Errorf("object is not Array. got=%T", obj)
+					t.Errorf("object is not Tuple. got=%T", obj)
 					return
 				}
-				str, ok := arr.Elements[0].(*object.String)
+				str, ok := tuple.Elements[0].(*object.String)
 				if !ok {
-					t.Errorf("first element is not String. got=%T", arr.Elements[0])
+					t.Errorf("first element is not String. got=%T", tuple.Elements[0])
 					return
 				}
 				if str.Value != "" {
