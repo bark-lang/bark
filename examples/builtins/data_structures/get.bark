@@ -11,7 +11,14 @@
 {"name": "Alice", "age": 30} > get("name") > println()  // Output: Alice
 {"name": "Alice", "age": 30} > get("age") > println()   // Output: 30
 
-// Chained access for nested structures
+// Deep path access across maps and arrays
+{"users": [{"name": "bark"}, {"name": "barki"}]} > get("users", 0, "name") > println()  // Output: bark
+{"users": [{"name": "bark"}, {"name": "barki"}]} > get("users", 1, "name") > println()  // Output: barki
+
+// Deeply nested map access
+{"a": {"b": {"c": 42}}} > get("a", "b", "c") > println()  // Output: 42
+
+// Chained access for nested structures (single-key form)
 {"user": {"name": "Bob"}} > get("user") > get("name") > println()  // Output: Bob
 
 // Array of maps
