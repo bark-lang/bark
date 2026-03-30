@@ -1,0 +1,28 @@
+// Tests for map.descend
+
+// find field in nested map
+{"a": {"b": {"name": "deep"}}} > map.descend("name") > get(0) > assert("deep")
+
+// find field at multiple depths
+{"name": "top", "child": {"name": "mid", "inner": {"name": "bottom"}}} > map.descend("name") > len() > assert(3)
+
+// find field inside arrays
+{"items": [{"id": 1}, {"id": 2}, {"id": 3}]} > map.descend("id") > len() > assert(3)
+
+// mixed nesting: maps inside arrays inside maps
+{"groups": [{"members": [{"name": "Alice"}, {"name": "Bob"}]}, {"members": [{"name": "Carol"}]}]} > map.descend("name") > len() > assert(3)
+
+// no matches returns empty array
+{"a": 1, "b": 2} > map.descend("missing") > len() > assert(0)
+
+// empty map returns empty array
+{} > map.descend("x") > len() > assert(0)
+
+// empty array returns empty array
+[] > map.descend("x") > len() > assert(0)
+
+// top-level field is found
+{"target": 42, "nested": {"other": 1}} > map.descend("target") > get(0) > assert(42)
+
+// array as root container
+[{"x": 1}, {"x": 2}] > map.descend("x") > len() > assert(2)

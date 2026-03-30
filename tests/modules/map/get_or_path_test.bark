@@ -1,0 +1,29 @@
+// Tests for map.get_or_path
+
+// successful deep access
+{"a": {"b": {"c": 42}}} > map.get_or_path("default", "a", "b", "c") > assert(42)
+
+// missing intermediate key returns default
+{"a": {"b": 1}} > map.get_or_path("default", "a", "x", "c") > assert("default")
+
+// missing final key returns default
+{"a": {"b": 1}} > map.get_or_path("default", "a", "z") > assert("default")
+
+// array index access
+{"items": [10, 20, 30]} > map.get_or_path(-1, "items", 1) > assert(20)
+
+// out-of-bounds array index returns default
+{"items": [10, 20]} > map.get_or_path(-1, "items", 5) > assert(-1)
+
+// single key - equivalent to map.get_or
+{"name": "Alice"} > map.get_or_path("Unknown", "name") > assert("Alice")
+{"name": "Alice"} > map.get_or_path("Unknown", "email") > assert("Unknown")
+
+// mixed map and array traversal
+{"users": [{"name": "Alice"}, {"name": "Bob"}]} > map.get_or_path("?", "users", 1, "name") > assert("Bob")
+
+// deep missing path returns default
+{"a": 1} > map.get_or_path("nope", "x", "y", "z") > assert("nope")
+
+// non-container intermediate returns default
+{"a": 42} > map.get_or_path("default", "a", "b") > assert("default")

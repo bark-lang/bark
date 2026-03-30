@@ -1,0 +1,34 @@
+// Tests for json.parse_lines
+
+// valid NDJSON
+"{\"a\":1}\n{\"b\":2}\n{\"c\":3}" > json.parse_lines() > (err error, data array) {
+  err > absent?() > assert(true)
+  data > len() > assert(3)
+  data > get(0) > get("a") > assert(1)
+  data > get(2) > get("c") > assert(3)
+}()
+
+// empty lines are skipped
+"{\"a\":1}\n\n{\"b\":2}\n" > json.parse_lines() > (err error, data array) {
+  err > absent?() > assert(true)
+  data > len() > assert(2)
+}()
+
+// trailing newline does not produce extra element
+"{\"x\":1}\n" > json.parse_lines() > (err error, data array) {
+  err > absent?() > assert(true)
+  data > len() > assert(1)
+}()
+
+// single line
+"{\"only\":42}" > json.parse_lines() > (err error, data array) {
+  err > absent?() > assert(true)
+  data > len() > assert(1)
+  data > get(0) > get("only") > assert(42)
+}()
+
+// empty string returns empty array
+"" > json.parse_lines() > (err error, data array) {
+  err > absent?() > assert(true)
+  data > len() > assert(0)
+}()

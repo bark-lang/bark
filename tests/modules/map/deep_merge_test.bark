@@ -1,0 +1,26 @@
+// Tests for map.deep_merge
+
+// nested merge - recurse into nested maps
+{"a": {"x": 1}} > map.deep_merge({"a": {"y": 2}}) > get("a") > get("x") > assert(1)
+{"a": {"x": 1}} > map.deep_merge({"a": {"y": 2}}) > get("a") > get("y") > assert(2)
+
+// non-map value override - last wins
+{"a": {"x": 1}} > map.deep_merge({"a": 42}) > get("a") > assert(42)
+
+// array replacement - arrays are replaced, not concatenated
+{"a": [1, 2]} > map.deep_merge({"a": [3, 4, 5]}) > get("a") > len() > assert(3)
+{"a": [1, 2]} > map.deep_merge({"a": [3, 4, 5]}) > get("a") > get(0) > assert(3)
+
+// multiple maps - variadic merge
+{"a": 1} > map.deep_merge({"b": 2}, {"c": 3}) > size() > assert(3)
+
+// deeply nested merge
+{"a": {"b": {"c": 1}}} > map.deep_merge({"a": {"b": {"d": 2}}}) > get("a", "b", "c") > assert(1)
+{"a": {"b": {"c": 1}}} > map.deep_merge({"a": {"b": {"d": 2}}}) > get("a", "b", "d") > assert(2)
+
+// empty map merge
+{"a": 1} > map.deep_merge({}) > get("a") > assert(1)
+{} > map.deep_merge({"a": 1}) > get("a") > assert(1)
+
+// new keys are added
+{"a": 1} > map.deep_merge({"b": 2}) > size() > assert(2)

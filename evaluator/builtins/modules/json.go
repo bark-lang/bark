@@ -93,6 +93,47 @@ func InitJSON() map[string]*object.Builtin {
 			},
 		},
 
+		"json.parse_lines": {
+			Fn: func(args ...object.Object) object.Object {
+				if len(args) != 1 {
+					return helpers.NewError("json.parse_lines requires 1 argument (string), got=%d", len(args))
+				}
+
+				input, ok := args[0].(*object.String)
+				if !ok {
+					return helpers.NewError("json.parse_lines requires string argument, got=%s", args[0].Type())
+				}
+
+				lines := strings.Split(input.Value, "\n")
+				results := make([]object.Object, 0, len(lines))
+
+				for _, line := range lines {
+					trimmed := strings.TrimSpace(line)
+					if trimmed == "" {
+						continue
+					}
+
+					barkObj, err := parseJSONDirect([]byte(trimmed))
+					if err != nil {
+						return &object.Tuple{
+							Elements: []object.Object{
+								helpers.WrapError(err),
+								&object.Array{Elements: []object.Object{}},
+							},
+						}
+					}
+					results = append(results, barkObj)
+				}
+
+				return &object.Tuple{
+					Elements: []object.Object{
+						&object.Map{Pairs: make(map[string]object.Object), Keys: []string{}},
+						&object.Array{Elements: results},
+					},
+				}
+			},
+		},
+
 		"json.parse_stream": {
 			Fn: func(args ...object.Object) object.Object {
 				if len(args) != 1 {

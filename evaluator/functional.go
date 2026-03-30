@@ -23,6 +23,8 @@ func InitFunctionalBuiltins() map[string]*object.Builtin {
 		"array.group_by":  {Fn: arrayGroupByFunc},
 		"array.find":      {Fn: arrayFindFunc},
 		"array.dedupe_by": {Fn: arrayDedupeByFunc},
+		"map.map_keys":    {Fn: mapMapKeysFunc},
+		"map.filter_keys": {Fn: mapFilterKeysFunc},
 	}
 }
 
@@ -609,6 +611,88 @@ func arrayDedupeByFunc(args ...object.Object) object.Object {
 	}
 
 	return &object.Array{Elements: result}
+}
+
+// map.map_keys transforms all keys using a callback function, returns new map
+// Usage: {"a": 1, "b": 2} > map.map_keys((k string) { k > str.upper() }(string))
+func mapMapKeysFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("map.map_keys requires 2 arguments (map, function), got=%d", len(args))
+	}
+
+	m, ok := args[0].(*object.Map)
+	if !ok {
+		return newError("map.map_keys requires map as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("map.map_keys requires function as second argument, got=%s", args[1].Type())
+	}
+
+	newPairs := make(map[string]object.Object)
+	newKeys := make([]string, 0, len(m.Keys))
+	keyExists := make(map[string]bool)
+
+	for _, k := range m.Keys {
+		val := applyFunction(fn, []object.Object{&object.String{Value: k}})
+		if isError(val) {
+			return val
+		}
+		if isExecutionError(val) {
+			return val
+		}
+
+		newKey, ok := val.(*object.String)
+		if !ok {
+			return newError("map.map_keys callback must return string, got=%s", val.Type())
+		}
+
+		newPairs[newKey.Value] = m.Pairs[k]
+		if !keyExists[newKey.Value] {
+			newKeys = append(newKeys, newKey.Value)
+			keyExists[newKey.Value] = true
+		}
+	}
+
+	return &object.Map{Pairs: newPairs, Keys: newKeys}
+}
+
+// map.filter_keys keeps entries where the callback returns truthy for the key
+// Usage: {"name": "Alice", "_id": 123} > map.filter_keys((k string) { k > starts_with?("_") > not() }(bool))
+func mapFilterKeysFunc(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("map.filter_keys requires 2 arguments (map, function), got=%d", len(args))
+	}
+
+	m, ok := args[0].(*object.Map)
+	if !ok {
+		return newError("map.filter_keys requires map as first argument, got=%s", args[0].Type())
+	}
+
+	fn, ok := args[1].(*object.Function)
+	if !ok {
+		return newError("map.filter_keys requires function as second argument, got=%s", args[1].Type())
+	}
+
+	newPairs := make(map[string]object.Object)
+	newKeys := make([]string, 0)
+
+	for _, k := range m.Keys {
+		val := applyFunction(fn, []object.Object{&object.String{Value: k}})
+		if isError(val) {
+			return val
+		}
+		if isExecutionError(val) {
+			return val
+		}
+		if isTruthyValue(val) {
+			newPairs[k] = m.Pairs[k]
+			newKeys = append(newKeys, k)
+		}
+	}
+
+	return &object.Map{Pairs: newPairs, Keys: newKeys}
 }
 
 // compareObjects compares two objects for sorting.

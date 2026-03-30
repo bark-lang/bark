@@ -1,0 +1,21 @@
+// Tests for map.extract
+
+// map values - returns all values from a map
+{"a": 1, "b": 2, "c": 3} > map.extract() > len() > assert(3)
+
+// array passthrough - returns array unchanged
+[1, 2, 3] > map.extract() > len() > assert(3)
+[1, 2, 3] > map.extract() > get(0) > assert(1)
+
+// empty map - returns empty array
+{} > map.extract() > len() > assert(0)
+
+// empty array - returns empty array
+[] > map.extract() > len() > assert(0)
+
+// single element map
+{"only": 42} > map.extract() > get(0) > assert(42)
+
+// preserves insertion order for maps
+{"x": 10, "y": 20, "z": 30} > map.extract() > get(0) > assert(10)
+{"x": 10, "y": 20, "z": 30} > map.extract() > get(2) > assert(30)
