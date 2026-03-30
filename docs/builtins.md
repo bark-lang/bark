@@ -6,12 +6,12 @@ This document provides user-friendly documentation for all built-in functions in
 
 Bark organizes built-in functions into two namespaces:
 
-### Global Namespace (58 functions)
+### Global Namespace (59 functions)
 
 Fundamental operations that are always available without a module prefix:
 
 - **Numbers (4)** - `add()`, `sub()`, `mul()`, `div()`
-- **Comparison (9)** - `eq?()`, `neq?()`, `gt?()`, `gte?()`, `lt?()`, `lte?()`, `not()`, `present?()`, `absent?()`
+- **Comparison (10)** - `eq?()`, `neq?()`, `gt?()`, `gte?()`, `lt?()`, `lte?()`, `not()`, `present?()`, `absent?()`, `coalesce()`
 - **Arrays (2)** - `len()`, `empty?()`
 - **Data Structures - polymorphic (12)** - `get()`, `set()`, `first()`, `last()`, `next()`, `prev()`, `head()`, `tail()`, `includes?()`, `excludes?()`, `reverse()`, `size()`
 - **Iteration (1)** - `each()`
@@ -21,14 +21,15 @@ Fundamental operations that are always available without a module prefix:
 - **Testing (2)** - `assert()`, `assert_error()`
 - **Core (10)** - `print()`, `println()`, `eprint()`, `eprintln()`, `print?()`, `println?()`, `eprint?()`, `eprintln?()`, `return()`, `to_string()`
 
-### Module Namespace (121 functions)
+### Module Namespace (149 functions)
 
 Specialized operations accessed via `module.function()` syntax:
 
-- **http module (5)** - `http.get()`, `http.post()`, `http.put()`, `http.delete()`, `http.request()`
+- **http module (7)** - `http.get()`, `http.post()`, `http.put()`, `http.delete()`, `http.request()`, `http.download()`, `http.get_stream()`
 - **file module (7)** - `file.read()`, `file.write()`, `file.append()`, `file.delete()`, `file.exists?()`, `file.absent?()`, `file.info()`
 - **env module (5)** - `env.get()`, `env.get_or()`, `env.present?()`, `env.absent?()`, `env.all()`
-- **json module (3)** - `json.parse()`, `json.stringify()`, `json.stringify_pretty()`
+- **json module (5)** - `json.parse()`, `json.stringify()`, `json.stringify_pretty()`, `json.parse_stream()`, `json.parse_lazy()`
+- **lazy module (3)** - `lazy.get()`, `lazy.keys()`, `lazy.materialize()`
 - **time module (6)** - `time.now()`, `time.now_ms()`, `time.parse()`, `time.parse_iso8601()`, `time.format()`, `time.format_iso8601()`
 - **base64 module (2)** - `base64.encode()`, `base64.decode()`
 - **url module (3)** - `url.encode()`, `url.decode()`, `url.parse()`
@@ -38,11 +39,13 @@ Specialized operations accessed via `module.function()` syntax:
 - **math module (24)** - `math.mod()`, `math.abs()`, `math.ceil()`, `math.floor()`, `math.round()`, `math.min()`, `math.max()`, `math.sqrt()`, `math.pow()`, `math.exp()`, `math.log()`, `math.log10()`, `math.sin()`, `math.cos()`, `math.tan()`, `math.asin()`, `math.acos()`, `math.atan()`, `math.pi()`, `math.e()`, `math.odd?()`, `math.even?()`, `math.to_int()`, `math.to_float()`
 - **security module (10)** - `security.sql_escape()`, `security.shell_escape()`, `security.safe_command?()`, `security.sanitize_path()`, `security.email?()`, `security.url?()`, `security.html_escape()`, `security.strip_tags()`, `security.generate_nonce()`, `security.hash_key()`
 - **crypto module (13)** - `crypto.bcrypt_hash()`, `crypto.bcrypt_verify()`, `crypto.argon2_hash()`, `crypto.argon2_verify()`, `crypto.aes_encrypt()`, `crypto.aes_decrypt()`, `crypto.hmac_sha256()`, `crypto.hmac_sha512()`, `crypto.hmac_verify()`, `crypto.random_bytes()`, `crypto.random_string()`, `crypto.sha256()`, `crypto.sha512()`
-- **array module (8)** - `array.push()`, `array.append_to()`, `array.pop()`, `array.shift()`, `array.unshift()`, `array.slice()`, `array.range()`, `array.dedupe()`
-- **map module (8)** - `map.get_or()`, `map.del()`, `map.keys()`, `map.values()`, `map.entries()`, `map.key_present?()`, `map.key_absent?()`, `map.merge()`
+- **array module (23)** - `array.push()`, `array.append_to()`, `array.pop()`, `array.shift()`, `array.unshift()`, `array.slice()`, `array.range()`, `array.dedupe()`, `array.zip()`, `array.map()`, `array.filter()`, `array.reduce()`, `array.sort()`, `array.sort_by()`, `array.sum()`, `array.min()`, `array.max()`, `array.min_by()`, `array.max_by()`, `array.flatten()`, `array.group_by()`, `array.find()`, `array.dedupe_by()`
+- **map module (11)** - `map.get_or()`, `map.del()`, `map.keys()`, `map.values()`, `map.entries()`, `map.from_entries()`, `map.key_present?()`, `map.key_absent?()`, `map.wildcard()`, `map.descend()`, `map.merge()`
+- **csv module (2)** - `csv.decode()`, `csv.encode()`
+- **iter module (3)** - `iter.next()`, `iter.close()`, `iter.exhausted?()`
 - **sql module (7)** - `sql.open()`, `sql.close()`, `sql.query()`, `sql.exec()`, `sql.begin()`, `sql.commit()`, `sql.rollback()`
 
-**Total: 179 built-in functions**
+**Total: 208 built-in functions**
 
 ## Quick Reference
 
@@ -58,12 +61,17 @@ Specialized operations accessed via `module.function()` syntax:
 **Collections (Global + Modules):**
 
 - `map > get(key)` - Get map value (global)
+- `map > get("a", "b", "c")` - Deep path access across nested maps/arrays (global)
 - `map > set(key, value)` - Set map value (global)
 - `array > get(index)` - Get array element (global)
 - `array > array.push(value)` - Add to array (array module)
 - `array > reverse()` - Reverse array or string (global)
 - `map > map.keys()` - Get all keys (map module)
 - `map > map.get_or(key, default)` - Get with default (map module)
+- `entries > map.from_entries()` - Create map from array of (key, value) tuples (map module)
+- `map > map.wildcard()` - Get all values as array (map module)
+- `map > map.descend(field)` - Recursively find field in nested structure (map module)
+- `coalesce(a, b, c)` - Return first non-absent value (global)
 
 **String Operations (str module):**
 
@@ -99,6 +107,14 @@ Specialized operations accessed via `module.function()` syntax:
 
 - `url > http.get() > (err, response)` - HTTP GET request
 - `url > http.post(body) > (err, response)` - HTTP POST request
+- `url > http.download(path) > (err, result)` - Download file from URL
+- `url > http.get_stream() > (err, iterator)` - Stream HTTP response
+
+**Iterators (iter module):**
+
+- `iterator > iter.next() > (err, value)` - Get next value from iterator
+- `iterator > iter.close()` - Close iterator
+- `iterator > iter.exhausted?()` - Check if iterator is exhausted
 
 **SQL Database (sql module):**
 
@@ -114,6 +130,14 @@ Specialized operations accessed via `module.function()` syntax:
 
 - `string > json.parse() > (err, data)` - Parse JSON string
 - `data > json.stringify() > string` - Convert to JSON string
+- `iterator > json.parse_stream() > (err, data)` - Parse JSON from stream iterator
+- `string > json.parse_lazy() > (err, lazy_map)` - Parse JSON lazily (for large objects)
+
+**Lazy Maps (lazy module):**
+
+- `lazy_map > lazy.get(key)` - Get field from lazy map
+- `lazy_map > lazy.keys()` - Get keys from lazy map
+- `lazy_map > lazy.materialize()` - Fully parse lazy map into regular map
 
 **Environment (env module):**
 
@@ -130,6 +154,29 @@ Specialized operations accessed via `module.function()` syntax:
 - `n > math.pow(exp)` - Raise to power
 - `n > math.odd?()` - Check if odd
 - `n > math.even?()` - Check if even
+
+**Functional (array module):**
+
+- `array > array.map(fn)` - Transform each element
+- `array > array.filter(fn)` - Keep elements where fn returns true
+- `array > array.reduce(initial, fn)` - Reduce to single value
+- `array > array.sort()` - Sort array (natural ordering)
+- `array > array.sort_by(fn)` - Sort by function result
+- `array > array.sum()` - Sum numeric elements
+- `array > array.min()` - Minimum value
+- `array > array.max()` - Maximum value
+- `array > array.min_by(fn)` - Minimum by function result
+- `array > array.max_by(fn)` - Maximum by function result
+- `array > array.flatten()` - Flatten nested arrays
+- `array > array.group_by(fn)` - Group elements by function result
+- `array > array.find(fn)` - Find first matching element
+- `array > array.dedupe_by(fn)` - Deduplicate by function result
+- `array > array.zip(other)` - Zip two arrays into array of tuples
+
+**CSV (csv module):**
+
+- `csv_string > csv.decode() > (err, array_of_maps)` - Parse CSV string
+- `array_of_maps > csv.encode() > csv_string` - Convert to CSV string
 
 **Iteration (Global + array module):**
 
