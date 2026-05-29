@@ -1,0 +1,224 @@
+// Tests for Tarjan's strongly connected components algorithm
+//
+// Go implementation: https://rosettacode.org/wiki/Tarjan#Go
+//
+// Finds the strongly connected components (SCCs) of a directed graph.
+// A graph is given as an adjacency list: an array of arrays, where index v
+// holds the list of vertices reachable from v in one step (vertices 0..n-1).
+//
+// Bark has no mutable references, so the classic algorithm (which mutates
+// shared index/lowlink/onStack arrays and a stack across a recursive DFS)
+// is rephrased functionally: all mutable state lives in a single `st` map
+// that is threaded through return values. The three loops (over vertices,
+// over neighbors, and the SCC pop loop) are written as `repeat()` blocks,
+// and `strongconnect` recurses non-tail just like the Go `sc` closure.
+
+// min of two ints
+fn imin(a int, b int) {
+  a > lt?(b) > return?(a)
+  return(b)
+}(int)
+
+// build an array of `n` copies of `val`
+fn fill(n int, val int) {
+  (0, []) > (i int, acc array) {
+    i > gte?(n) > return?(acc)
+    acc > array.push(val) > acc2
+    i > add(1) > ni
+    repeat(ni, acc2)
+  }(array) > out
+  return(out)
+}(array)
+
+// functional update of one element of an array stored under `key` in `st`
+fn put_arr(st map, key string, idx int, val int) {
+  st > get(key) > arr
+  arr > set(idx, val) > arr2
+  st > set(key, arr2) > st2
+  return(st2)
+}(map)
+
+// visit vertex v, returning the updated state map
+fn strongconnect(v int, g array, st map) {
+  st > get("counter") > c
+  st > put_arr("index", v, c) > st_a   // index[v] = counter
+  st_a > put_arr("low", v, c) > st_b   // low[v]   = counter
+  c > add(1) > nc
+  st_b > set("counter", nc) > st_c     // counter++
+  st_c > get("stack") > stk
+  stk > array.push(v) > stk2
+  st_c > set("stack", stk2) > st_d     // push v onto the stack
+  st_d > put_arr("onstack", v, 1) > st_e
+
+  g > get(v) > nbrs
+  nbrs > len() > deg
+
+  (0, st_e) > (i int, acc map) {
+    i > gte?(deg) > return?(acc)
+    nbrs > get(i) > w
+    acc > get("index") > idxArr0
+    idxArr0 > get(w) > iw
+    iw > eq?(-1) > unvisited
+
+    // if w is unvisited: recurse, then low[v] = min(low[v], low[w])
+    unvisited > (yes bool) {
+      yes > eq?(false) > return?(acc)
+      w > strongconnect(g, acc) > st2
+      st2 > get("low") > lowArr
+      lowArr > get(v) > lv
+      lowArr > get(w) > lw
+      lv > imin(lw) > nlv
+      st2 > put_arr("low", v, nlv) > st3
+      return(st3)
+    }(map) > acc_b1
+
+    // else (already visited): if w is on the stack,
+    //   low[v] = min(low[v], index[w])
+    unvisited > (yes bool) {
+      yes > return?(acc_b1)
+      acc > get("onstack") > onArr
+      onArr > get(w) > ow
+      ow > eq?(1) > onstk
+      onstk > (on bool) {
+        on > eq?(false) > return?(acc)
+        acc > get("index") > idxArr2
+        idxArr2 > get(w) > iw2
+        acc > get("low") > lowArr2
+        lowArr2 > get(v) > lv2
+        lv2 > imin(iw2) > nlv2
+        acc > put_arr("low", v, nlv2) > done2
+        return(done2)
+      }(map) > b2
+      return(b2)
+    }(map) > acc_next
+
+    i > add(1) > ni
+    repeat(ni, acc_next)
+  }(map) > st_after
+
+  // if v is a root (low[v] == index[v]), pop one SCC off the stack
+  st_after > get("index") > idxF
+  idxF > get(v) > iv
+  st_after > get("low") > lowF
+  lowF > get(v) > lvf
+  lvf > eq?(iv) > is_root
+
+  is_root > (root bool) {
+    root > eq?(false) > return?(st_after)
+    (st_after, []) > (acc map, comp array) {
+      acc > get("stack") > s
+      s > array.pop() > pair          // [rest, popped]
+      pair > get(0) > rest
+      pair > get(1) > w
+      acc > set("stack", rest) > acc1
+      acc1 > put_arr("onstack", w, 0) > acc2
+      comp > array.push(w) > comp2
+      w > eq?(v) > done
+      done > (finished bool) {
+        finished > eq?(false) > return?()
+        acc2 > get("sccs") > sccs
+        sccs > array.push(comp2) > sccs2
+        acc2 > set("sccs", sccs2) > acc3
+        return(acc3)
+      }(map) > maybe
+      done > return?(maybe)
+      repeat(acc2, comp2)
+    }(map) > st_final
+    return(st_final)
+  }(map) > result
+
+  return(result)
+}(map)
+
+// run Tarjan over the whole graph, returning the array of SCCs
+fn tarjan(g array) {
+  g > len() > n
+  n > fill(-1) > indexArr
+  n > fill(-1) > lowArr
+  n > fill(0) > onstackArr
+  {} > st0
+  st0 > set("index", indexArr) > st1
+  st1 > set("low", lowArr) > st2
+  st2 > set("onstack", onstackArr) > st3
+  st3 > set("stack", []) > st4
+  st4 > set("sccs", []) > st5
+  st5 > set("counter", 0) > st
+
+  (0, st) > (v int, acc map) {
+    v > gte?(n) > return?(acc)
+    acc > get("index") > idxA
+    idxA > get(v) > iv
+    iv > eq?(-1) > (unv bool) {
+      unv > eq?(false) > return?(acc)
+      v > strongconnect(g, acc) > acc2
+      return(acc2)
+    }(map) > acc3
+    v > add(1) > nv
+    repeat(nv, acc3)
+  }(map) > stFinal
+
+  stFinal > get("sccs") > return()
+}(array)
+
+// true if vertices a and b belong to the same strongly connected component
+fn same_scc?(sccs array, a int, b int) {
+  sccs > len() > k
+  0 > (i int) {
+    i > gte?(k) > return?(false)
+    sccs > get(i) > comp
+    comp > includes?(a) > hasA
+    hasA > (yes bool) {
+      yes > eq?(false) > return?()
+      comp > includes?(b) > inB
+      inB > return?(true)
+      return(false)
+    }(bool) > verdict
+    hasA > return?(verdict)
+    i > add(1) > ni
+    repeat(ni)
+  }(bool) > res
+  return(res)
+}(bool)
+
+// Example graph from the Rosetta Code task (vertices 0..7):
+//   0 -> 1        1 -> 2        2 -> 0
+//   3 -> 1,2,4    4 -> 5,3      5 -> 2,6
+//   6 -> 5        7 -> 4,7,6
+// Expected SCCs: {0,1,2}, {3,4}, {5,6}, {7}
+[[1], [2], [0], [1, 2, 4], [5, 3], [2, 6], [5], [4, 7, 6]] > g
+g > tarjan() > sccs
+
+// four components
+sccs > len() > assert(4)
+
+// {0, 1, 2} are mutually connected
+sccs > same_scc?(0, 1) > assert(true)
+sccs > same_scc?(1, 2) > assert(true)
+sccs > same_scc?(0, 2) > assert(true)
+
+// {3, 4} and {5, 6} are each their own component
+sccs > same_scc?(3, 4) > assert(true)
+sccs > same_scc?(5, 6) > assert(true)
+
+// vertices in different components are not connected
+sccs > same_scc?(0, 3) > assert(false)
+sccs > same_scc?(3, 5) > assert(false)
+sccs > same_scc?(5, 7) > assert(false)
+sccs > same_scc?(0, 7) > assert(false)
+
+// the self-loop vertex 7 is its own singleton component
+sccs > same_scc?(7, 7) > assert(true)
+sccs > same_scc?(7, 4) > assert(false)
+
+// a graph that is one big cycle is a single SCC: 0 -> 1 -> 2 -> 3 -> 0
+[[1], [2], [3], [0]] > cycle
+cycle > tarjan() > cyc_sccs
+cyc_sccs > len() > assert(1)
+cyc_sccs > same_scc?(0, 3) > assert(true)
+
+// a DAG (no cycles) has every vertex in its own SCC: 0 -> 1 -> 2
+[[1], [2], []] > dag
+dag > tarjan() > dag_sccs
+dag_sccs > len() > assert(3)
+dag_sccs > same_scc?(0, 1) > assert(false)
+dag_sccs > same_scc?(1, 2) > assert(false)
