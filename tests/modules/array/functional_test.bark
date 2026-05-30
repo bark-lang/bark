@@ -11,7 +11,7 @@
 [1, 2, 3, 4, 5] > array.map((x int) { x > add(10) }(int)) > len() > assert(5)
 
 // map over strings
-["hello", "world"] > array.map((s string) { s > str.upper() }(string)) > get(0) > assert("HELLO")
+["hello", "world"] > array.map(str.upper) > get(0) > assert("HELLO")
 
 // map over empty array
 [] > array.map((x int) { x > mul(2) }(int)) > len() > assert(0)

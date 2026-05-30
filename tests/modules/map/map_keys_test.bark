@@ -1,17 +1,17 @@
 // Tests for map.map_keys and map.filter_keys
 
 // map_keys - transform keys to uppercase
-{"hello": 1, "world": 2} > map.map_keys((k string) { k > str.upper() }(string)) > map.key_present?("HELLO") > assert(true)
-{"hello": 1, "world": 2} > map.map_keys((k string) { k > str.upper() }(string)) > map.key_present?("WORLD") > assert(true)
+{"hello": 1, "world": 2} > map.map_keys(str.upper) > map.key_present?("HELLO") > assert(true)
+{"hello": 1, "world": 2} > map.map_keys(str.upper) > map.key_present?("WORLD") > assert(true)
 
 // map_keys - values preserved
-{"a": 42} > map.map_keys((k string) { k > str.upper() }(string)) > get("A") > assert(42)
+{"a": 42} > map.map_keys(str.upper) > get("A") > assert(42)
 
 // map_keys - key collision (later key wins)
-{"a": 1, "A": 2} > map.map_keys((k string) { k > str.upper() }(string)) > get("A") > assert(2)
+{"a": 1, "A": 2} > map.map_keys(str.upper) > get("A") > assert(2)
 
 // map_keys - empty map
-{} > map.map_keys((k string) { k > str.upper() }(string)) > size() > assert(0)
+{} > map.map_keys(str.upper) > size() > assert(0)
 
 // filter_keys - keep matching keys
 {"name": "Alice", "age": 30, "city": "NYC"} > map.filter_keys((k string) { k > eq?("name") }(bool)) > size() > assert(1)
