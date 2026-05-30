@@ -1,0 +1,39 @@
+// Tests: bare module/builtin functions passed as function values to higher-order builtins.
+// Previously these failed with "requires function as second argument, got=BUILTIN".
+
+// --- array.map with a builtin ---
+
+// builtin str.upper as the mapper
+["a", "b"] > array.map(str.upper) > get(0) > assert("A")
+["a", "b"] > array.map(str.upper) > get(1) > assert("B")
+["a", "b"] > array.map(str.upper) > len() > assert(2)
+
+// builtin result matches the equivalent user-fn wrapper
+["a", "b"] > array.map((s string) { s > str.upper() }(string)) > get(0) > assert("A")
+["a", "b"] > array.map((s string) { s > str.upper() }(string)) > get(1) > assert("B")
+
+// user fn still works (regression guard)
+[1, 2, 3] > array.map((x int) { x > mul(2) }(int)) > get(0) > assert(2)
+[1, 2, 3] > array.map((x int) { x > mul(2) }(int)) > get(2) > assert(6)
+
+// --- map.map_keys with a builtin ---
+
+// builtin str.upper uppercases keys
+{"id": 1, "name": "x"} > map.map_keys(str.upper) > get("ID") > assert(1)
+{"id": 1, "name": "x"} > map.map_keys(str.upper) > get("NAME") > assert("x")
+
+// matches user-fn wrapper
+{"id": 1} > map.map_keys((k string) { k > str.upper() }(string)) > get("ID") > assert(1)
+
+// --- array.filter with a builtin predicate ---
+
+// str.upper returns a string; empty strings are falsey and filtered out,
+// non-empty strings are truthy and kept.
+["", "a", "", "b"] > array.filter(str.upper) > len() > assert(2)
+["", "a", "", "b"] > array.filter(str.upper) > get(0) > assert("a")
+["", "a", "", "b"] > array.filter(str.upper) > get(1) > assert("b")
+
+// --- array.find with a builtin predicate ---
+
+// first element whose str.upper is truthy (non-empty)
+["", "x", "y"] > array.find(str.upper) > assert("x")

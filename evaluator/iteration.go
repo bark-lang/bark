@@ -21,8 +21,8 @@ func eachFunc(args ...object.Object) object.Object {
 	}
 
 	// Get function (second argument)
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("each() second argument must be function, got %s", args[1].Type())
 	}
 

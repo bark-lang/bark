@@ -40,8 +40,8 @@ func arrayMapFunc(args ...object.Object) object.Object {
 		return newError("array.map requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.map requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -72,8 +72,8 @@ func arrayFilterFunc(args ...object.Object) object.Object {
 		return newError("array.filter requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.filter requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -106,8 +106,8 @@ func arrayReduceFunc(args ...object.Object) object.Object {
 		return newError("array.reduce requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.reduce requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -173,8 +173,8 @@ func arraySortByFunc(args ...object.Object) object.Object {
 		return newError("array.sort_by requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.sort_by requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -340,8 +340,8 @@ func arrayMinByFunc(args ...object.Object) object.Object {
 		return newError("array.min_by requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.min_by requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -391,8 +391,8 @@ func arrayMaxByFunc(args ...object.Object) object.Object {
 		return newError("array.max_by requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.max_by requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -483,8 +483,8 @@ func arrayGroupByFunc(args ...object.Object) object.Object {
 		return newError("array.group_by requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.group_by requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -554,8 +554,8 @@ func arrayFindFunc(args ...object.Object) object.Object {
 		return newError("array.find requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.find requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -587,8 +587,8 @@ func arrayDedupeByFunc(args ...object.Object) object.Object {
 		return newError("array.dedupe_by requires array as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("array.dedupe_by requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -625,8 +625,8 @@ func mapMapKeysFunc(args ...object.Object) object.Object {
 		return newError("map.map_keys requires map as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("map.map_keys requires function as second argument, got=%s", args[1].Type())
 	}
 
@@ -670,8 +670,8 @@ func mapFilterKeysFunc(args ...object.Object) object.Object {
 		return newError("map.filter_keys requires map as first argument, got=%s", args[0].Type())
 	}
 
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("map.filter_keys requires function as second argument, got=%s", args[1].Type())
 	}
 

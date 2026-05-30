@@ -684,6 +684,18 @@ func isErrorPresent(val object.Object) bool {
 	}
 }
 
+// isCallable reports whether obj can be invoked via applyFunction. This covers
+// user-defined functions, memoized functions, and module/builtin functions, so
+// any of them may be passed as a function value to higher-order builtins.
+func isCallable(obj object.Object) bool {
+	switch obj.(type) {
+	case *object.Function, *object.MemoizedFunction, *object.Builtin:
+		return true
+	default:
+		return false
+	}
+}
+
 func applyFunction(fn object.Object, args []object.Object) object.Object {
 	switch fn := fn.(type) {
 

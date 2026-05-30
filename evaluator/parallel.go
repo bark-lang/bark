@@ -35,8 +35,8 @@ func parallelFunc(args ...object.Object) object.Object {
 	}
 
 	// Get function
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("parallel() second argument must be function, got %s", args[1].Type())
 	}
 
@@ -115,15 +115,15 @@ func parallelAllFunc(args ...object.Object) object.Object {
 
 	// Execute each function in parallel
 	for i, elem := range elements {
-		fn, ok := elem.(*object.Function)
-		if !ok {
+		fn := elem
+		if !isCallable(fn) {
 			wg.Done()
 			errors[i] = newError("parallel_all() array element %d must be function, got %s", i, elem.Type())
 			results[i] = &object.Map{Pairs: make(map[string]object.Object), Keys: []string{}}
 			continue
 		}
 
-		go func(index int, function *object.Function) {
+		go func(index int, function object.Object) {
 			defer wg.Done()
 
 			// Call function with a dummy parameter (0) since these are typically closures
@@ -183,8 +183,8 @@ func parallelLimitedFunc(args ...object.Object) object.Object {
 	}
 
 	// Get function
-	fn, ok := args[2].(*object.Function)
-	if !ok {
+	fn := args[2]
+	if !isCallable(fn) {
 		return newError("parallel_limited() third argument must be function, got %s", args[2].Type())
 	}
 
@@ -282,14 +282,14 @@ func parallelRaceFunc(args ...object.Object) object.Object {
 	// Launch all functions with WaitGroup to ensure all goroutines finish
 	var wg sync.WaitGroup
 	for i, elem := range functions.Elements {
-		fn, ok := elem.(*object.Function)
-		if !ok {
+		fn := elem
+		if !isCallable(fn) {
 			// Return error immediately if any element is not a function
 			return newError("parallel_race() array element %d must be function, got %s", i, elem.Type())
 		}
 
 		wg.Add(1)
-		go func(function *object.Function) {
+		go func(function object.Object) {
 			defer wg.Done()
 
 			// Check if already canceled
@@ -359,8 +359,8 @@ func parallelStrictFunc(args ...object.Object) object.Object {
 	}
 
 	// Get function
-	fn, ok := args[1].(*object.Function)
-	if !ok {
+	fn := args[1]
+	if !isCallable(fn) {
 		return newError("parallel_strict() second argument must be function, got %s", args[1].Type())
 	}
 
